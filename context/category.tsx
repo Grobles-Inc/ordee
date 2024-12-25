@@ -24,6 +24,7 @@ export const CategoryContextProvider = ({
   const [category, setCategory] = React.useState<ICategory>({} as ICategory);
   const { profile } = useAuth();
   const [loading, setLoading] = React.useState(false);
+  if (!profile) return null;
 
   const addCategory = async (category: ICategory) => {
     const { error } = await supabase.from("categories").insert({

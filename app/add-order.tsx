@@ -27,6 +27,8 @@ export default function AddOrderScreen() {
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [isRegisterDisabled, setIsRegisterDisabled] = useState(false);
 
+  if (!profile) return null;
+
   async function getOrderById(id: string) {
     const { data, error } = await supabase
       .from("orders")

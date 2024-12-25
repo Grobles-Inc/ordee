@@ -3,7 +3,6 @@ export interface IMeal {
   name: string;
   price: number;
   created_at?: Date;
-  id_tenant: string;
   image_url: string;
   id_category: string;
   category?: string;

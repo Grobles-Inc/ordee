@@ -1,4 +1,4 @@
-import { Session, User } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 export interface IUser {
   id?: string;
   name?: string;
@@ -16,11 +16,9 @@ export interface ICustomer {
   total_free_orders: number;
 }
 export interface IAuthContextProvider {
+  profile: IUser | null;
   session: Session | null;
-  user: User | null;
-  isAuthenticated: boolean;
-  profile: IUser;
-  getProfile: (userId: string) => void;
+  getProfile: () => void;
   loading: boolean;
   signOut: () => void;
   updateProfile: (userData: Partial<IUser>) => void;

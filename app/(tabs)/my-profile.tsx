@@ -5,6 +5,7 @@ import { Button, Chip, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function ProfileScreen() {
   const { profile: user, signOut } = useAuth();
+  if (!user) return null;
 
   return (
     <SafeAreaView className="bg-white p-4 h-screen-safe">

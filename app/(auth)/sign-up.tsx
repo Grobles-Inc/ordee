@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { AppState, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -15,14 +15,6 @@ type TSignUp = {
   company: string;
   last_name: string;
 };
-
-AppState.addEventListener("change", (state) => {
-  if (state === "active") {
-    supabase.auth.startAutoRefresh();
-  } else {
-    supabase.auth.stopAutoRefresh();
-  }
-});
 export default function SignUpScreen() {
   const [loading, setLoading] = React.useState(false);
   const {

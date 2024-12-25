@@ -1,25 +1,25 @@
 import { AuthContextProvider, OrderContextProvider } from "@/context";
+import { CategoryContextProvider } from "@/context/category";
+import { CustomerContextProvider } from "@/context/customer";
 import { MealContextProvider } from "@/context/meals";
+import { NAV_THEME } from "@/utils/constants";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import {
+  DefaultTheme as DefaultNavigationTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { Toaster } from "sonner-native";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   MD3LightTheme as DefaultTheme,
   PaperProvider,
 } from "react-native-paper";
 import "react-native-reanimated";
+import { Toaster } from "sonner-native";
 import "../styles/global.css";
-import { CustomerContextProvider } from "@/context/customer";
-import { NAV_THEME } from "@/utils/constants";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import {
-  ThemeProvider,
-  DefaultTheme as DefaultNavigationTheme,
-} from "@react-navigation/native";
-import { CategoryContextProvider } from "@/context/category";
 // Import your global CSS file
 
 export {

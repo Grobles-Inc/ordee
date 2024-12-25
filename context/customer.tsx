@@ -25,6 +25,7 @@ export function CustomerContextProvider({
   const [customers, setCustomers] = useState<ICustomer[]>([]);
   const { profile } = useAuth();
   const [customer, setCustomer] = useState<ICustomer>({} as ICustomer);
+  if (!profile) return null;
 
   const getCustomerById = async (id: string) => {
     try {

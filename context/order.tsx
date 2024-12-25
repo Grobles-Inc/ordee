@@ -34,6 +34,7 @@ export const OrderContextProvider = ({
   const { profile } = useAuth();
   const [paidOrders, setPaidOrders] = React.useState<IOrder[]>([]);
   const [loading, setLoading] = React.useState(false);
+  if (!profile) return null;
 
   React.useEffect(() => {
     const subscription = supabase
@@ -70,17 +71,15 @@ export const OrderContextProvider = ({
       });
 
       if (orderError) {
-        if(orderError.code === 'P0001'){
-          console.error('Error:', orderError.message);
-          alert('Límite de 100 órdenes por día alcanzado para este negocio.');
-        }
-        else {
-        console.error("Error inserting order:", orderError);
-        alert("Error inserting order");
+        if (orderError.code === "P0001") {
+          console.error("Error:", orderError.message);
+          alert("Límite de 100 órdenes por día alcanzado para este negocio.");
+        } else {
+          console.error("Error inserting order:", orderError);
+          alert("Error inserting order");
         }
         setLoading(false);
         return;
-        
       }
 
       const updates = await Promise.all(
@@ -178,7 +177,7 @@ export const OrderContextProvider = ({
     const { data, error } = await supabase
       .from("orders")
       .select("*")
-      .eq("id_tenant", profile.id_tenant)
+      .eq("id_tenant", profile?.id_tenant)
       .eq("served", false);
     if (error) throw error;
     setLoading(false);
@@ -191,7 +190,7 @@ export const OrderContextProvider = ({
       .from("orders")
       .select("*")
       .eq("paid", true)
-      .eq("id_tenant", profile.id_tenant)
+      .eq("id_tenant", profile?.id_tenant)
       .order("date", { ascending: false });
     if (error) throw error;
     setPaidOrders(data);
@@ -260,7 +259,7 @@ export const OrderContextProvider = ({
       .from("orders")
       .select("*")
       .eq("paid", true)
-      .eq("id_tenant", profile.id_tenant)
+      .eq("id_tenant", profile?.id_tenant)
       .gte("date", today.toISOString())
       .order("date");
     if (error) throw error;
@@ -274,7 +273,7 @@ export const OrderContextProvider = ({
       .from("orders")
       .select("*")
       .eq("paid", false)
-      .eq("id_tenant", profile.id_tenant);
+      .eq("id_tenant", profile?.id_tenant);
     if (error) throw error;
     setLoading(false);
     return data;

@@ -1,11 +1,10 @@
-import { useAuth } from "@/context";
 import { supabase } from "@/utils/supabase";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { AppState, Linking, ScrollView, Text, View } from "react-native";
+import { Linking, ScrollView, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -14,17 +13,8 @@ type TLogin = {
   password: string;
 };
 
-AppState.addEventListener("change", (state) => {
-  if (state === "active") {
-    supabase.auth.startAutoRefresh();
-  } else {
-    supabase.auth.stopAutoRefresh();
-  }
-});
-
 export default function SignInScreen() {
   const [loading, setLoading] = React.useState(false);
-  const { getProfile } = useAuth();
   const {
     control,
     handleSubmit,
@@ -39,7 +29,7 @@ export default function SignInScreen() {
 
   const onSubmit = async (data: TLogin) => {
     setLoading(true);
-    const { error, data: user } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: data.email,
       password: data.password,
     });
@@ -47,12 +37,8 @@ export default function SignInScreen() {
       toast.error("Credenciales incorrectas!", {
         icon: <FontAwesome name="times-circle" size={20} color="red" />,
       });
-    } else {
-      reset();
     }
-    getProfile(user?.user?.id as string);
     setLoading(false);
-    router.push("/(tabs)");
   };
 
   return (

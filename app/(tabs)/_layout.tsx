@@ -4,20 +4,10 @@ import { useAuth } from "@/context";
 import { Image } from "expo-image";
 import { Redirect, Tabs } from "expo-router";
 import React from "react";
-import { ActivityIndicator } from "react-native-paper";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { profile: user, isAuthenticated, loading } = useAuth();
-
-  if (loading) {
-    return <ActivityIndicator color="tomato" />;
-  }
-
-  if (!isAuthenticated) {
-    return <Redirect href="/(auth)/sign-in" />;
-  }
-
+  const { profile } = useAuth();
   const tabConfigurations = {
     chef: [
       {
@@ -175,7 +165,7 @@ export default function TabLayout() {
   };
 
   const tabs =
-    tabConfigurations[user.role as keyof typeof tabConfigurations] || [];
+    tabConfigurations[profile?.role as keyof typeof tabConfigurations] || [];
 
   if (tabs.length === 0) {
     return <Redirect href="/(auth)/sign-in" />;

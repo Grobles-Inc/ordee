@@ -2,22 +2,26 @@ import { IAuthContextProvider, IUser } from "@/interfaces";
 import { supabase } from "@/utils/supabase";
 import { supabaseAdmin } from "@/utils/supabaseAdmin";
 import { FontAwesome } from "@expo/vector-icons";
-import { Session, User } from "@supabase/supabase-js";
-import { createContext, useContext, useState } from "react";
-import { Alert } from "react-native";
+import { Session } from "@supabase/supabase-js";
+import { createContext, useContext, useEffect, useState } from "react";
+import { AppState } from "react-native";
 import { toast } from "sonner-native";
-
+AppState.addEventListener("change", (state) => {
+  if (state === "active") {
+    supabase.auth.startAutoRefresh();
+  } else {
+    supabase.auth.stopAutoRefresh();
+  }
+});
 const AuthContext = createContext<IAuthContextProvider>({
-  session: null,
-  user: null,
-  isAuthenticated: false,
-  signOut: async () => {},
+  signOut: () => {},
   updateProfile: async () => {},
+  session: null,
   getProfile: async () => {},
   deleteUser: async () => {},
   getUsers: async () => {},
   users: [],
-  profile: {} as IUser,
+  profile: null,
   loading: false,
 });
 
@@ -26,90 +30,71 @@ export function AuthContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<IUser | null>(null);
   const [users, setUsers] = useState<IUser[]>([]);
+  const [session, setSession] = useState<Session | null>(null);
 
-  const getProfile = async (userId: string) => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("accounts")
-        .select("*")
-        .eq("id", userId)
-        .single();
-      if (error) throw console.log("PROFILE ERROR", error);
-      setProfile(data);
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert("Profile Fetch Error", error.message);
-      }
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (session) getProfile();
+  }, [session]);
+
+  const getProfile = async () => {
+    setLoading(true);
+    const { data, error, status } = await supabase
+      .from("accounts")
+      .select("*")
+      .eq("id", session?.user?.id)
+      .single();
+    if (error && status !== 406) {
+      console.log("PROFILE ERROR", error);
     }
+    setProfile(data);
+    setLoading(false);
   };
 
-  async function signOut() {
-    try {
-      setLoading(true);
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        throw new Error(error.message);
-      }
-      setSession(null);
-      setProfile(null);
-    } catch (error) {
-      Alert.alert(
-        "Sign Out Error",
-        error instanceof Error ? error.message : "An unexpected error occurred."
-      );
-    } finally {
-      setLoading(false);
-    }
+  function signOut() {
+    supabase.auth.signOut();
+    setProfile(null);
+    setSession(null);
   }
 
   const updateProfile = async (userData: Partial<IUser>) => {
-    try {
-      setLoading(true);
-      if (!session?.user) throw new Error("No user on the session!");
-
-      const updates = {
-        ...userData,
-        id: session.user.id,
-        updated_at: new Date(),
-      };
-
-      const { error } = await supabase.from("accounts").upsert(updates);
-
-      if (error) throw error;
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert("Update Error", error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
+    const updates = {
+      ...userData,
+      id: profile?.id,
+      updated_at: new Date(),
+    };
+    const { error } = await supabase.from("accounts").upsert(updates);
+    if (error) console.log("UPDATE PROFILE ERROR", error);
+    toast.success("Perfil actualizado!", {
+      icon: <FontAwesome name="check-circle" size={20} color="green" />,
+    });
+    setLoading(false);
   };
 
   const deleteUser = async (id: string) => {
-    try {
-      const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
-
-      if (error) {
-        toast.error("Error al eliminar usuario!", {
-          icon: <FontAwesome name="times-circle" size={20} color="red" />,
-        });
-        return;
-      }
-      toast.success("Usuario eliminado!", {
-        icon: <FontAwesome name="check-circle" size={20} color="green" />,
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
+    if (error) {
+      toast.error("Error al eliminar usuario!", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
       });
-
-      setUsers(users.filter((user) => user.id !== id));
-    } catch (err: any) {
-      alert("Error deleting user: " + err.message);
+      return;
     }
+    toast.success("Usuario eliminado!", {
+      icon: <FontAwesome name="check-circle" size={20} color="green" />,
+    });
+    setUsers(users.filter((user) => user.id !== id));
   };
 
   const getUsers = async (id_tenant: string) => {
@@ -123,16 +108,12 @@ export function AuthContextProvider({
     return data;
   };
 
-  const user: User | null = session?.user || null;
-
   return (
     <AuthContext.Provider
       value={{
-        session,
         loading,
-        profile: profile || ({} as IUser),
-        user,
-        isAuthenticated: !!session?.user,
+        profile,
+        session,
         signOut,
         getProfile,
         updateProfile,

@@ -26,6 +26,7 @@ export const MealContextProvider = ({
   const [loading, setLoading] = React.useState(false);
   const { profile } = useAuth();
   const [meal, setMeal] = React.useState<IMeal>({} as IMeal);
+  if (!profile) return null;
 
   const addMeal = async (meal: IMeal) => {
     setLoading(true);

@@ -6,7 +6,7 @@ import { ActivityIndicator } from "react-native-paper";
 export default function AuthLayout() {
   const { session, loading } = useAuth();
   if (loading) return <ActivityIndicator color="tomato" />;
-  return session?.user ? (
+  return session ? (
     <Redirect href="/(tabs)" />
   ) : (
     <Stack screenOptions={{ headerShown: false }} />
