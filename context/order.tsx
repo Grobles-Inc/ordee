@@ -34,7 +34,6 @@ export const OrderContextProvider = ({
   const { profile } = useAuth();
   const [paidOrders, setPaidOrders] = React.useState<IOrder[]>([]);
   const [loading, setLoading] = React.useState(false);
-  if (!profile) return null;
 
   React.useEffect(() => {
     const subscription = supabase

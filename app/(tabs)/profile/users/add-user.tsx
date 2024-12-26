@@ -36,8 +36,6 @@ export default function AddUserScreen() {
       role: "Administrador",
     },
   });
-  
-    
 
   const onSubmit = async (data: IUser) => {
     setLoading(true);
@@ -61,8 +59,12 @@ export default function AddUserScreen() {
       if (!authData.user?.id) {
         throw new Error("No se pudo crear el usuario");
       }
-      const { data: tenantData, error: tenantError } = await supabase.from("tenants").select("id").eq("id", "id_tenant").single();
-      console.log("awawaa",tenantData);
+      const { data: tenantData, error: tenantError } = await supabase
+        .from("tenants")
+        .select("id")
+        .eq("id", "id_tenant")
+        .single();
+      console.log("awawaa", tenantData);
 
       // Create user profile
       const { error: profileError } = await supabase.from("accounts").insert({

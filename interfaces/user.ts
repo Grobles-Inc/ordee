@@ -16,9 +16,9 @@ export interface ICustomer {
   total_free_orders: number;
 }
 export interface IAuthContextProvider {
-  profile: IUser | null;
+  profile: IUser;
   session: Session | null;
-  getProfile: () => void;
+  getProfile: (id: string) => void;
   loading: boolean;
   signOut: () => void;
   updateProfile: (userData: Partial<IUser>) => void;

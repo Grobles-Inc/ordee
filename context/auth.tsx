@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/utils/supabaseAdmin";
 import { FontAwesome } from "@expo/vector-icons";
 import { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native-paper";
 import { toast } from "sonner-native";
 const AuthContext = createContext<IAuthContextProvider>({
   signOut: () => {},
@@ -13,7 +14,7 @@ const AuthContext = createContext<IAuthContextProvider>({
   deleteUser: async () => {},
   getUsers: async () => {},
   users: [],
-  profile: null,
+  profile: {} as IUser,
   loading: false,
 });
 
@@ -23,30 +24,44 @@ export function AuthContextProvider({
   children: React.ReactNode;
 }) {
   const [loading, setLoading] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [profile, setProfile] = useState<IUser | null>(null);
   const [users, setUsers] = useState<IUser[]>([]);
   const [session, setSession] = useState<Session | null>(null);
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
+    async function initializeAuth() {
+      const {
+        data: { session: initialSession },
+      } = await supabase.auth.getSession();
+      setSession(initialSession);
+      if (initialSession?.user) {
+        await getProfile(initialSession.user.id);
+      }
+      setIsReady(true);
+    }
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
+      async (_event, newSession) => {
+        if (_event === "SIGNED_OUT") {
+          setSession(null);
+          setProfile(null);
+        } else if (newSession?.user) {
+          setSession(newSession);
+          await getProfile(newSession.user.id);
+        }
       }
     );
+    initializeAuth();
     return () => {
       authListener.subscription.unsubscribe();
     };
   }, []);
 
-  const getProfile = async () => {
+  const getProfile = async (id: string) => {
     setLoading(true);
     const { data, error, status } = await supabase
       .from("accounts")
       .select("*")
-      .eq("id", session?.user?.id)
+      .eq("id", id)
       .single();
     if (error && status !== 406) {
       console.log("PROFILE ERROR", error);
@@ -57,8 +72,6 @@ export function AuthContextProvider({
 
   function signOut() {
     supabase.auth.signOut();
-    setProfile(null);
-    setSession(null);
   }
 
   const updateProfile = async (userData: Partial<IUser>) => {
@@ -101,11 +114,14 @@ export function AuthContextProvider({
     return data;
   };
 
+  if (!isReady) {
+    return <ActivityIndicator color="tomato" style={{ marginTop: 100 }} />;
+  }
   return (
     <AuthContext.Provider
       value={{
         loading,
-        profile,
+        profile: profile || ({} as IUser),
         session,
         signOut,
         getProfile,

@@ -27,8 +27,6 @@ export const MealContextProvider = ({
   const { profile } = useAuth();
   const [meal, setMeal] = React.useState<IMeal>({} as IMeal);
 
-  if (!profile?.id_tenant) return null;
-
   const addMeal = async (meal: IMeal) => {
     setLoading(true);
     const { error } = await supabase.from("meals").insert({
