@@ -1,10 +1,17 @@
 import { Session } from "@supabase/supabase-js";
+
+export interface ITenant {
+  id: string;
+  name: string;
+  logo: string;
+}
 export interface IUser {
-  id?: string;
-  name?: string;
-  id_tenant?: string;
-  last_name?: string;
-  image_url?: string;
+  id: string;
+  name: string;
+  id_tenant: string;
+  tenants?: ITenant;
+  last_name: string;
+  image_url: string;
   role: "waiter" | "chef" | "admin";
 }
 
@@ -21,7 +28,6 @@ export interface IAuthContextProvider {
   getProfile: (id: string) => void;
   loading: boolean;
   signOut: () => void;
-  updateProfile: (userData: Partial<IUser>) => void;
   deleteUser: (id: string) => void;
   getUsers: (id_tenant: string) => void;
   users: IUser[];

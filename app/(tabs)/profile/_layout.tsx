@@ -6,7 +6,7 @@ import BottomSheet, {
   BottomSheetTextInput,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import React, {
   useCallback,
   useEffect,
@@ -15,8 +15,7 @@ import React, {
   useState,
 } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Keyboard, Button as NativeButton, View } from "react-native";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { Button as NativeButton, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 
 export default function ProfileLayout() {
@@ -92,6 +91,13 @@ export default function ProfileLayout() {
             headerBackVisible: true,
             headerShadowVisible: true,
             headerLargeTitleShadowVisible: false,
+            headerRight: () => (
+              <NativeButton
+                title="Agregar"
+                color="#FF6247"
+                onPress={() => router.push("/profile/users/add-user")}
+              />
+            ),
           }}
         />
         <Stack.Screen

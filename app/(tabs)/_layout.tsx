@@ -13,7 +13,7 @@ export default function TabLayout() {
       {
         name: "index",
         title: "Mesas",
-        icon: ["mingcute:board-fill.svg", "mmingcute:board-line.svg"],
+        icon: ["mingcute:board-fill.svg", "mingcute:board-line.svg"],
       },
       {
         name: "menu",
@@ -177,6 +177,7 @@ export default function TabLayout() {
           name={tab.name}
           options={{
             title: tab.title,
+            headerShown: tab.name === "my-profile",
             href: tab.href,
             tabBarIcon: createTabIcon(
               `https://api.iconify.design/${tab.icon[0]}`,

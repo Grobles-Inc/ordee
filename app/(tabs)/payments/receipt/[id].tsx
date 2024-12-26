@@ -111,15 +111,11 @@ export default function ReceiptDetailsScreen() {
           </style>
         </head>
         <body>
+
+        <div class="header-info">
+        <img src="${order.tenants?.logo}" alt="logo" width="100" height="100" >
           <div class="logo">
-            <h1>RINCONCITO SURCUBAMBINO</h1>
-          </div>
-
-          <div class="header-info">
-            Av.Huancavelica N°380<br>
-            Tel: 923 008 282
-          </div>
-
+            <h1>${order.tenants?.name}</h1>
           <div class="table-info">
             Mesa: ${order.id_table}<br>
             Atendido por: ${order?.users?.name}<br>

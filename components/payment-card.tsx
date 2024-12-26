@@ -1,5 +1,5 @@
 import { IOrder } from "@/interfaces";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { View } from "react-native";
@@ -21,8 +21,9 @@ export default function PaymentCard({ order }: { order: IOrder }) {
   return (
     <Card
       style={{
-        marginHorizontal: 10,
         marginVertical: 8,
+        backgroundColor: "white",
+        shadowOpacity: 0,
       }}
       onPress={() => {
         router.push(`/(tabs)/payments/receipt/${order.id}`);
@@ -33,14 +34,14 @@ export default function PaymentCard({ order }: { order: IOrder }) {
         subtitleStyle={{ fontSize: 12, color: "gray" }}
         subtitle={formattedDate}
         left={(props) => (
-          <FontAwesome5 name="file-invoice-dollar" color="#FF6247" {...props} />
+          <FontAwesome6 name="file-invoice-dollar" color="#22c55e" {...props} />
         )}
         right={(props) => (
-          <View className="flex flex-row items-center">
+          <View className="flex flex-row items-center  gap-2 mr-4">
             <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
               S/. {order.total.toFixed(2)}
             </Text>
-            <IconButton {...props} icon="chevron-right" />
+            <FontAwesome6 name="chevron-right" size={16} color="#a1a1aa" />
           </View>
         )}
       />

@@ -51,20 +51,13 @@ export default function AddOrderScreen() {
       getOrderById(id_order);
     }
   }, [id_order]);
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm<IOrder>({
+  const { control, handleSubmit, reset, setValue, watch } = useForm<IOrder>({
     defaultValues: {
       id_table: updatingOrder?.id_table,
       id_fixed_customer: updatingOrder?.id_fixed_customer
         ? updatingOrder?.id_fixed_customer
         : "",
-      items: [] as IMeal[],
+      items: updatingOrder?.items || ([] as IMeal[]),
       paid: updatingOrder?.paid,
       served: updatingOrder?.served,
       total: updatingOrder?.total,
@@ -91,7 +84,11 @@ export default function AddOrderScreen() {
         id_fixed_customer:
           updatingOrder?.id_fixed_customer || data.id_fixed_customer || null,
         id_table: id_table,
-        total: 100,
+        items: itemsSelected,
+        total: itemsSelected.reduce(
+          (acc, item) => acc + item.quantity * item.price,
+          0
+        ),
       };
 
       await updateOrder(orderData);
@@ -135,9 +132,7 @@ export default function AddOrderScreen() {
         paid: false,
         id_table: id_table,
         items: itemsSelected,
-        id_fixed_customer: data.id_fixed_customer
-          ? data.id_fixed_customer
-          : null,
+        id_fixed_customer: data.id_fixed_customer || null,
         total: itemsSelected.reduce(
           (acc, item) => acc + item.quantity * item.price,
           0
@@ -283,7 +278,7 @@ export default function AddOrderScreen() {
           loading={orderLoading}
           disabled={isRegisterDisabled}
         >
-          {updatingOrder ? "Editar Orden" : "Registrar Orden"}
+          {updatingOrder ? "Guardar Cambios" : "Registrar Orden"}
         </Button>
 
         <CustomerFinder

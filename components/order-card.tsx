@@ -1,8 +1,9 @@
 import { IOrder } from "@/interfaces";
+import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { View } from "react-native";
-import { Avatar, Card, IconButton, Text } from "react-native-paper";
+import { Avatar, Card, Chip, IconButton, Text } from "react-native-paper";
 export default function OrderCard({ order }: { order: IOrder }) {
   const formattedDate = new Date(order.date ?? new Date()).toLocaleString(
     "es-ES",
@@ -15,8 +16,9 @@ export default function OrderCard({ order }: { order: IOrder }) {
   return (
     <Card
       style={{
-        marginHorizontal: 10,
         marginVertical: 8,
+        backgroundColor: "white",
+        shadowOpacity: 0,
       }}
       onPress={() => {
         router.push({
@@ -27,37 +29,25 @@ export default function OrderCard({ order }: { order: IOrder }) {
     >
       <Card.Title
         title={"Mesa " + order.id_table}
-        subtitle={`${order.served ? "Servido" : "En espera"}`}
-        subtitleStyle={{ fontSize: 13, color: "gray" }}
-        left={(props) => (
-          <Avatar.Icon
-            color="white"
-            {...props}
-            icon={order.served ? "food" : "alert-decagram-outline"}
-          />
-        )}
+        subtitle={order.served ? null : "En espera"}
+        subtitleStyle={{ color: "gray" }}
+        left={(props) => <Avatar.Icon color="white" {...props} icon="food" />}
         right={(props) => (
-          <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View className="flex flex-col gap-2">
+            <View className="flex flex-row items-center gap-2 mr-4">
               <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
                 {formattedDate}
               </Text>
-              <IconButton {...props} icon="chevron-right" />
+              <FontAwesome6 name="chevron-right" size={16} color="#a1a1aa" />
             </View>
             {order.free && (
-              <View
-                style={{
-                  backgroundColor: "green",
-                  borderRadius: 12,
-                  paddingHorizontal: 8,
-                  paddingVertical: 4,
-                  marginBottom: 8,
-                }}
+              <Chip
+                className="rounded-l-none rounded-t-none "
+                style={{ backgroundColor: "#FF6247" }}
+                selectedColor="white"
               >
-                <Text variant="bodyMedium" style={{ color: "white" }}>
-                  Pedido Gratis
-                </Text>
-              </View>
+                Pedido Gratis
+              </Chip>
             )}
           </View>
         )}

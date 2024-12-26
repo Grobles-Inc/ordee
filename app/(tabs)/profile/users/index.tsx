@@ -8,6 +8,7 @@ import { Alert, ScrollView, View } from "react-native";
 import {
   ActivityIndicator,
   Card,
+  Divider,
   FAB,
   IconButton,
   Text,
@@ -16,13 +17,9 @@ import {
 export default function UsersScreen() {
   const { deleteUser, users, getUsers, profile, loading } = useAuth();
   React.useEffect(() => {
-    if (!profile.id_tenant) return;
     getUsers(profile.id_tenant);
-    console.log(profile.id_tenant);
-  }, [profile.id_tenant]);
-
+  }, []);
   const router = useRouter();
-
   const onDelete = (id: string) => {
     Alert.alert("Eliminar", "¿Estás seguro de eliminar este usuario?", [
       {
@@ -59,6 +56,8 @@ export default function UsersScreen() {
               style={{
                 marginHorizontal: 16,
                 marginVertical: 8,
+                backgroundColor: "white",
+                shadowOpacity: 0,
               }}
             >
               <Card.Title
@@ -86,31 +85,21 @@ export default function UsersScreen() {
           data={users}
           estimatedItemSize={200}
           horizontal={false}
+          ListEmptyComponent={
+            <View className="flex flex-col gap-4 items-center justify-center mt-20">
+              <Image
+                source={{
+                  uri: "https://img.icons8.com/?size=200&id=119481&format=png&color=000000",
+                }}
+                style={{ width: 100, height: 100 }}
+              />
+              <Text style={{ color: "gray" }}>
+                No hay usuarios para mostrar
+              </Text>
+            </View>
+          }
         />
-        {users?.length === 0 && (
-          <View className="flex flex-col gap-4 items-center justify-center mt-20">
-            <Image
-              source={{
-                uri: "https://img.icons8.com/?size=200&id=119481&format=png&color=000000",
-              }}
-              style={{ width: 100, height: 100 }}
-            />
-            <Text style={{ color: "gray" }}>No hay usuarios para mostrar</Text>
-          </View>
-        )}
       </ScrollView>
-
-      <FAB
-        icon="account-plus-outline"
-        variant="tertiary"
-        style={{
-          position: "absolute",
-          margin: 16,
-          right: 0,
-          bottom: 0,
-        }}
-        onPress={() => router.push("/profile/users/add-user")}
-      />
     </View>
   );
 }

@@ -144,7 +144,7 @@ const ItemAccordion = ({
   );
 
   return (
-    <Animated.View entering={FadeInDown.duration(500).delay(index * 100)}>
+    <Animated.View entering={FadeInDown.duration(200).delay(index * 100)}>
       <List.Item
         style={{
           backgroundColor: index % 2 === 0 ? "#F3F3F3" : "white",
@@ -169,12 +169,12 @@ const ItemAccordion = ({
             <IconButton
               onPress={() => handleQuantityUpdate(orderItemQuantity - 1)}
               disabled={orderItemQuantity === 0}
-              mode="contained-tonal"
+              mode="contained"
               icon="minus"
             />
             <Text variant="titleLarge">{orderItemQuantity}</Text>
             <IconButton
-              mode="contained-tonal"
+              mode="contained"
               disabled={orderItemQuantity === mealQuantity}
               onPress={() => handleQuantityUpdate(orderItemQuantity + 1)}
               icon="plus"

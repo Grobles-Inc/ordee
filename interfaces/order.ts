@@ -1,4 +1,4 @@
-import { ICustomer, IMeal, IUser } from "@/interfaces";
+import { ICustomer, IMeal, ITenant, IUser } from "@/interfaces";
 
 export interface IOrder {
   id?: string;
@@ -6,6 +6,7 @@ export interface IOrder {
   date?: Date;
   users?: IUser;
   customers?: ICustomer;
+  tenants?: ITenant;
   id_tenant: string;
   id_fixed_customer?: string | null;
   id_waiter: string;

@@ -8,7 +8,6 @@ import { ActivityIndicator } from "react-native-paper";
 import { toast } from "sonner-native";
 const AuthContext = createContext<IAuthContextProvider>({
   signOut: () => {},
-  updateProfile: async () => {},
   session: null,
   getProfile: async () => {},
   deleteUser: async () => {},
@@ -60,7 +59,7 @@ export function AuthContextProvider({
     setLoading(true);
     const { data, error, status } = await supabase
       .from("accounts")
-      .select("*")
+      .select("*, tenants:id_tenant(name, logo)")
       .eq("id", id)
       .single();
     if (error && status !== 406) {
@@ -73,21 +72,6 @@ export function AuthContextProvider({
   function signOut() {
     supabase.auth.signOut();
   }
-
-  const updateProfile = async (userData: Partial<IUser>) => {
-    setLoading(true);
-    const updates = {
-      ...userData,
-      id: profile?.id,
-      updated_at: new Date(),
-    };
-    const { error } = await supabase.from("accounts").upsert(updates);
-    if (error) console.log("UPDATE PROFILE ERROR", error);
-    toast.success("Perfil actualizado!", {
-      icon: <FontAwesome name="check-circle" size={20} color="green" />,
-    });
-    setLoading(false);
-  };
 
   const deleteUser = async (id: string) => {
     const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
@@ -125,7 +109,6 @@ export function AuthContextProvider({
         session,
         signOut,
         getProfile,
-        updateProfile,
         deleteUser,
         getUsers,
         users,

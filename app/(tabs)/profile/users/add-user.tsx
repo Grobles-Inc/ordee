@@ -64,7 +64,6 @@ export default function AddUserScreen() {
         .select("id")
         .eq("id", "id_tenant")
         .single();
-      console.log("awawaa", tenantData);
 
       // Create user profile
       const { error: profileError } = await supabase.from("accounts").insert({
@@ -90,177 +89,177 @@ export default function AddUserScreen() {
   };
 
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
-      <View className="flex flex-col justify-center align-middle w-full p-4">
-        <Controller
-          control={control}
-          name="image_url"
-          render={({ field: { onChange, value } }) => (
-            <View className="mb-4">
-              <TextInput
-                label="URL de foto de perfil (opcional)"
-                value={value}
-                onChangeText={onChange}
-                mode="outlined"
-              />
-            </View>
-          )}
-        />
-        <Controller
-          control={control}
-          name="name"
-          rules={{
-            required: "Requerido",
-          }}
-          render={({ field: { onChange, value } }) => (
-            <View className="mb-4">
-              <TextInput
-                label="Nombres"
-                value={value}
-                onChangeText={onChange}
-                mode="outlined"
-                error={!!errors.name}
-              />
-              {errors.name && (
-                <Text className="text-red-500 ml-4">{errors.name.message}</Text>
-              )}
-            </View>
-          )}
-        />
-        <Controller
-          control={control}
-          name="last_name"
-          rules={{
-            required: "Requerido",
-          }}
-          render={({ field: { onChange, value } }) => (
-            <View className="mb-4">
-              <TextInput
-                label="Apellidos"
-                value={value}
-                onChangeText={onChange}
-                mode="outlined"
-                error={!!errors.last_name}
-              />
-              {errors.last_name && (
-                <Text className="text-red-500 ml-4">
-                  {errors.last_name.message}
-                </Text>
-              )}
-            </View>
-          )}
-        />
+    <ScrollView
+      className="flex flex-col p-4"
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={{ paddingBottom: 100 }}
+    >
+      <Controller
+        control={control}
+        name="image_url"
+        render={({ field: { onChange, value } }) => (
+          <View className="mb-4">
+            <TextInput
+              label="URL de foto de perfil (opcional)"
+              value={value}
+              onChangeText={onChange}
+              mode="outlined"
+            />
+          </View>
+        )}
+      />
+      <Controller
+        control={control}
+        name="name"
+        rules={{
+          required: "Requerido",
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View className="mb-4">
+            <TextInput
+              label="Nombres"
+              value={value}
+              onChangeText={onChange}
+              mode="outlined"
+              error={!!errors.name}
+            />
+            {errors.name && (
+              <Text className="text-red-500 ml-4">{errors.name.message}</Text>
+            )}
+          </View>
+        )}
+      />
+      <Controller
+        control={control}
+        name="last_name"
+        rules={{
+          required: "Requerido",
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View className="mb-4">
+            <TextInput
+              label="Apellidos"
+              value={value}
+              onChangeText={onChange}
+              mode="outlined"
+              error={!!errors.last_name}
+            />
+            {errors.last_name && (
+              <Text className="text-red-500 ml-4">
+                {errors.last_name.message}
+              </Text>
+            )}
+          </View>
+        )}
+      />
 
-        <Controller
-          control={control}
-          name="email"
-          rules={{
-            required: "Requerido",
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Ingrese un correo valido",
-            },
-          }}
-          render={({ field: { onChange, value } }) => (
-            <View className="mb-4">
-              <TextInput
-                label="Correo"
-                value={value}
-                onChangeText={onChange}
-                mode="outlined"
-                error={!!errors.email}
-              />
-              {errors.email && (
-                <Text className="text-red-500 ml-4">
-                  {errors.email.message}
-                </Text>
-              )}
-            </View>
-          )}
-        />
+      <Controller
+        control={control}
+        name="email"
+        rules={{
+          required: "Requerido",
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: "Ingrese un correo valido",
+          },
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View className="mb-4">
+            <TextInput
+              label="Correo"
+              value={value}
+              onChangeText={onChange}
+              mode="outlined"
+              error={!!errors.email}
+            />
+            {errors.email && (
+              <Text className="text-red-500 ml-4">{errors.email.message}</Text>
+            )}
+          </View>
+        )}
+      />
 
-        <Controller
-          control={control}
-          name="password"
-          rules={{
-            required: "Requerido",
-            minLength: {
-              value: 6,
-              message: "La contraseña debe tener al menos 6 caracteres",
-            },
-          }}
-          render={({ field: { onChange, value } }) => (
-            <View className="mb-4">
-              <TextInput
-                label="Contraseña"
-                value={value}
-                onChangeText={onChange}
-                mode="outlined"
-                secureTextEntry
-                error={!!errors.password}
-              />
-              {errors.password && (
-                <Text className="text-red-500 ml-4">
-                  {errors.password.message}
-                </Text>
-              )}
-            </View>
-          )}
-        />
+      <Controller
+        control={control}
+        name="password"
+        rules={{
+          required: "Requerido",
+          minLength: {
+            value: 6,
+            message: "La contraseña debe tener al menos 6 caracteres",
+          },
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View className="mb-4">
+            <TextInput
+              label="Contraseña"
+              value={value}
+              onChangeText={onChange}
+              mode="outlined"
+              secureTextEntry
+              error={!!errors.password}
+            />
+            {errors.password && (
+              <Text className="text-red-500 ml-4">
+                {errors.password.message}
+              </Text>
+            )}
+          </View>
+        )}
+      />
 
-        <Controller
-          control={control}
-          name="role"
-          rules={{
-            required: "Campo requerido",
-          }}
-          render={({ field: { onChange, value } }) => (
-            <View className="mb-4">
-              <List.Section title="Rol del usuario">
-                <List.Accordion
-                  expanded={expanded}
-                  title={value}
-                  onPress={() => setExpanded(!expanded)}
-                >
-                  <List.Item
-                    title="Mesero"
-                    onPress={() => {
-                      onChange("waiter");
-                      setExpanded(!expanded);
-                    }}
-                  />
-                  <List.Item
-                    title="Cocinero"
-                    onPress={() => {
-                      onChange("chef");
-                      setExpanded(!expanded);
-                    }}
-                  />
-                  <List.Item
-                    title="Administrador"
-                    onPress={() => {
-                      onChange("admin");
-                      setExpanded(!expanded);
-                    }}
-                  />
-                </List.Accordion>
-              </List.Section>
-              {errors.role && (
-                <Text className="text-red-500 ml-4">{errors.role.message}</Text>
-              )}
-            </View>
-          )}
-        />
+      <Controller
+        control={control}
+        name="role"
+        rules={{
+          required: "Campo requerido",
+        }}
+        render={({ field: { onChange, value } }) => (
+          <View className="mb-4">
+            <List.Section title="Rol del usuario">
+              <List.Accordion
+                expanded={expanded}
+                title={value}
+                onPress={() => setExpanded(!expanded)}
+              >
+                <List.Item
+                  title="Mesero"
+                  onPress={() => {
+                    onChange("waiter");
+                    setExpanded(!expanded);
+                  }}
+                />
+                <List.Item
+                  title="Cocinero"
+                  onPress={() => {
+                    onChange("chef");
+                    setExpanded(!expanded);
+                  }}
+                />
+                <List.Item
+                  title="Administrador"
+                  onPress={() => {
+                    onChange("admin");
+                    setExpanded(!expanded);
+                  }}
+                />
+              </List.Accordion>
+            </List.Section>
+            {errors.role && (
+              <Text className="text-red-500 ml-4">{errors.role.message}</Text>
+            )}
+          </View>
+        )}
+      />
 
-        <Button
-          mode="contained"
-          style={{ marginTop: 50 }}
-          onPress={handleSubmit(onSubmit)}
-          loading={loading}
-        >
-          Registrar
-        </Button>
-      </View>
+      <Button
+        mode="contained"
+        style={{ marginTop: 50 }}
+        onPress={handleSubmit(onSubmit)}
+        loading={loading}
+      >
+        Registrar
+      </Button>
     </ScrollView>
   );
 }
