@@ -1,6 +1,7 @@
 import { useOrderContext } from "@/context";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import React from "react";
+import { Button } from "react-native";
 
 export default function WaiterLayout() {
   const { order } = useOrderContext();
@@ -20,21 +21,20 @@ export default function WaiterLayout() {
           title: "Mesa " + order.id_table,
           headerLargeTitle: true,
           headerLargeTitleShadowVisible: false,
-          //TODO: Premium Feature
-          // headerRight: () => {
-          //   return order.paid ? null : (
-          //     <Button
-          //       title="Editar"
-          //       color="#FF6247"
-          //       onPress={() => {
-          //         router.push({
-          //           pathname: "/add-order",
-          //           params: { number: order.id_table, id_order: order.id },
-          //         });
-          //       }}
-          //     />
-          //   );
-          // },
+          headerRight: () => {
+            return order.paid ? null : (
+              <Button
+                title="Editar"
+                color="#FF6247"
+                onPress={() => {
+                  router.push({
+                    pathname: "/add-order",
+                    params: { number: order.id_table, id_order: order.id },
+                  });
+                }}
+              />
+            );
+          },
         }}
       />
     </Stack>

@@ -26,7 +26,11 @@ export default function OrderItemsAccordion({
     loading: categoriesLoading,
   } = useCategoryContext();
   const { getMealsByCategoryId, loading: mealsLoading } = useMealContext();
-  const [mealsByCategory, setMealsByCategory] = useState<IMeal[]>([]);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [categoryMeals, setCategoryMeals] = useState<Record<string, IMeal[]>>(
+    {}
+  );
+
   const handleQuantityChange = (item: IMeal, quantity: number) => {
     const newItemsSelected = [...items];
     const index = newItemsSelected.findIndex((i) => i.id === item.id);
@@ -41,17 +45,23 @@ export default function OrderItemsAccordion({
         newItemsSelected.splice(index, 1);
       }
     }
-
     setItems(newItemsSelected);
   };
 
-  const mealsByCategoryHandler = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    if (!category) return;
-    //FIX: Add real time strictly to this useEffect
-    getMealsByCategoryId(category.id as string).then((meals) => {
-      setMealsByCategory(meals);
-    });
+  const mealsByCategoryHandler = async (categoryId: string) => {
+    if (expandedId === categoryId) {
+      setExpandedId(null);
+      return;
+    }
+
+    setExpandedId(categoryId);
+    if (!categoryMeals[categoryId]) {
+      const meals = await getMealsByCategoryId(categoryId);
+      setCategoryMeals((prev) => ({
+        ...prev,
+        [categoryId]: meals,
+      }));
+    }
   };
 
   useEffect(() => {
@@ -69,12 +79,14 @@ export default function OrderItemsAccordion({
               paddingTop: 0,
               marginTop: 0,
             }}
+            expanded={expandedId === category.id}
             title={category.name}
             onPress={() => mealsByCategoryHandler(category.id as string)}
           >
             {mealsLoading && <ActivityIndicator style={{ marginTop: 20 }} />}
+            <Divider />
             <FlashList
-              data={mealsByCategory}
+              data={categoryMeals[category.id as string] || []}
               estimatedItemSize={74}
               ItemSeparatorComponent={() => <Divider />}
               renderItem={({ item, index }) => (
@@ -89,7 +101,7 @@ export default function OrderItemsAccordion({
                 />
               )}
               ListEmptyComponent={
-                <View className="p-4 items-center">
+                <View className="p-4 items-center flex flex-col justify-center h-20">
                   <Text variant="bodyMedium" style={{ color: "gray" }}>
                     Sin elementos
                   </Text>
@@ -104,7 +116,6 @@ export default function OrderItemsAccordion({
     </>
   );
 }
-
 const ItemAccordion = ({
   item,
   index,
