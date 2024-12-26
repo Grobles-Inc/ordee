@@ -38,6 +38,7 @@ export default function SignInScreen() {
         icon: <FontAwesome name="times-circle" size={20} color="red" />,
       });
     }
+    reset();
     setLoading(false);
   };
 

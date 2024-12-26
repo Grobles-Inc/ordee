@@ -4,15 +4,7 @@ import { supabaseAdmin } from "@/utils/supabaseAdmin";
 import { FontAwesome } from "@expo/vector-icons";
 import { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
-import { AppState } from "react-native";
 import { toast } from "sonner-native";
-AppState.addEventListener("change", (state) => {
-  if (state === "active") {
-    supabase.auth.startAutoRefresh();
-  } else {
-    supabase.auth.stopAutoRefresh();
-  }
-});
 const AuthContext = createContext<IAuthContextProvider>({
   signOut: () => {},
   updateProfile: async () => {},
@@ -34,19 +26,20 @@ export function AuthContextProvider({
   const [profile, setProfile] = useState<IUser | null>(null);
   const [users, setUsers] = useState<IUser[]>([]);
   const [session, setSession] = useState<Session | null>(null);
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
 
-  useEffect(() => {
-    if (session) getProfile();
-  }, [session]);
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
 
   const getProfile = async () => {
     setLoading(true);

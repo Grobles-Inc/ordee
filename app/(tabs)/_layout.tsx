@@ -151,7 +151,6 @@ export default function TabLayout() {
     freezeOnBlur: true,
   };
 
-  // Function to create tab icon
   const createTabIcon = (focusedIcon: string, unfocusedIcon: string) => {
     return ({ color, focused }: { color: string; focused: boolean }) => (
       <Image
@@ -163,7 +162,6 @@ export default function TabLayout() {
       />
     );
   };
-
   const tabs =
     tabConfigurations[profile?.role as keyof typeof tabConfigurations] || [];
 
