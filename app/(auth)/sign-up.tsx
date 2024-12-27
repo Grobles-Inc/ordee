@@ -94,7 +94,7 @@ export default function SignUpScreen() {
   };
 
   return (
-    <ScrollView className="bg-white ">
+    <ScrollView className="bg-white  dark:bg-zinc-900">
       <SafeAreaView className="flex flex-col justify-center align-middle m-4 items-center ">
         <View className="flex flex-col gap-10 w-full items-center">
           <View className="flex flex-col items-center gap-8 mt-10">
@@ -106,8 +106,10 @@ export default function SignUpScreen() {
               source={require("../../assets/images/logo.png")}
             />
             <View className="flex flex-col gap-1 items-center">
-              <Text className="text-4xl font-bold">Crea una cuenta</Text>
-              <Text className="text-center ">
+              <Text className="text-4xl font-bold dark:text-white">
+                Crea una cuenta
+              </Text>
+              <Text className="text-center  dark:text-white">
                 Ingresa tus datos para crear una cuenta
               </Text>
             </View>

@@ -1,17 +1,16 @@
-const tintColor = "#41D29B";
-
+import { DefaultTheme, DarkTheme } from "@react-navigation/native";
 export const NAV_THEME = {
-  background: "hsl(0 0% 100%)", // background
-  border: "hsl(240 5.9% 90%)", // border
-  card: "hsl(0 0% 100%)", // card
-  notification: "hsl(0 84.2% 60.2%)", // destructive
-  primary: "#FF6247", // primary
-  text: "hsl(240 10% 3.9%)", // foreground
-  tint: tintColor,
-  tabIconDefault: "#ccc",
-  tabIconSelected: tintColor,
+  ...DefaultTheme.colors,
+  primary: "#FF6247", // Example primary color
+  background: "#ffffff", // Light background
+  card: "#ffffff", // Light card color
+  text: "#000000", // Light text color
 };
 
-export default {
-  NAV_THEME,
+export const DARK_NAV_THEME = {
+  ...DarkTheme.colors,
+  primary: "#FF6247", // Example primary color for dark mode
+  background: "#121212", // Dark background
+  card: "#18181b", // Dark card color
+  text: "#ffffff", // Light text color on dark background
 };

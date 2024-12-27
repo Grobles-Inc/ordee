@@ -43,7 +43,7 @@ export default function SignInScreen() {
   };
 
   return (
-    <ScrollView className="bg-white ">
+    <ScrollView className="bg-white dark:bg-zinc-900">
       <SafeAreaView className="flex flex-col justify-center align-middle m-4 items-center ">
         <View className="flex flex-col gap-10 w-full items-center">
           <View className="flex flex-col items-center gap-8 mt-20">
@@ -55,8 +55,11 @@ export default function SignInScreen() {
               source={require("../../assets/images/logo.png")}
             />
             <View className="flex flex-col gap-1 items-center">
-              <Text className="text-4xl font-bold"> Inicia Sesión</Text>
-              <Text className="text-center ">
+              <Text className="text-4xl font-bold dark:text-white">
+                {" "}
+                Inicia Sesión
+              </Text>
+              <Text className="text-center dark:text-white">
                 No tienes credenciales?
                 <Text
                   className=" text-orange-500"
@@ -145,7 +148,7 @@ export default function SignInScreen() {
               </Text>
             </Text>
             <Text className="text-muted-foreground text-zinc-400   mx-auto text-sm">
-              Versión 1.2.2
+              Versión 2.0.1
             </Text>
           </View>
         </View>

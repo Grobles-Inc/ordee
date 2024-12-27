@@ -41,12 +41,7 @@ export default function MenuScreen() {
 
   return (
     <>
-      <Appbar.Header
-        style={{
-          borderBottomColor: "#f1f1f1",
-          borderBottomWidth: 0.5,
-        }}
-      >
+      <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
         <Appbar.Content
           title="Menú del Día"
           titleStyle={{ fontWeight: "bold" }}
@@ -60,7 +55,6 @@ export default function MenuScreen() {
             justifyContent: "center",
           }}
           contentStyle={{
-            backgroundColor: "#fff",
             borderRadius: 12,
           }}
           onDismiss={() => setVisible(false)}

@@ -60,7 +60,9 @@ function TableSvg({ table, index }: { table: ITable; index: number }) {
       <TouchableOpacity onPress={onPress}>
         <View className="flex flex-col items-center justify-center">
           {table.status ? (
-            <Text className="text-2xl font-bold">{table.number}</Text>
+            <Text className="text-2xl font-bold dark:text-white">
+              {table.number}
+            </Text>
           ) : (
             <Chip
               mode="flat"
@@ -141,18 +143,20 @@ export default function TablesScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 justify-center items-center bg-white">
+      <SafeAreaView className="flex-1 justify-center items-center bg-white dark:bg-zinc-900">
         <ActivityIndicator size="large" />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView className="p-4 bg-white">
-      <Text className="text-4xl" style={{ fontWeight: "700" }}>
+    <SafeAreaView className="p-4 bg-white dark:bg-zinc-900">
+      <Text className="text-4xl dark:text-white" style={{ fontWeight: "700" }}>
         Mesas
       </Text>
-      <Text className="opacity-50">Listado de mesas del local</Text>
+      <Text className="opacity-50 dark:text-white">
+        Listado de mesas del local
+      </Text>
       <Divider style={{ marginTop: 16 }} />
 
       <ScrollView contentContainerStyle={{ paddingVertical: 40 }}>

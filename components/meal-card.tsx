@@ -29,7 +29,6 @@ export default function MealCard({ meal }: { meal: IMeal }) {
     <Card
       style={{
         margin: 20,
-        backgroundColor: "white",
       }}
     >
       <Card.Cover

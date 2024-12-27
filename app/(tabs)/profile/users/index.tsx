@@ -36,60 +36,57 @@ export default function UsersScreen() {
   };
 
   return (
-    <View className="flex-1">
-      <ScrollView contentInsetAdjustmentBehavior="automatic">
-        {loading && <ActivityIndicator style={{ marginTop: 20 }} />}
-        <FlashList
-          renderItem={({ item: user }) => (
-            <Card
-              key={user.id}
-              style={{
-                marginHorizontal: 16,
-                marginVertical: 8,
-                backgroundColor: "white",
-                shadowOpacity: 0,
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      className="p-4 dark:bg-zinc-900"
+    >
+      {loading && <ActivityIndicator style={{ marginTop: 20 }} />}
+      <FlashList
+        renderItem={({ item: user }) => (
+          <Card
+            key={user.id}
+            style={{
+              marginVertical: 8,
+              shadowOpacity: 0,
+            }}
+          >
+            <Card.Title
+              title={`${user.name} ${user.last_name}`}
+              subtitle={getRoleLabel(user.role)}
+              right={(props) => (
+                <IconButton
+                  icon="delete-outline"
+                  onPress={() => onDelete(user.id as string)}
+                  {...props}
+                />
+              )}
+              left={(props) => (
+                <Image
+                  style={{
+                    width: 45,
+                    height: 45,
+                  }}
+                  source={{ uri: user.image_url }}
+                />
+              )}
+            />
+          </Card>
+        )}
+        data={users}
+        estimatedItemSize={200}
+        horizontal={false}
+        ListEmptyComponent={
+          <View className="flex flex-col gap-4 items-center justify-center mt-20">
+            <Image
+              source={{
+                uri: "https://img.icons8.com/?size=200&id=119481&format=png&color=000000",
               }}
-            >
-              <Card.Title
-                title={`${user.name} ${user.last_name}`}
-                subtitle={getRoleLabel(user.role)}
-                right={(props) => (
-                  <IconButton
-                    icon="delete-outline"
-                    onPress={() => onDelete(user.id as string)}
-                    {...props}
-                  />
-                )}
-                left={(props) => (
-                  <Image
-                    style={{
-                      width: 45,
-                      height: 45,
-                    }}
-                    source={{ uri: user.image_url }}
-                  />
-                )}
-              />
-            </Card>
-          )}
-          data={users}
-          estimatedItemSize={200}
-          horizontal={false}
-          ListEmptyComponent={
-            <View className="flex flex-col gap-4 items-center justify-center mt-20">
-              <Image
-                source={{
-                  uri: "https://img.icons8.com/?size=200&id=119481&format=png&color=000000",
-                }}
-                style={{ width: 100, height: 100 }}
-              />
-              <Text style={{ color: "gray" }}>
-                No hay usuarios para mostrar
-              </Text>
-            </View>
-          }
-        />
-      </ScrollView>
-    </View>
+              style={{ width: 100, height: 100 }}
+            />
+            <Text style={{ color: "gray" }}>No hay usuarios para mostrar</Text>
+          </View>
+        }
+      />
+    </ScrollView>
   );
 }

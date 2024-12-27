@@ -1,5 +1,6 @@
 import { useCategoryContext } from "@/context/category";
 import { useCustomer } from "@/context/customer";
+import { PreferencesContext } from "@/context/preference";
 import { ICategory, ICustomer } from "@/interfaces";
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -15,12 +16,15 @@ import React, {
   useState,
 } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Button as NativeButton, View } from "react-native";
+import { Button as NativeButton, useColorScheme, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 
 export default function ProfileLayout() {
   const customerBottomSheetRef = useRef<BottomSheet>(null);
   const categoryBottomSheetRef = useRef<BottomSheet>(null);
+  const { toggleTheme, isThemeDark } = React.useContext(PreferencesContext);
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === "dark";
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const { addCategory } = useCategoryContext();
@@ -81,6 +85,16 @@ export default function ProfileLayout() {
             headerLargeTitle: false,
             headerShadowVisible: false,
             headerLargeTitleShadowVisible: false,
+            //FIX: Uncomment this line to add a theme toggle button to the profile screen
+            // headerRight: () => (
+            //   <IconButton
+            //     onPress={toggleTheme}
+            //     icon={
+            //       isDarkMode ? "moon-waxing-crescent" : "white-balance-sunny"
+            //     }
+            //     size={20}
+            //   />
+            // ),
           }}
         />
         <Stack.Screen
@@ -98,6 +112,16 @@ export default function ProfileLayout() {
                 onPress={() => router.push("/profile/users/add-user")}
               />
             ),
+          }}
+        />
+        <Stack.Screen
+          name="membership"
+          options={{
+            title: "Membresía",
+            headerLargeTitle: true,
+            headerBackVisible: true,
+            headerShadowVisible: true,
+            headerLargeTitleShadowVisible: false,
           }}
         />
         <Stack.Screen
@@ -152,10 +176,10 @@ export default function ProfileLayout() {
         snapPoints={snapPoints}
         enablePanDownToClose={true}
         handleIndicatorStyle={{ backgroundColor: "gray" }}
-        backgroundStyle={{ backgroundColor: "white" }}
+        backgroundStyle={{ backgroundColor: isDarkMode ? "#262626" : "white" }}
         backdropComponent={renderBackdrop}
       >
-        <BottomSheetView className="p-4 flex flex-col gap-4 pb-20">
+        <BottomSheetView className="p-4 flex flex-col gap-4 ">
           <Controller
             control={control}
             name="full_name"
@@ -168,7 +192,7 @@ export default function ProfileLayout() {
                   Nombres Completos
                 </Text>
                 <BottomSheetTextInput
-                  className="border rounded-lg border-gray-200 p-4 w-full"
+                  className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
                   value={value}
                   onChangeText={onChange}
                 />
@@ -189,7 +213,7 @@ export default function ProfileLayout() {
                   Total de Ordenes
                 </Text>
                 <BottomSheetTextInput
-                  className="border rounded-lg border-gray-200 p-4 w-full"
+                  className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
                   value={String(value)}
                   onChangeText={onChange}
                 />
@@ -211,7 +235,7 @@ export default function ProfileLayout() {
                   Ordenes Gratis
                 </Text>
                 <BottomSheetTextInput
-                  className="border rounded-lg border-gray-200 p-4 w-full"
+                  className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
                   value={String(value)}
                   onChangeText={onChange}
                 />
@@ -246,11 +270,11 @@ export default function ProfileLayout() {
       </BottomSheet>
       <BottomSheet
         ref={categoryBottomSheetRef}
-        index={-1} // Changed from 0 to -1
+        index={-1}
         snapPoints={snapPoints}
         enablePanDownToClose={true}
         handleIndicatorStyle={{ backgroundColor: "gray" }}
-        backgroundStyle={{ backgroundColor: "white" }}
+        backgroundStyle={{ backgroundColor: isDarkMode ? "#262626" : "white" }}
         backdropComponent={renderBackdrop}
       >
         <BottomSheetView className="p-4 flex flex-col gap-4">
@@ -259,7 +283,7 @@ export default function ProfileLayout() {
               Nombre
             </Text>
             <BottomSheetTextInput
-              className="border rounded-lg border-gray-200 p-4 w-full"
+              className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
               value={name}
               onChangeText={(text) => setName(text)}
             />
@@ -270,7 +294,7 @@ export default function ProfileLayout() {
               Descripción
             </Text>
             <BottomSheetTextInput
-              className="border rounded-lg border-gray-200 p-4 w-full"
+              className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
               value={description}
               onChangeText={(text) => setDescription(text)}
             />

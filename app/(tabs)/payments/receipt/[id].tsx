@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Button,
   Chip,
+  Divider,
   Modal,
   Portal,
   Text,
@@ -178,7 +179,7 @@ export default function ReceiptDetailsScreen() {
   return (
     <>
       <ScrollView
-        className="p-4 bg-white"
+        className="p-4 bg-white dark:bg-zinc-900"
         contentInsetAdjustmentBehavior="automatic"
       >
         {loading && (
@@ -191,31 +192,9 @@ export default function ReceiptDetailsScreen() {
           <View className="flex flex-col gap-10">
             <View className="flex flex-col gap-4">
               <View className="flex flex-row gap-2">
-                <Chip
-                  selectedColor="white"
-                  style={{
-                    backgroundColor: "#FF6247",
-                  }}
-                >
-                  {order.users?.name}
-                </Chip>
-                <Chip
-                  style={{
-                    backgroundColor: "#e7e5e4",
-                  }}
-                >
-                  {order.to_go ? "Para llevar" : "Para mesa"}
-                </Chip>
-
-                {order.free && (
-                  <Chip
-                    style={{
-                      backgroundColor: "#e7e5e4",
-                    }}
-                  >
-                    Gratis
-                  </Chip>
-                )}
+                <Chip>{order.users?.name}</Chip>
+                <Chip>{order.to_go ? "Para llevar" : "Para mesa"}</Chip>
+                {order.free && <Chip>Gratis</Chip>}
               </View>
               {order.id_fixed_customer && (
                 <View className="flex flex-col gap-1 items-start">
@@ -236,14 +215,7 @@ export default function ReceiptDetailsScreen() {
                   <Text variant="titleSmall">Precio/u</Text>
                   <Text variant="titleSmall">Cantidad</Text>
                 </View>
-                <View
-                  style={{
-                    height: 1,
-                    borderWidth: 1,
-                    borderColor: "#e7e5e4",
-                    borderStyle: "dashed",
-                  }}
-                />
+                <Divider />
                 {order?.items?.map((item, index) => (
                   <View key={index} className="flex flex-row justify-between">
                     <View className="flex flex-row items-center gap-2">
@@ -260,14 +232,7 @@ export default function ReceiptDetailsScreen() {
             </View>
           </View>
           <View className="flex flex-col gap-4">
-            <View
-              style={{
-                height: 1,
-                borderWidth: 1,
-                borderColor: "#e7e5e4",
-                borderStyle: "dashed",
-              }}
-            />
+            <Divider />
 
             <View className="flex flex-row justify-between">
               <Text variant="titleMedium">Importe Total</Text>

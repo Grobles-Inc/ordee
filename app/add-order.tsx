@@ -189,10 +189,10 @@ export default function AddOrderScreen() {
       </Appbar.Header>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        className="bg-zinc-100"
+        className="bg-zinc-100 dark:bg-zinc-900"
       >
         <View className="flex flex-col w-full items-center  ">
-          <View className="w-full  overflow-hidden flex flex-col bg-white">
+          <View className="w-full  overflow-hidden flex flex-col bg-white dark:bg-zinc-900">
             <Controller
               control={control}
               name="id_fixed_customer"

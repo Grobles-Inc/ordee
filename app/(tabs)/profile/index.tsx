@@ -1,6 +1,7 @@
 import { useAuth } from "@/context";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import React from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 export default function ProfileScreen() {
@@ -17,7 +18,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView className="bg-white p-4 ">
+    <ScrollView className="bg-white p-4 dark:bg-zinc-900">
       <View className="flex flex-col items-center justify-center mb-10">
         <Image
           source={{
@@ -34,15 +35,15 @@ export default function ProfileScreen() {
         <Image
           accessibilityLabel="tenant-logo"
           style={{
-            width: 70,
-            height: 70,
+            width: 50,
+            height: 50,
           }}
           source={{
             uri: profile.image_url,
           }}
         />
 
-        <View className="flex flex-col ">
+        <View className="flex flex-col">
           <Text variant="titleLarge">
             {profile.name} {profile.last_name}
           </Text>
@@ -51,13 +52,20 @@ export default function ProfileScreen() {
           </Text>
         </View>
       </View>
-      <View className="flex flex-col gap-4 mt-10 items-start ">
+      <View className="flex flex-col gap-2 mt-10 items-start ">
         <Button
           icon="account-group-outline"
           onPress={() => router.push("/(tabs)/profile/users")}
           mode="text"
         >
           Usuarios
+        </Button>
+        <Button
+          icon="badge-account-outline"
+          onPress={() => router.push("/(tabs)/profile/membership")}
+          mode="text"
+        >
+          Membresía
         </Button>
         <Button
           icon="book-open-page-variant-outline"

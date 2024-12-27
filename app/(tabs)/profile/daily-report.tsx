@@ -2,12 +2,36 @@ import { useOrderContext } from "@/context/order";
 import { IOrder } from "@/interfaces";
 import { supabase } from "@/utils/supabase";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, useColorScheme, View } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import { BarChart } from "react-native-gifted-charts";
 import { ActivityIndicator, Text } from "react-native-paper";
 import { toZonedTime, format } from "date-fns-tz";
 import { FontAwesome6 } from "@expo/vector-icons";
+
+const lightTheme = {
+  todayTextColor: "#FF6247",
+  backgroundColor: "#ffffff",
+  calendarBackground: "#ffffff",
+  textSectionTitleColor: "#b6c1cd",
+  dayTextColor: "#2d4150",
+  selectedDayBackgroundColor: "#FF6247",
+  selectedDayTextColor: "#ffffff",
+  textDisabledColor: "#d9e1e8",
+  monthTextColor: "#2d4150",
+};
+
+const darkTheme = {
+  todayTextColor: "#FF6247",
+  backgroundColor: "#121212",
+  calendarBackground: "#262626",
+  textSectionTitleColor: "#ffffff",
+  dayTextColor: "#ffffff",
+  monthTextColor: "gray",
+  selectedDayBackgroundColor: "#FF6247",
+  selectedDayTextColor: "#ffffff",
+  textDisabledColor: "gray",
+};
 
 LocaleConfig.locales["es"] = {
   monthNames: [
@@ -62,6 +86,12 @@ const timeZone = "America/Lima";
 
 export default function DailyReportScreen() {
   const { getDailyPaidOrders } = useOrderContext();
+  const colorScheme = useColorScheme();
+  const [isDarkMode, setIsDarkMode] = useState(colorScheme === "dark");
+
+  useEffect(() => {
+    setIsDarkMode(colorScheme === "dark");
+  }, [colorScheme]);
   const [dailySales, setDailySales] = useState([
     { value: 0, label: "12 AM", frontColor: "#FF6247" },
     { value: 0, label: "2 AM", frontColor: "#FF6247" },
@@ -223,6 +253,7 @@ export default function DailyReportScreen() {
     <ScrollView
       contentContainerStyle={styles.scrollContent}
       contentInsetAdjustmentBehavior="automatic"
+      className="bg-white dark:bg-zinc-900"
     >
       {loading ? (
         <View
@@ -237,12 +268,14 @@ export default function DailyReportScreen() {
           <Text style={{ color: "gray" }}>Cargando datos...</Text>
         </View>
       ) : (
-        <>
-          <View style={styles.chartContainer}>
-            <Text style={styles.title}>Ventas diarias</Text>
-            <Text style={styles.totalSales}>
-              Total: S/. {totalDailySales.toFixed(2)}
-            </Text>
+        <View className="flex flex-col gap-8">
+          <View className="overflow-hidden bg-zinc-100 dark:bg-zinc-800 p-4 rounded-xl flex flex-col gap-8">
+            <View className="flex flex-col ">
+              <Text style={styles.title}>Ventas diarias</Text>
+              <Text style={styles.totalSales}>
+                Total: S/. {totalDailySales.toFixed(2)}
+              </Text>
+            </View>
             <BarChart
               data={dailySales}
               barWidth={30}
@@ -253,22 +286,20 @@ export default function DailyReportScreen() {
               xAxisLabelTextStyle={styles.chartText}
               noOfSections={5}
             />
-            <View style={styles.detailsContainer}>
+            <View className="p-4 bg-white dark:bg-zinc-900 rounded-lg">
               <SalesDetails
                 title="Total de pedidos"
                 data={orderDetails.totalOrders}
               />
-              <SalesDetails
-                title="Total de ventas"
-                data={`S/. ${orderDetails.totalAmount.toFixed(2)}`}
-              />
+
               <SalesDetails title="Hora pico" data={orderDetails.peakHour} />
             </View>
           </View>
           <Calendar
             onDayPress={(day: any) => setSelectedDate(day.dateString)}
-            theme={{
-              todayTextColor: "#FF6247",
+            theme={isDarkMode ? darkTheme : lightTheme}
+            style={{
+              borderRadius: 8,
             }}
             markedDates={{
               [selectedDate]: {
@@ -289,7 +320,7 @@ export default function DailyReportScreen() {
               />
             )}
           />
-          <View className="flex flex-row items-center justify-between bg-zinc-100 p-6 rounded-lg">
+          <View className="flex flex-row items-center justify-between bg-zinc-100 p-6 rounded-lg dark:bg-zinc-800">
             <View className="flex flex-col gap-2">
               <Text style={{ color: "gray" }}>Total Recaudado</Text>
               <Text variant="titleMedium">{selectedDate} </Text>
@@ -304,7 +335,7 @@ export default function DailyReportScreen() {
               S/.{dailyTotals[selectedDate]?.toFixed(2) || "0.00"}
             </Text>
           </View>
-        </>
+        </View>
       )}
     </ScrollView>
   );
@@ -314,13 +345,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 16,
   },
-  chartContainer: {
-    marginBottom: 24,
-    padding: 16,
-    overflow: "hidden",
-    backgroundColor: "#f5f5f5",
-    borderRadius: 8,
-  },
+
   title: {
     fontSize: 14,
     marginBottom: 16,
@@ -337,12 +362,7 @@ const styles = StyleSheet.create({
     color: "#FF6247",
     marginBottom: 12,
   },
-  detailsContainer: {
-    marginTop: 16,
-    padding: 12,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-  },
+
   detailText: {
     fontSize: 14,
     color: "#666",

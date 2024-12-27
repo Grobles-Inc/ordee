@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Button,
   Chip,
+  Divider,
   Modal,
   Portal,
   Text,
@@ -35,14 +36,6 @@ export default function OrderDetailsScreen() {
     setModalVisible(false);
   };
 
-  const getCompany = async () => {
-    const { data: tenantData } = await supabase
-      .from("tenants")
-      .select("*")
-      .eq("id_tenant", order?.id_tenant)
-      .single();
-    setCompanyLogo(tenantData.logo);
-  };
   const generateHTML = () => {
     const now = new Date();
     const dateStr = now.toLocaleDateString();
@@ -201,7 +194,7 @@ export default function OrderDetailsScreen() {
   return (
     <>
       <ScrollView
-        className="p-4 bg-white"
+        className="p-4 bg-white dark:bg-zinc-900"
         contentInsetAdjustmentBehavior="automatic"
       >
         {loading && (
@@ -214,20 +207,8 @@ export default function OrderDetailsScreen() {
           <View className="flex flex-col gap-10">
             <View className="flex flex-col gap-4">
               <View className="flex flex-row gap-2">
-                <Chip
-                  style={{
-                    backgroundColor: "#e7e5e4",
-                  }}
-                >
-                  {order.to_go ? "Para llevar" : "Para mesa"}
-                </Chip>
-
-                <Chip
-                  style={{
-                    backgroundColor: "#e7e5e4",
-                  }}
-                  disabled={!order.served}
-                >
+                <Chip>{order.to_go ? "Para llevar" : "Para mesa"}</Chip>
+                <Chip disabled={!order.served}>
                   {order.served ? "Servido" : "En espera"}
                 </Chip>
 
@@ -260,14 +241,7 @@ export default function OrderDetailsScreen() {
                   <Text variant="titleSmall">Precio/u</Text>
                   <Text variant="titleSmall">Cantidad</Text>
                 </View>
-                <View
-                  style={{
-                    height: 1,
-                    borderWidth: 1,
-                    borderColor: "#e7e5e4",
-                    borderStyle: "dashed",
-                  }}
-                />
+                <Divider />
                 {order?.items?.map((item, index) => (
                   <View key={index} className="flex flex-row justify-between">
                     <View className="flex flex-row items-center gap-2">
@@ -284,14 +258,7 @@ export default function OrderDetailsScreen() {
             </View>
           </View>
           <View className="flex flex-col gap-4">
-            <View
-              style={{
-                height: 1,
-                borderWidth: 1,
-                borderColor: "#e7e5e4",
-                borderStyle: "dashed",
-              }}
-            />
+            <Divider />
 
             <View className="flex flex-row justify-between">
               <Text variant="titleMedium">Importe Total</Text>

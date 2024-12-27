@@ -34,14 +34,16 @@ export default function CategoriesScreen() {
 
   return (
     <>
-      <ScrollView contentInsetAdjustmentBehavior="automatic">
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        className="p-4 bg-white dark:bg-zinc-900"
+      >
         {loading && <ActivityIndicator className="mt-20" />}
         <FlashList
           renderItem={({ item: category }) => (
             <Card
               key={category.id}
               style={{
-                marginHorizontal: 16,
                 marginVertical: 8,
               }}
             >

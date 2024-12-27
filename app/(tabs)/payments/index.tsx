@@ -17,12 +17,7 @@ export default function PaidOrdersScreen() {
 
   return (
     <>
-      <Appbar.Header
-        style={{
-          borderBottomColor: "#f1f1f1",
-          borderBottomWidth: 0.5,
-        }}
-      >
+      <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
         <Appbar.Content
           titleStyle={{ fontWeight: "bold" }}
           title="Pedidos Pagados"

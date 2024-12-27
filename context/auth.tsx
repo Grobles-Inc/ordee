@@ -59,7 +59,7 @@ export function AuthContextProvider({
     setLoading(true);
     const { data, error, status } = await supabase
       .from("accounts")
-      .select("*, tenants:id_tenant(name, logo)")
+      .select("*, tenants:id_tenant(*)")
       .eq("id", id)
       .single();
     if (error && status !== 406) {

@@ -75,7 +75,6 @@ export default function OrderItemsAccordion({
         <List.Section key={category.id}>
           <List.Accordion
             style={{
-              backgroundColor: "white",
               paddingTop: 0,
               marginTop: 0,
             }}
@@ -146,9 +145,6 @@ const ItemAccordion = ({
   return (
     <Animated.View entering={FadeInDown.duration(200).delay(index * 100)}>
       <List.Item
-        style={{
-          backgroundColor: index % 2 === 0 ? "#F3F3F3" : "white",
-        }}
         title={
           <View>
             <Text>{item.name}</Text>

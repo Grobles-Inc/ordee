@@ -17,7 +17,6 @@ export default function OrderCard({ order }: { order: IOrder }) {
     <Card
       style={{
         marginVertical: 8,
-        backgroundColor: "white",
         shadowOpacity: 0,
       }}
       onPress={() => {

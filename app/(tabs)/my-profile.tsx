@@ -14,7 +14,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View className="bg-white p-4 h-screen-safe">
+    <View className="bg-white p-4 h-screen-safe dark:bg-zinc-900">
       <View className="flex flex-col items-center justify-center mb-10">
         <Image
           source={{
