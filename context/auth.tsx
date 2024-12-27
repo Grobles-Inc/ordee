@@ -74,6 +74,7 @@ export function AuthContextProvider({
   }
 
   const deleteUser = async (id: string) => {
+    setLoading(true);
     const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
     if (error) {
       toast.error("Error al eliminar usuario!", {
@@ -84,10 +85,12 @@ export function AuthContextProvider({
     toast.success("Usuario eliminado!", {
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
+    setLoading(false);
     setUsers(users.filter((user) => user.id !== id));
   };
 
   const getUsers = async (id_tenant: string) => {
+    setLoading(true);
     const { data, error } = await supabase
       .from("accounts")
       .select("*")
@@ -95,6 +98,7 @@ export function AuthContextProvider({
       .order("name");
     if (error) throw error;
     setUsers(data);
+    setLoading(false);
     return data;
   };
 

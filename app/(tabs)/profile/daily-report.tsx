@@ -2,12 +2,55 @@ import { useOrderContext } from "@/context/order";
 import { IOrder } from "@/interfaces";
 import { supabase } from "@/utils/supabase";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { Calendar } from "react-native-calendars";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { Calendar, LocaleConfig } from "react-native-calendars";
 import { BarChart } from "react-native-gifted-charts";
-import { ActivityIndicator } from "react-native-paper";
+import { ActivityIndicator, Text } from "react-native-paper";
 import { toZonedTime, format } from "date-fns-tz";
+import { FontAwesome6 } from "@expo/vector-icons";
 
+LocaleConfig.locales["es"] = {
+  monthNames: [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ],
+  monthNamesShort: [
+    "Ene.",
+    "Feb.",
+    "Mar.",
+    "Abr.",
+    "May.",
+    "Jun.",
+    "Jul.",
+    "Ago.",
+    "Sep.",
+    "Oct.",
+    "Nov.",
+    "Dic.",
+  ],
+  dayNames: [
+    "Domingo",
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sábado",
+  ],
+  dayNamesShort: ["D", "L", "M", "X", "J", "V", "S"],
+  today: "Hoy",
+};
+LocaleConfig.defaultLocale = "es";
 const calculateOrderTotal = (order: IOrder): number => {
   return order.items.reduce(
     (sum, meal) => sum + (meal.price || 0) * (meal.quantity || 1),
@@ -15,7 +58,7 @@ const calculateOrderTotal = (order: IOrder): number => {
   );
 };
 
-const timeZone = 'America/Lima';
+const timeZone = "America/Lima";
 
 export default function DailyReportScreen() {
   const { getDailyPaidOrders } = useOrderContext();
@@ -63,7 +106,7 @@ export default function DailyReportScreen() {
           salesByHour[timeIndex] += orderTotal;
           dailyTotal += orderTotal;
 
-          const orderDateString = format(orderDate, 'yyyy-MM-dd', { timeZone });
+          const orderDateString = format(orderDate, "yyyy-MM-dd", { timeZone });
           if (!newDailyTotals[orderDateString]) {
             newDailyTotals[orderDateString] = 0;
           }
@@ -120,13 +163,12 @@ export default function DailyReportScreen() {
         throw error;
       }
 
-
       const newDailyTotals: { [key: string]: number } = {};
 
       data.forEach((order: { date: string; total: number }) => {
         if (order.date) {
           const orderDate = toZonedTime(new Date(order.date), timeZone);
-          const orderDateString = format(orderDate, 'yyyy-MM-dd', { timeZone });
+          const orderDateString = format(orderDate, "yyyy-MM-dd", { timeZone });
 
           if (!newDailyTotals[orderDateString]) {
             newDailyTotals[orderDateString] = 0;
@@ -183,7 +225,14 @@ export default function DailyReportScreen() {
       contentInsetAdjustmentBehavior="automatic"
     >
       {loading ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 24 }}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 24,
+          }}
+        >
           <ActivityIndicator size="large" />
           <Text style={{ color: "gray" }}>Cargando datos...</Text>
         </View>
@@ -218,6 +267,9 @@ export default function DailyReportScreen() {
           </View>
           <Calendar
             onDayPress={(day: any) => setSelectedDate(day.dateString)}
+            theme={{
+              todayTextColor: "#FF6247",
+            }}
             markedDates={{
               [selectedDate]: {
                 selected: true,
@@ -229,10 +281,26 @@ export default function DailyReportScreen() {
                 return acc;
               }, {} as { [key: string]: { marked: boolean; dotColor: string } }),
             }}
+            renderArrow={(direction: string) => (
+              <FontAwesome6
+                name={direction === "right" ? "chevron-right" : "chevron-left"}
+                size={20}
+                color="#FF6247"
+              />
+            )}
           />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#f5f5f5', padding: 16, borderRadius: 8 }}>
-            <Text style={styles.selectedDateText}>{selectedDate} </Text>
-            <Text style={styles.selectedDateText}>
+          <View className="flex flex-row items-center justify-between bg-zinc-100 p-6 rounded-lg">
+            <View className="flex flex-col gap-2">
+              <Text style={{ color: "gray" }}>Total Recaudado</Text>
+              <Text variant="titleMedium">{selectedDate} </Text>
+            </View>
+            <Text
+              variant="titleLarge"
+              style={{
+                color: "#FF6247",
+                fontWeight: "bold",
+              }}
+            >
               S/.{dailyTotals[selectedDate]?.toFixed(2) || "0.00"}
             </Text>
           </View>
@@ -279,10 +347,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     marginBottom: 8,
-  },
-  selectedDateText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#FF6247",
   },
 });

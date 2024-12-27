@@ -1,25 +1,15 @@
 import { useAuth } from "@/context/auth";
-import { useHeaderHeight } from "@react-navigation/elements";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
 import React from "react";
 import { Alert, ScrollView, View } from "react-native";
-import {
-  ActivityIndicator,
-  Card,
-  Divider,
-  FAB,
-  IconButton,
-  Text,
-} from "react-native-paper";
+import { ActivityIndicator, Card, IconButton, Text } from "react-native-paper";
 
 export default function UsersScreen() {
   const { deleteUser, users, getUsers, profile, loading } = useAuth();
   React.useEffect(() => {
     getUsers(profile.id_tenant);
   }, []);
-  const router = useRouter();
   const onDelete = (id: string) => {
     Alert.alert("Eliminar", "¿Estás seguro de eliminar este usuario?", [
       {
