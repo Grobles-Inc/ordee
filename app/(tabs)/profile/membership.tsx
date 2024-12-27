@@ -1,7 +1,7 @@
 import { useAuth } from "@/context";
 import { AntDesign } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { SafeAreaView, View } from "react-native";
+import { Alert, SafeAreaView, View } from "react-native";
 import { Button, Divider, Text } from "react-native-paper";
 
 export default function Membership() {
@@ -89,7 +89,18 @@ export default function Membership() {
             : "La renovación de la membresía tiene un costo de S/.00.00 nuevos soles por mes."}
         </Text>
         <Divider />
-        <Button mode="contained">Adquirir Pro</Button>
+
+        <Button
+          mode="contained"
+          onPress={() => {
+            Alert.alert(
+              "Adquisicion",
+              "Abrir el modal de paywall screen de Ordee"
+            );
+          }}
+        >
+          Adquirir Pro
+        </Button>
       </View>
     </SafeAreaView>
   );

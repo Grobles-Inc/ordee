@@ -1,7 +1,7 @@
 import { useCustomer } from "@/context/customer";
 import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, useColorScheme, View } from "react-native";
 import {
   IconButton,
   List,
@@ -26,6 +26,7 @@ export default function CustomerFinder({
   setShowCustomerModal: (value: boolean) => void;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const colorScheme = useColorScheme();
   const [searchText, setSearchText] = useState("");
   const { getCustomers, customers } = useCustomer();
 
@@ -61,7 +62,7 @@ export default function CustomerFinder({
 
   return (
     <Portal>
-      <Animated.View entering={FadeInUp.duration(2000)}>
+      <Animated.View entering={FadeInUp.duration(200)}>
         <Modal
           visible={showCustomerModal}
           onDismiss={() => {
@@ -70,7 +71,7 @@ export default function CustomerFinder({
             setSearchQuery("");
           }}
           contentContainerStyle={{
-            backgroundColor: "white",
+            backgroundColor: colorScheme === "dark" ? "#18181b" : "white",
             padding: 16,
             position: "absolute",
             top: 65,
