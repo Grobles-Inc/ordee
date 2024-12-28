@@ -3,9 +3,33 @@ import { supabase } from "@/utils/supabase";
 import { useFocusEffect } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { ActivityIndicator, Chip, Divider } from "react-native-paper";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Alert,
+  ScrollView,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetTextInput,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
+import {
+  ActivityIndicator,
+  Chip,
+  Divider,
+  IconButton,
+  Text,
+  Button,
+} from "react-native-paper";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -14,6 +38,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useOrderContext } from "@/context";
 
 function TableSvg({ table, index }: { table: ITable; index: number }) {
   const rotation = useSharedValue(90);
@@ -88,7 +113,31 @@ export default function TablesScreen() {
   const [tables, setTables] = useState<ITable[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const channelRef = useRef<any>(null);
+  const { addTable } = useOrderContext();
+  const colorScheme = useColorScheme();
+  const tableBottomSheetRef = useRef<BottomSheet>(null);
+  const [number, setNumber] = useState<number>(0);
+  const snapPoints = useMemo(() => ["40%"], []);
+  const isDarkMode = colorScheme === "dark";
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        {...props}
+      />
+    ),
+    []
+  );
 
+  const onSubmitTable = async (e: any) => {
+    addTable({
+      number,
+      status: true,
+    });
+    tableBottomSheetRef.current?.close();
+    setNumber(0);
+  };
   const getTables = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -150,13 +199,25 @@ export default function TablesScreen() {
   }
 
   return (
-    <SafeAreaView className="p-4 bg-white dark:bg-zinc-900">
-      <Text className="text-4xl dark:text-white" style={{ fontWeight: "700" }}>
-        Mesas
-      </Text>
-      <Text className="opacity-50 dark:text-white">
-        Listado de mesas del local
-      </Text>
+    <SafeAreaView className="p-4 bg-white dark:bg-zinc-900 h-screen">
+      <View className="flex flex-row justify-between items-center">
+        <View className="flex flex-col gap-2">
+          <Text
+            className="text-4xl dark:text-white"
+            style={{ fontWeight: "700" }}
+          >
+            Mesas
+          </Text>
+          <Text className="opacity-50 dark:text-white">
+            Listado de mesas del local
+          </Text>
+        </View>
+        <IconButton
+          mode="contained"
+          icon="plus"
+          onPress={() => tableBottomSheetRef.current?.expand()}
+        />
+      </View>
       <Divider style={{ marginTop: 16 }} />
 
       <ScrollView contentContainerStyle={{ paddingVertical: 40 }}>
@@ -166,6 +227,42 @@ export default function TablesScreen() {
           ))}
         </View>
       </ScrollView>
+      <BottomSheet
+        ref={tableBottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        enablePanDownToClose={true}
+        handleIndicatorStyle={{ backgroundColor: "gray" }}
+        backgroundStyle={{
+          backgroundColor: isDarkMode ? "#262626" : "white",
+        }}
+        backdropComponent={renderBackdrop}
+      >
+        <BottomSheetView className="p-4 flex flex-col gap-4">
+          <View className="flex flex-col gap-2">
+            <Text variant="bodyMedium" style={{ color: "gray" }}>
+              Número de Mesa
+            </Text>
+            <BottomSheetTextInput
+              className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
+              keyboardType="numeric"
+              value={String(number)}
+              onChangeText={(text) => setNumber(Number(text))}
+            />
+          </View>
+
+          <Button mode="contained" onPress={onSubmitTable}>
+            Registrar Mesa
+          </Button>
+
+          <Button
+            onPress={() => tableBottomSheetRef.current?.close()}
+            mode="outlined"
+          >
+            Cancelar
+          </Button>
+        </BottomSheetView>
+      </BottomSheet>
     </SafeAreaView>
   );
 }

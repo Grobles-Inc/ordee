@@ -1,3 +1,4 @@
+import { ORDEE_THEME } from "@/constants/ordee";
 import { AuthContextProvider, OrderContextProvider } from "@/context";
 import { CategoryContextProvider } from "@/context/category";
 import { CustomerContextProvider } from "@/context/customer";
@@ -5,7 +6,6 @@ import { MealContextProvider } from "@/context/meals";
 import { DARK_NAV_THEME, NAV_THEME } from "@/utils/constants";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
-import { ORDEE_THEME } from "@/constants/ordee";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";

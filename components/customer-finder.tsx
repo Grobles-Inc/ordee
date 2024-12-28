@@ -39,7 +39,7 @@ export default function CustomerFinder({
   }, []);
   useEffect(() => {
     const selectedCustomer = customers.find(
-      (c) => c.id === watch("id_fixed_customer")
+      (c) => c.id === watch("id_customer")
     );
     const isFreeOrderSelected = watch("free");
     if (
@@ -51,7 +51,7 @@ export default function CustomerFinder({
     } else {
       setIsRegisterDisabled(false);
     }
-  }, [watch("id_fixed_customer"), watch("free")]);
+  }, [watch("id_customer"), watch("free")]);
   const filteredCustomers = React.useMemo(
     () =>
       customers.filter((customer) =>
@@ -119,14 +119,14 @@ export default function CustomerFinder({
               <List.Item
                 title={customer.full_name}
                 onPress={() => {
-                  setValue("id_fixed_customer", customer.id);
+                  setValue("id_customer", customer.id);
                   setShowCustomerModal(false);
                   setSearchText("");
                   setSearchQuery("");
                 }}
                 left={(props) => <List.Icon {...props} icon="account" />}
                 right={(props) =>
-                  watch("id_fixed_customer") === customer.id ? (
+                  watch("id_customer") === customer.id ? (
                     <List.Icon {...props} icon="check" />
                   ) : null
                 }

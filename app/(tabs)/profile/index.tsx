@@ -10,8 +10,8 @@ export default function ProfileScreen() {
 
   const getRoleLabel = (role: string) => {
     const roles = {
-      waiter: "Mesero",
-      chef: "Cocinero",
+      user: "Mesero",
+      guest: "Cocinero",
       admin: "Administrador",
     };
     return roles[role as keyof typeof roles] || role;

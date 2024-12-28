@@ -54,9 +54,7 @@ export default function AddOrderScreen() {
   const { control, handleSubmit, reset, setValue, watch } = useForm<IOrder>({
     defaultValues: {
       id_table: updatingOrder?.id_table,
-      id_fixed_customer: updatingOrder?.id_fixed_customer
-        ? updatingOrder?.id_fixed_customer
-        : "",
+      id_customer: updatingOrder?.id_customer ? updatingOrder?.id_customer : "",
       items: updatingOrder?.items || ([] as IMeal[]),
       paid: updatingOrder?.paid,
       served: updatingOrder?.served,
@@ -79,10 +77,9 @@ export default function AddOrderScreen() {
         served: updatingOrder?.served || data.served,
         to_go: updatingOrder?.to_go || data.to_go,
         id: updatingOrder?.id || data.id,
-        id_waiter: updatingOrder?.id_waiter || data.id_waiter,
+        id_user: updatingOrder?.id_user || data.id_user,
         paid: updatingOrder?.paid || data.paid,
-        id_fixed_customer:
-          updatingOrder?.id_fixed_customer || data.id_fixed_customer || null,
+        id_customer: updatingOrder?.id_customer || data.id_customer || null,
         id_table: id_table,
         items: itemsSelected,
         total: itemsSelected.reduce(
@@ -96,11 +93,11 @@ export default function AddOrderScreen() {
 
       if (data.free) {
         const selectedCustomer = customers.find(
-          (c) => c.id === data.id_fixed_customer
+          (c) => c.id === data.id_customer
         );
         if (selectedCustomer) {
           await supabase
-            .from("fixed_customers")
+            .from("customers")
             .update({
               total_free_orders: selectedCustomer.total_free_orders - 1,
             })
@@ -128,11 +125,11 @@ export default function AddOrderScreen() {
       const orderData: IOrder = {
         ...data,
         served: false,
-        id_waiter: profile.id,
+        id_user: profile.id,
         paid: false,
         id_table: id_table,
         items: itemsSelected,
-        id_fixed_customer: data.id_fixed_customer || null,
+        id_customer: data.id_customer || null,
         total: itemsSelected.reduce(
           (acc, item) => acc + item.quantity * item.price,
           0
@@ -141,12 +138,12 @@ export default function AddOrderScreen() {
       addOrder(orderData);
       if (data.free) {
         const selectedCustomer = customers.find(
-          (c) => c.id === data.id_fixed_customer
+          (c) => c.id === data.id_customer
         );
         console.log("selectedCustomer", selectedCustomer);
         if (selectedCustomer) {
           await supabase
-            .from("fixed_customers")
+            .from("customers")
             .update({
               total_free_orders: selectedCustomer.total_free_orders - 1,
             })
@@ -195,7 +192,7 @@ export default function AddOrderScreen() {
           <View className="w-full  overflow-hidden flex flex-col bg-white dark:bg-zinc-900">
             <Controller
               control={control}
-              name="id_fixed_customer"
+              name="id_customer"
               render={({ field: { value } }) => (
                 <View className="flex flex-row gap-2 justify-between items-center p-4 w-full">
                   <View>
@@ -222,7 +219,7 @@ export default function AddOrderScreen() {
                       if (checked) {
                         setShowCustomerModal(true);
                       } else {
-                        setValue("id_fixed_customer", undefined);
+                        setValue("id_customer", undefined);
                         setValue("free", false);
                       }
                     }}
@@ -234,7 +231,7 @@ export default function AddOrderScreen() {
 
             {(() => {
               const selectedCustomer = customers.find(
-                (c) => c.id === watch("id_fixed_customer")
+                (c) => c.id === watch("id_customer")
               );
               return (selectedCustomer?.total_free_orders ?? 0) > 0 ? (
                 <>

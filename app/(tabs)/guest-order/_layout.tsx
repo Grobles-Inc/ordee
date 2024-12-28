@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import React from "react";
 
-export default function ChefLayout() {
+export default function GuestLayout() {
   return (
     <Stack>
       <Stack.Screen

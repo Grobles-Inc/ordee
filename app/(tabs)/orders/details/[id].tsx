@@ -222,7 +222,7 @@ export default function OrderDetailsScreen() {
                   </Chip>
                 )}
               </View>
-              {order.id_fixed_customer && (
+              {order.id_customer && (
                 <View className="flex flex-col gap-1 items-start">
                   <Text style={{ color: "gray" }}>Cliente:</Text>
                   <Text style={{ fontWeight: "bold" }}>

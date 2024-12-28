@@ -128,7 +128,7 @@ export const MealContextProvider = ({
     setLoading(true);
     const { data, error } = await supabase
       .from("meals")
-      .select("*, users:id_waiter(name)")
+      .select("*, users:id_user(name)")
       .eq("id", id)
       .single();
     if (error) throw error;

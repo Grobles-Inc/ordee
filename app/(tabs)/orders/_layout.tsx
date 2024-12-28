@@ -3,7 +3,7 @@ import { router, Stack } from "expo-router";
 import React from "react";
 import { Button } from "react-native";
 
-export default function WaiterLayout() {
+export default function UserLayout() {
   const { order } = useOrderContext();
   return (
     <Stack>

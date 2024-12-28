@@ -75,11 +75,17 @@ export function AuthContextProvider({
 
   const deleteUser = async (id: string) => {
     setLoading(true);
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(id);
+    const { error } = await supabase
+      .from("accounts")
+      .update({
+        disabled: true,
+      })
+      .eq("id", id);
     if (error) {
       toast.error("Error al eliminar usuario!", {
         icon: <FontAwesome name="times-circle" size={20} color="red" />,
       });
+      console.log("ERROR", error);
       return;
     }
     toast.success("Usuario eliminado!", {
@@ -95,6 +101,8 @@ export function AuthContextProvider({
       .from("accounts")
       .select("*")
       .eq("id_tenant", id_tenant)
+      .neq("id", profile?.id)
+      .eq("disabled", false)
       .order("name");
     if (error) throw error;
     setUsers(data);

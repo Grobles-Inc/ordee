@@ -17,6 +17,7 @@ export default function UsersScreen() {
         style: "destructive",
         onPress: async () => {
           deleteUser(id);
+          console.log("deleteUser", id);
         },
       },
       {
@@ -28,8 +29,8 @@ export default function UsersScreen() {
 
   const getRoleLabel = (role: string) => {
     const roles = {
-      waiter: "Mesero",
-      chef: "Cocinero",
+      user: "Mesero",
+      guest: "Cocinero",
       admin: "Administrador",
     };
     return roles[role as keyof typeof roles] || role;

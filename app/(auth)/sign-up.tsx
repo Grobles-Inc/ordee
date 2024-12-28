@@ -39,9 +39,15 @@ export default function SignUpScreen() {
       const { data: user, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
+
+        options: {
+          data: {
+            company: data.company,
+          },
+        },
       });
 
-      if (signUpError || !user) {
+      if (signUpError || !user.user?.user_metadata) {
         console.error("SIGNUP ERROR", signUpError);
         return;
       }

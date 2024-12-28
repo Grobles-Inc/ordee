@@ -54,7 +54,7 @@ export function CustomerContextProvider({
 
   const addCustomer = async (customer: ICustomer) => {
     setLoading(true);
-    const { error } = await supabase.from("fixed_customers").insert({
+    const { error } = await supabase.from("customers").insert({
       ...customer,
       id_tenant: profile.id_tenant,
     });
@@ -71,10 +71,7 @@ export function CustomerContextProvider({
   };
 
   const deleteCustomer = async (id: string) => {
-    const { error } = await supabase
-      .from("fixed_customers")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("customers").delete().eq("id", id);
 
     if (error) {
       toast.error("Error al eliminar cliente!", {
@@ -90,7 +87,7 @@ export function CustomerContextProvider({
 
   const getCustomers = async () => {
     const { data, error } = await supabase
-      .from("fixed_customers")
+      .from("customers")
       .select("*")
       .order("full_name")
       .eq("id_tenant", profile.id_tenant);

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createContext, useContext } from "react";
 import { supabase } from "@/utils/supabase";
-import { IOrder, IOrderContextProvider } from "@/interfaces";
+import { IOrder, IOrderContextProvider, ITable } from "@/interfaces";
 import { router } from "expo-router";
 import { toast } from "sonner-native";
 import { FontAwesome } from "@expo/vector-icons";
@@ -9,6 +9,7 @@ import { useAuth } from "./auth";
 export const OrderContext = createContext<IOrderContextProvider>({
   addOrder: async () => {},
   getUnservedOrders: async () => [],
+  addTable: async () => {},
   getOrderById: async (id: string): Promise<IOrder> => ({} as IOrder),
   orders: [],
   order: {} as IOrder,
@@ -141,6 +142,25 @@ export const OrderContextProvider = ({
     }
   };
 
+  async function addTable(table: ITable) {
+    setLoading(true);
+    const { error } = await supabase.from("tables").insert({
+      ...table,
+      id_tenant: profile.id_tenant,
+    });
+    if (error) {
+      console.error("Error adding table:", error);
+      toast.error("Error al agregar mesa!", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
+      return;
+    }
+    toast.success("Mesa agregada!", {
+      icon: <FontAwesome name="check-circle" size={20} color="green" />,
+    });
+    setLoading(false);
+  }
+
   const updatePaidStatus = async (id: string, paid: boolean) => {
     await supabase.from("orders").update({ paid }).eq("id", id).select();
     const { error } = await supabase
@@ -225,7 +245,7 @@ export const OrderContextProvider = ({
     const { data, error } = await supabase
       .from("orders")
       .select(
-        "*, users:id_waiter(name), customers:id_fixed_customer(full_name), tenants:id_tenant(name, logo)"
+        "*, users:id_user(name), customers:id_customer(full_name), tenants:id_tenant(name, logo)"
       )
       .eq("id", id)
       .single();
@@ -291,6 +311,7 @@ export const OrderContextProvider = ({
         getUnservedOrders,
         updateOrder,
         addOrder,
+        addTable,
         updateOrderServedStatus,
         order,
         getDailyPaidOrders,

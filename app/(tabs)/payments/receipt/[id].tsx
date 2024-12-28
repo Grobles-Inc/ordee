@@ -196,7 +196,7 @@ export default function ReceiptDetailsScreen() {
                 <Chip>{order.to_go ? "Para llevar" : "Para mesa"}</Chip>
                 {order.free && <Chip>Gratis</Chip>}
               </View>
-              {order.id_fixed_customer && (
+              {order.id_customer && (
                 <View className="flex flex-col gap-1 items-start">
                   <Text style={{ color: "gray" }}>Cliente:</Text>
                   <Text style={{ fontWeight: "bold" }}>

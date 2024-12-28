@@ -15,7 +15,7 @@ export interface IUser {
   tenants?: ITenant;
   last_name: string;
   image_url: string;
-  role: "waiter" | "chef" | "admin";
+  role: "user" | "guest" | "admin";
 }
 
 export interface ICustomer {

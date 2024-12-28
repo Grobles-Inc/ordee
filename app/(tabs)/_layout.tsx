@@ -9,7 +9,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { profile } = useAuth();
   const tabConfigurations = {
-    chef: [
+    guest: [
       {
         name: "index",
         title: "Mesas",
@@ -30,7 +30,7 @@ export default function TabLayout() {
         ],
       },
       {
-        name: "chef-order",
+        name: "guest-order",
         title: "Ordenes",
         icon: ["mingcute:clipboard-fill.svg", "mingcute:clipboard-line.svg"],
       },
@@ -72,8 +72,8 @@ export default function TabLayout() {
         ],
       },
       {
-        name: "chef-order",
-        title: "Chef",
+        name: "guest-order",
+        title: "Guest",
         href: null,
         icon: ["mingcute:clipboard-fill.svg", "mingcute:clipboard-line.svg"],
       },
@@ -94,7 +94,7 @@ export default function TabLayout() {
         icon: ["mingcute:user-3-fill.svg", "mingcute:user-3-line.svg"],
       },
     ],
-    waiter: [
+    user: [
       {
         name: "index",
         title: "Mesas",
@@ -126,8 +126,8 @@ export default function TabLayout() {
         ],
       },
       {
-        name: "chef-order",
-        title: "Chef",
+        name: "guest-order",
+        title: "Guest",
         href: null,
         icon: ["mingcute:clipboard-fill.svg", "mingcute:clipboard-line.svg"],
       },

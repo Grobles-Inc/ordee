@@ -225,14 +225,14 @@ export default function AddUserScreen() {
                 <List.Item
                   title="Mesero"
                   onPress={() => {
-                    onChange("waiter");
+                    onChange("user");
                     setExpanded(!expanded);
                   }}
                 />
                 <List.Item
                   title="Cocinero"
                   onPress={() => {
-                    onChange("chef");
+                    onChange("guest");
                     setExpanded(!expanded);
                   }}
                 />
