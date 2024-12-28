@@ -5,6 +5,7 @@ import { Image } from "expo-image";
 import React from "react";
 import { View } from "react-native";
 import { Appbar, Text } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PaidOrdersScreen() {
   const { paidOrders, getPaidOrders, loading } = useOrderContext();
@@ -35,15 +36,15 @@ export default function PaidOrdersScreen() {
           estimatedItemSize={200}
           horizontal={false}
           ListEmptyComponent={
-            <View className="flex flex-col gap-4 items-center justify-center ">
+            <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">
               <Image
                 source={{
-                  uri: "https://img.icons8.com/?size=200&id=119481&format=png&color=000000",
+                  uri: "https://cdn-icons-png.flaticon.com/128/17768/17768859.png",
                 }}
-                style={{ width: 100, height: 100 }}
+                style={{ width: 100, height: 100, opacity: 0.5 }}
               />
               <Text style={{ color: "gray" }}>No hay items para mostrar</Text>
-            </View>
+            </SafeAreaView>
           }
         />
       </View>

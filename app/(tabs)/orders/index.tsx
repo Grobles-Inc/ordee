@@ -7,6 +7,7 @@ import React from "react";
 import { View } from "react-native";
 import { Appbar, Text } from "react-native-paper";
 import { supabase } from "@/utils/supabase";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OrdersScreen() {
   const { getUnpaidOrders, loading } = useOrderContext();
@@ -58,15 +59,15 @@ export default function OrdersScreen() {
           onRefresh={onRefresh}
           estimatedItemSize={200}
           ListEmptyComponent={
-            <View className="flex flex-col gap-4 items-center justify-center mt-20">
+            <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">
               <Image
                 source={{
-                  uri: "https://img.icons8.com/?size=200&id=119481&format=png&color=000000",
+                  uri: "https://cdn-icons-png.flaticon.com/128/17768/17768778.png",
                 }}
-                style={{ width: 100, height: 100 }}
+                style={{ width: 100, height: 100, opacity: 0.5 }}
               />
               <Text style={{ color: "gray" }}>No hay items para mostrar</Text>
-            </View>
+            </SafeAreaView>
           }
           horizontal={false}
         />

@@ -2,6 +2,7 @@ import { useCategoryContext } from "@/context/category";
 import { useMealContext } from "@/context/meals";
 import { IMeal } from "@/interfaces";
 import { FlashList } from "@shopify/flash-list";
+import { Image } from "expo-image";
 import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import {
@@ -12,6 +13,7 @@ import {
   Text,
 } from "react-native-paper";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OrderItemsAccordion({
   items,
@@ -112,6 +114,24 @@ export default function OrderItemsAccordion({
           {index !== categories.length - 1 && <Divider />}
         </List.Section>
       ))}
+      {categories.length === 0 && (
+        <SafeAreaView className="flex flex-col gap-4 items-center justify-center p-8">
+          <Image
+            source={{
+              uri: "https://cdn-icons-png.flaticon.com/128/17768/17768803.png",
+            }}
+            style={{ width: 100, height: 100, opacity: 0.5 }}
+          />
+          <Text>No hay categorías para mostrar</Text>
+          <Text
+            variant="bodySmall"
+            style={{ color: "gray", textAlign: "center" }}
+          >
+            Primero debes crear categorías en la sección de Perfil y luego
+            agregar productos en el Tab de Menú.
+          </Text>
+        </SafeAreaView>
+      )}
     </>
   );
 }

@@ -5,7 +5,7 @@ import React from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 export default function ProfileScreen() {
-  const { profile, signOut } = useAuth();
+  const { profile } = useAuth();
   const router = useRouter();
 
   const getRoleLabel = (role: string) => {
@@ -88,8 +88,12 @@ export default function ProfileScreen() {
         >
           Reporte Diario
         </Button>
-        <Button onPress={signOut} icon="logout" mode="text">
-          Cerrar Sesión
+        <Button
+          onPress={() => router.push("/(tabs)/profile/settings")}
+          mode="text"
+          icon="nut"
+        >
+          Configuración
         </Button>
       </View>
 

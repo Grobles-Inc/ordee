@@ -225,6 +225,17 @@ export default function TablesScreen() {
           {tables.map((table, index) => (
             <TableSvg key={table.id} table={table} index={index} />
           ))}
+          {tables.length === 0 && (
+            <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">
+              <Image
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/128/17768/17768766.png",
+                }}
+                style={{ width: 100, height: 100, opacity: 0.5 }}
+              />
+              <Text style={{ color: "gray" }}>No hay mesas para mostrar</Text>
+            </SafeAreaView>
+          )}
         </View>
       </ScrollView>
       <BottomSheet

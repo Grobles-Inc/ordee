@@ -4,6 +4,7 @@ import { Image } from "expo-image";
 import React from "react";
 import { Alert, ScrollView, View } from "react-native";
 import { ActivityIndicator, Card, IconButton, Text } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CategoriesScreen() {
   const { deleteCategory, getCategories, categories, loading } =
@@ -67,19 +68,19 @@ export default function CategoriesScreen() {
           )}
           data={categories}
           estimatedItemSize={200}
+          ListEmptyComponent={
+            <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">
+              <Image
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/128/17768/17768803.png",
+                }}
+                style={{ width: 100, height: 100, opacity: 0.5 }}
+              />
+              <Text style={{ color: "gray" }}>No hay items para mostrar</Text>
+            </SafeAreaView>
+          }
           horizontal={false}
         />
-        {categories?.length === 0 && (
-          <View className="flex flex-col gap-4 items-center justify-center mt-20">
-            <Image
-              source={{
-                uri: "https://img.icons8.com/?size=200&id=119481&format=png&color=000000",
-              }}
-              style={{ width: 100, height: 100 }}
-            />
-            <Text style={{ color: "gray" }}>No hay items para mostrar</Text>
-          </View>
-        )}
       </ScrollView>
     </>
   );

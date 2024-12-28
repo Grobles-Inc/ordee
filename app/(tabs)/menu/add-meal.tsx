@@ -5,9 +5,10 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ScrollView, Text, View } from "react-native";
-import { Button, List, TextInput } from "react-native-paper";
+import { Button, Divider, List, TextInput } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
+import { toast } from "sonner-native";
 
 export default function MenuScreen() {
   const { addMeal, loading } = useMealContext();
@@ -77,6 +78,10 @@ export default function MenuScreen() {
     const category = categories.find(
       (category) => category.name === id_category
     );
+    if (!category && !id_category) {
+      toast.error("Selecciona una categoría para el item");
+      return;
+    }
     if (category) {
       addMeal({
         ...data,
@@ -192,6 +197,7 @@ export default function MenuScreen() {
             </View>
           )}
         />
+        <Divider />
         <Controller
           control={control}
           name="id_category"
@@ -199,11 +205,15 @@ export default function MenuScreen() {
             required: "Requerido",
           }}
           render={({ field: { onChange, value } }) => (
-            <View className="mb-4">
+            <View>
               <List.Section>
                 <List.Accordion
                   expanded={expanded}
                   title={value}
+                  style={{
+                    paddingVertical: 0,
+                    marginTop: 0,
+                  }}
                   onPress={() => setExpanded(!expanded)}
                 >
                   {categories.map((category) => (
@@ -216,6 +226,17 @@ export default function MenuScreen() {
                       }}
                     />
                   ))}
+                  {categories.length === 0 && (
+                    <List.Item
+                      style={{
+                        opacity: 0.3,
+                      }}
+                      title="No hay categorías"
+                      onPress={() => {
+                        setExpanded(!expanded);
+                      }}
+                    />
+                  )}
                 </List.Accordion>
               </List.Section>
               {errors.id_category && (
@@ -226,6 +247,7 @@ export default function MenuScreen() {
             </View>
           )}
         />
+        <Divider />
 
         <Button
           mode="contained"

@@ -10,6 +10,7 @@ import {
   IconButton,
   Text,
 } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 export default function CustomersScreen() {
   const { deleteCustomer, customers, getCustomers, loading, addCustomer } =
     useCustomer();
@@ -90,18 +91,18 @@ export default function CustomersScreen() {
         data={customers}
         estimatedItemSize={200}
         horizontal={false}
+        ListEmptyComponent={
+          <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">
+            <Image
+              source={{
+                uri: "https://cdn-icons-png.flaticon.com/128/17768/17768731.png",
+              }}
+              style={{ width: 100, height: 100, opacity: 0.5 }}
+            />
+            <Text style={{ color: "gray" }}>No hay clientes para mostrar</Text>
+          </SafeAreaView>
+        }
       />
-      {customers?.length === 0 && (
-        <View className="flex flex-col gap-4 items-center justify-center mt-20">
-          <Image
-            source={{
-              uri: "https://img.icons8.com/?size=200&id=119481&format=png&color=000000",
-            }}
-            style={{ width: 100, height: 100 }}
-          />
-          <Text style={{ color: "gray" }}>No hay clientes para mostrar</Text>
-        </View>
-      )}
     </ScrollView>
   );
 }

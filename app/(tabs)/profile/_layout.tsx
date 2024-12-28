@@ -160,6 +160,16 @@ export default function ProfileLayout() {
           }}
         />
         <Stack.Screen
+          name="settings"
+          options={{
+            title: "Configuración",
+            headerLargeTitle: true,
+            headerShadowVisible: true,
+            headerLargeTitleShadowVisible: false,
+            headerBackVisible: true,
+          }}
+        />
+        <Stack.Screen
           name="daily-report"
           options={{
             title: "Reporte",

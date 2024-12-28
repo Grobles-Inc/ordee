@@ -8,7 +8,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { ScrollView, View } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 import { Appbar, Button, Divider, Switch, Text } from "react-native-paper";
 import { toast } from "sonner-native";
 
@@ -21,7 +21,12 @@ export default function AddOrderScreen() {
   const [itemsSelected, setItemsSelected] = useState<IMeal[]>([]);
   const [toGo, setToGo] = useState(false);
   const [updatingOrder, setUpdatingOrder] = useState<IOrder | null>(null);
-  const { addOrder, updateOrder, loading: orderLoading } = useOrderContext();
+  const {
+    addOrder,
+    updateOrder,
+    loading: orderLoading,
+    deleteOrder,
+  } = useOrderContext();
   const { profile } = useAuth();
   const { getCustomers, customers } = useCustomer();
   const [showCustomerModal, setShowCustomerModal] = useState(false);
@@ -51,6 +56,59 @@ export default function AddOrderScreen() {
       getOrderById(id_order);
     }
   }, [id_order]);
+
+  function onDelete() {
+    Alert.alert(
+      "Eliminar orden",
+      "Esta acción eliminara la orden, ¿estás seguro?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Aceptar",
+          onPress: async () => {
+            try {
+              await deleteOrder(updatingOrder?.id as string);
+              router.replace("/orders");
+            } catch (err) {
+              console.error("An error occurred:", err);
+              alert("Algo sucedió mal, vuelve a intentarlo.");
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  }
+
+  function onReset() {
+    Alert.alert(
+      "Resetear order",
+      "Esta acción limpiara todos los datos de la orden, ¿estás seguro?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Aceptar",
+          onPress: async () => {
+            try {
+              reset();
+              setItemsSelected([]);
+              router.back();
+            } catch (err) {
+              console.error("An error occurred:", err);
+              alert("Algo sucedió mal, vuelve a intentarlo.");
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  }
   const { control, handleSubmit, reset, setValue, watch } = useForm<IOrder>({
     defaultValues: {
       id_table: updatingOrder?.id_table,
@@ -176,12 +234,9 @@ export default function AddOrderScreen() {
           titleStyle={{ fontWeight: "bold", color: "white" }}
         />
         <Appbar.Action
-          icon="restore"
+          icon="delete-outline"
           color="white"
-          onPress={() => {
-            reset();
-            setItemsSelected([]);
-          }}
+          onPress={updatingOrder ? onDelete : onReset}
         />
       </Appbar.Header>
       <ScrollView
@@ -265,18 +320,6 @@ export default function AddOrderScreen() {
             />
           </View>
         </View>
-        <Button
-          mode="contained"
-          style={{
-            marginTop: 40,
-            marginHorizontal: 20,
-          }}
-          onPress={updatingOrder ? handleSubmit(onUpdate) : handleSubmit(onAdd)}
-          loading={orderLoading}
-          disabled={isRegisterDisabled}
-        >
-          {updatingOrder ? "Guardar Cambios" : "Registrar Orden"}
-        </Button>
 
         <CustomerFinder
           watch={watch}
@@ -286,6 +329,21 @@ export default function AddOrderScreen() {
           setShowCustomerModal={setShowCustomerModal}
         />
       </ScrollView>
+      <Button
+        mode="contained"
+        style={{
+          position: "absolute",
+          bottom: 40,
+          left: 8,
+          right: 8,
+          marginHorizontal: 20,
+        }}
+        onPress={updatingOrder ? handleSubmit(onUpdate) : handleSubmit(onAdd)}
+        loading={orderLoading}
+        disabled={isRegisterDisabled}
+      >
+        {updatingOrder ? "Guardar Cambios" : "Registrar Orden"}
+      </Button>
     </>
   );
 }

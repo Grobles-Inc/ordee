@@ -171,7 +171,7 @@ export default function DailyReportScreen() {
       setOrderDetails({
         totalOrders: orders.length,
         totalAmount: dailyTotal,
-        peakHour: peakHourLabel || "N/A",
+        peakHour: orders.length > 0 ? peakHourLabel : "N/A",
       });
       setDailyTotals(newDailyTotals);
     } catch (error) {

@@ -4,6 +4,7 @@ import { Image } from "expo-image";
 import React from "react";
 import { Alert, ScrollView, View } from "react-native";
 import { ActivityIndicator, Card, IconButton, Text } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function UsersScreen() {
   const { deleteUser, users, getUsers, profile, loading } = useAuth();
@@ -77,15 +78,15 @@ export default function UsersScreen() {
         estimatedItemSize={200}
         horizontal={false}
         ListEmptyComponent={
-          <View className="flex flex-col gap-4 items-center justify-center mt-20">
+          <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">
             <Image
               source={{
-                uri: "https://img.icons8.com/?size=200&id=119481&format=png&color=000000",
+                uri: "https://cdn-icons-png.flaticon.com/128/17768/17768784.png",
               }}
-              style={{ width: 100, height: 100 }}
+              style={{ width: 100, height: 100, opacity: 0.5 }}
             />
             <Text style={{ color: "gray" }}>No hay usuarios para mostrar</Text>
-          </View>
+          </SafeAreaView>
         }
       />
     </ScrollView>

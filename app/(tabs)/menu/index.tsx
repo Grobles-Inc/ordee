@@ -14,6 +14,7 @@ import {
   Menu,
   Text,
 } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 const MORE_ICON = Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical";
 export default function MenuScreen() {
   const { getMealsByCategoryId, loading, getDailyMeals } = useMealContext();
@@ -92,6 +93,17 @@ export default function MenuScreen() {
               title={category.name}
             />
           ))}
+          {categories.length === 0 && (
+            <Menu.Item
+              style={{
+                opacity: 0.3,
+              }}
+              title="No hay categorías"
+              onPress={() => {
+                setVisible(false);
+              }}
+            />
+          )}
         </Menu>
       </Appbar.Header>
       <View className="flex-1">
@@ -104,15 +116,15 @@ export default function MenuScreen() {
           estimatedItemSize={200}
           horizontal={false}
           ListEmptyComponent={
-            <View className="flex flex-col gap-4 items-center justify-center mt-20">
+            <SafeAreaView className="flex flex-col  items-center justify-center mt-20">
               <Image
                 source={{
-                  uri: "https://img.icons8.com/?size=200&id=119481&format=png&color=000000",
+                  uri: "https://cdn-icons-png.flaticon.com/128/17768/17768786.png",
                 }}
-                style={{ width: 100, height: 100 }}
+                style={{ width: 100, height: 100, opacity: 0.5 }}
               />
               <Text style={{ color: "gray" }}>No hay items para mostrar</Text>
-            </View>
+            </SafeAreaView>
           }
           ListFooterComponent={
             <Text
