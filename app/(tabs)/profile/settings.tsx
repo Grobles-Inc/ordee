@@ -6,7 +6,7 @@ import { Button, RadioButton, Text } from "react-native-paper";
 type AppearanceOption = "light" | "dark" | "system";
 
 export default function SettingsScreen() {
-  const [appearance, setAppearance] = useState<AppearanceOption>("system");
+  const [appearance, setAppearance] = useState<AppearanceOption>("light");
   const { signOut } = useAuth();
 
   return (
@@ -15,32 +15,35 @@ export default function SettingsScreen() {
       contentInsetAdjustmentBehavior="automatic"
     >
       <View className="flex-row justify-between mb-8">
-        {["light", "dark", "system"].map((mode) => (
-          <View key={mode} className="items-center">
-            <Image
-              source={{
-                uri: `https://via.placeholder.com/150?text=${mode}+mode`,
-              }}
-              className="w-32 h-64 rounded-lg mb-2"
-            />
-            <RadioButton.Android
-              value={mode}
-              status={appearance === mode ? "checked" : "unchecked"}
-              onPress={() => setAppearance(mode as AppearanceOption)}
-              color="#007AFF"
-            />
-            <Text className=" capitalize">
-              {mode === "system"
-                ? "Automático"
-                : mode === "light"
-                ? "Claro"
-                : "Oscuro"}
-            </Text>
-          </View>
-        ))}
+        <View className="items-center">
+          <Image
+            source={require("../../../assets/images/light.png")}
+            className="w-48 h-72 rounded-lg mb-2"
+          />
+          <RadioButton.Android
+            value="light"
+            status={appearance === "light" ? "checked" : "unchecked"}
+            onPress={() => setAppearance("light")}
+            color="#007AFF"
+          />
+          <Text className=" capitalize">Claro</Text>
+        </View>
+        <View className="items-center">
+          <Image
+            source={require("../../../assets/images/dark.png")}
+            className="w-48 h-72 rounded-lg mb-2"
+          />
+          <RadioButton.Android
+            value="dark"
+            status={appearance === "dark" ? "checked" : "unchecked"}
+            onPress={() => setAppearance("dark")}
+            color="#007AFF"
+          />
+          <Text className=" capitalize">Oscuro</Text>
+        </View>
       </View>
 
-      <Text className="text-base text-gray-700 dark:text-gray-300 mb-4">
+      <Text variant="bodyMedium" style={{ color: "gray" }} className=" mb-4">
         Selecciona tu modo de visualización y cambia el tema de la aplicación. O
         si deseas accede a la configuración desde la barra de menú en la esquina
         superior derecha.
