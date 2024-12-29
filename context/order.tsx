@@ -12,6 +12,7 @@ export const OrderContext = createContext<IOrderContextProvider>({
   addTable: async () => {},
   getOrderById: async (id: string): Promise<IOrder> => ({} as IOrder),
   orders: [],
+  getOrdersCountByMonth: async () => 0,
   order: {} as IOrder,
   loading: false,
   getPaidOrders: async () => [],
@@ -60,6 +61,20 @@ export const OrderContextProvider = ({
       subscription.unsubscribe();
     };
   }, []);
+
+  const getOrdersCountByMonth = async () => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const { error, count } = await supabase
+      .from("orders")
+      .select("*", { count: "exact" })
+      .eq("id_tenant", profile.id_tenant)
+      .gte("date", new Date(currentYear, currentMonth, 1).toISOString())
+      .lt("date", new Date(currentYear, currentMonth + 1, 1).toISOString());
+    if (error) throw error;
+    return count;
+  };
 
   const addOrder = async (order: IOrder) => {
     setLoading(true);
@@ -315,6 +330,7 @@ export const OrderContextProvider = ({
         updateOrderServedStatus,
         order,
         getDailyPaidOrders,
+        getOrdersCountByMonth,
         updatePaidStatus,
         getUnpaidOrders,
       }}

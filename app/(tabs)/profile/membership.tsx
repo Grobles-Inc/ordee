@@ -1,7 +1,7 @@
 import { useAuth } from "@/context";
 import { AntDesign } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Alert, SafeAreaView, View } from "react-native";
+import { Alert, Linking, SafeAreaView, View } from "react-native";
 import { Button, Divider, Text } from "react-native-paper";
 
 export default function Membership() {
@@ -16,7 +16,7 @@ export default function Membership() {
   });
 
   const acquiredAtFormatted = new Date(
-    profile.tenants.acquired_at
+    profile.tenants.updated_at
   ).toLocaleDateString("es-ES", {
     year: "numeric",
     month: "2-digit",
@@ -49,7 +49,7 @@ export default function Membership() {
                 color: "gray",
               }}
             >
-              Ciclo Facturación: <Text>{acquiredAtFormatted}</Text>
+              Ciclo Facturación: <Text>Mensual </Text>
             </Text>
           </View>
         </View>
@@ -92,12 +92,9 @@ export default function Membership() {
 
         <Button
           mode="contained"
-          onPress={() => {
-            Alert.alert(
-              "Adquisicion",
-              "Abrir el modal de paywall screen de Ordee"
-            );
-          }}
+          onPress={() =>
+            Linking.openURL("https://cal.com/miguel-requena/meeting-ordee")
+          }
         >
           Adquirir Pro
         </Button>

@@ -82,9 +82,7 @@ export default function ProfileLayout() {
           name="index"
           options={{
             title: "Mi Perfil",
-            headerLargeTitle: false,
-            headerShadowVisible: false,
-            headerLargeTitleShadowVisible: false,
+            headerShown: false,
             //FIX: Uncomment this line to add a theme toggle button to the profile screen
             // headerRight: () => (
             //   <IconButton
