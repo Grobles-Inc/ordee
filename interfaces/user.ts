@@ -6,7 +6,7 @@ export interface ITenant {
   logo: string;
   created_at: Date;
   is_premium: boolean;
-  acquired_at: Date;
+  updated_at: Date;
 }
 export interface IUser {
   id: string;

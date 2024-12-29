@@ -1,58 +1,110 @@
-import { useAuth } from "@/context";
+import { useAuth, useOrderContext } from "@/context";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { Link, useRouter } from "expo-router";
 import React from "react";
-import { ScrollView, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import {
+  Linking,
+  ScrollView,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
+import { Button, Divider, ProgressBar, Text } from "react-native-paper";
 export default function ProfileScreen() {
-  const { profile } = useAuth();
+  const { profile, session } = useAuth();
+  const [count, setCount] = React.useState(0);
+  const { getOrdersCountByMonth } = useOrderContext();
   const router = useRouter();
+  const headerHeight = useHeaderHeight();
+  const colorScheme = useColorScheme();
+  React.useEffect(() => {
+    getOrdersCountByMonth().then((count) => setCount(count as number));
+  }, []);
 
-  const getRoleLabel = (role: string) => {
-    const roles = {
-      user: "Mesero",
-      guest: "Cocinero",
-      admin: "Administrador",
-    };
-    return roles[role as keyof typeof roles] || role;
-  };
+  const value = count / 500;
 
   return (
-    <ScrollView className="bg-white p-4 dark:bg-zinc-900">
-      <View className="flex flex-col items-center justify-center mb-10">
+    <ScrollView
+      className="bg-white dark:bg-zinc-900 "
+      contentContainerStyle={{ padding: 16 }}
+      style={{ marginTop: headerHeight }}
+      contentInsetAdjustmentBehavior="automatic"
+    >
+      <View className="flex flex-col gap-4 items-center justify-center">
         <Image
-          source={{
-            uri: profile.tenants?.logo,
-          }}
+          accessibilityLabel="profile_logo"
           style={{
-            width: 100,
-            height: 100,
-          }}
-        />
-      </View>
-
-      <View className="flex flex-row gap-4 items-center">
-        <Image
-          accessibilityLabel="tenant-logo"
-          style={{
-            width: 50,
-            height: 50,
+            width: 80,
+            height: 80,
+            borderRadius: 100,
           }}
           source={{
             uri: profile.image_url,
           }}
         />
 
-        <View className="flex flex-col">
-          <Text variant="titleLarge">
-            {profile.name} {profile.last_name}
-          </Text>
-          <Text variant="labelMedium" style={{ color: "gray" }}>
-            {getRoleLabel(profile.role)}
-          </Text>
+        <View className="flex flex-col items-center gap-4">
+          <View className="flex flex-col items-center">
+            <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
+              {profile.tenants?.name}
+            </Text>
+            <Text style={{ color: "gray" }}>{session?.user.email}</Text>
+          </View>
+          <Button onPress={() => alert("Editar Perfil")} mode="contained">
+            Editar perfil
+          </Button>
         </View>
       </View>
-      <View className="flex flex-col gap-2 mt-10 items-start ">
+      <View className="flex flex-col gap-4 mt-10 items-start ">
+        <View className="bg-zinc-100 p-4 rounded-xl dark:bg-zinc-800 w-full flex flex-col gap-4">
+          <Text variant="titleSmall" style={{ color: "gray" }}>
+            Ordenes Mensuales
+          </Text>
+
+          <View>
+            <View className="flex-row justify-between mb-2">
+              <Text className="text-gray-700">{count}</Text>
+              <Text className="font-semibold">500</Text>
+            </View>
+            <ProgressBar
+              progress={Number(value.toFixed(2))}
+              style={{ height: 10, borderRadius: 5 }}
+              color={colorScheme === "dark" ? "#FF6347" : "#FF4500"}
+              className="h-2 rounded-full"
+            />
+          </View>
+        </View>
+        <LinearGradient
+          colors={["#FF6347", "#FF4500"]}
+          style={{ marginTop: 10, borderRadius: 10, width: "100%" }}
+        >
+          <TouchableOpacity
+            className="flex-row flex items-center justify-between  p-4"
+            onPress={() =>
+              Linking.openURL("https://cal.com/miguel-requena/meeting-ordee")
+            }
+          >
+            <View className=" flex flex-col gap-4 w-4/5">
+              <Text
+                variant="titleLarge"
+                style={{ fontWeight: "bold", color: "white" }}
+              >
+                Adquirir Pro
+              </Text>
+              <Text className="opacity-80 " style={{ color: "white" }}>
+                Para poder registrar ilimitadamante ordenes y demas
+                funcionalidades premium.
+              </Text>
+            </View>
+            <View className="bg-white/20 rounded-full p-2 ">
+              <FontAwesome5 name="check-circle" size={32} color="white" />
+            </View>
+          </TouchableOpacity>
+        </LinearGradient>
+        <Divider className="my-4" />
         <Button
           icon="account-group-outline"
           onPress={() => router.push("/(tabs)/profile/users")}
@@ -97,7 +149,7 @@ export default function ProfileScreen() {
         </Button>
       </View>
 
-      <Text className="text-muted-foreground opacity-40  mt-28 mx-auto ">
+      <Text className="text-muted-foreground opacity-40  mt-36 mx-auto ">
         {profile.id}
       </Text>
       <Text className="text-muted-foreground opacity-40   mx-auto text-sm">
