@@ -20,14 +20,14 @@ export default function AddOrderScreen() {
     id_order: string;
   }>();
   const [itemsSelected, setItemsSelected] = useState<IMeal[]>([]);
-  const [toGo, setToGo] = useState(false);
-  const [updatingOrder, setUpdatingOrder] = useState<IOrder | null>(null);
   const {
     addOrder,
     updateOrder,
     loading: orderLoading,
     deleteOrder,
     getOrdersCountByMonth,
+    getOrderForUpdate,
+    updatingOrder,
   } = useOrderContext();
   const { profile } = useAuth();
   const { getCustomers, customers } = useCustomer();
@@ -53,20 +53,6 @@ export default function AddOrderScreen() {
     });
   }
   if (!profile) return null;
-  async function getOrderById(id: string) {
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("id", id)
-      .single();
-    setUpdatingOrder(data);
-    if (!data) return;
-    if (error) {
-      console.error("Error getting order:", error);
-      alert("Error al obtener o pedido");
-    }
-    return;
-  }
 
   useEffect(() => {
     getCustomers();
@@ -75,8 +61,9 @@ export default function AddOrderScreen() {
 
   useEffect(() => {
     if (id_order) {
-      getOrderById(id_order);
+      getOrderForUpdate(id_order);
     }
+    console.log(updatingOrder);
   }, [id_order]);
 
   function onDelete() {
@@ -137,6 +124,7 @@ export default function AddOrderScreen() {
       id_customer: updatingOrder?.id_customer ? updatingOrder?.id_customer : "",
       items: updatingOrder?.items || ([] as IMeal[]),
       paid: updatingOrder?.paid,
+      to_go: updatingOrder?.to_go,
       served: updatingOrder?.served,
       total: updatingOrder?.total,
     },
@@ -155,7 +143,7 @@ export default function AddOrderScreen() {
       const orderData: IOrder = {
         ...data,
         served: updatingOrder?.served || data.served,
-        to_go: updatingOrder?.to_go || data.to_go,
+        to_go: data.to_go,
         id: updatingOrder?.id || data.id,
         id_user: updatingOrder?.id_user || data.id_user,
         paid: updatingOrder?.paid || data.paid,
@@ -205,6 +193,7 @@ export default function AddOrderScreen() {
       const orderData: IOrder = {
         ...data,
         served: false,
+
         id_user: profile.id,
         paid: false,
         id_table: id_table,
@@ -329,12 +318,16 @@ export default function AddOrderScreen() {
               ) : null;
             })()}
 
-            <View className="flex flex-row gap-2 justify-between items-center p-4">
-              <View>
-                <Text variant="bodyLarge">Orden para llevar</Text>
-              </View>
-              <Switch value={toGo} onValueChange={() => setToGo(!toGo)} />
-            </View>
+            <Controller
+              control={control}
+              name="to_go"
+              render={({ field: { onChange, value } }) => (
+                <View className="flex flex-row justify-between items-center p-4">
+                  <Text variant="bodyLarge">Orden para llevar</Text>
+                  <Switch value={value} onValueChange={onChange} />
+                </View>
+              )}
+            />
             <Divider />
             <OrderItemsAccordion
               items={itemsSelected}

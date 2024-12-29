@@ -68,9 +68,11 @@ export default function ProfileLayout() {
       description,
     };
     addCategory(data);
+    categoryBottomSheetRef.current?.close();
     setName("");
     setDescription("");
   };
+
   useEffect(() => {
     customerBottomSheetRef.current?.close();
     categoryBottomSheetRef.current?.close();

@@ -26,11 +26,7 @@ export default function MealCard({ meal }: { meal: IMeal }) {
     ]);
   };
   return (
-    <Card
-      style={{
-        margin: 20,
-      }}
-    >
+    <Card>
       <Card.Cover
         source={{
           uri: meal.image_url,

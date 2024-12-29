@@ -1,10 +1,12 @@
 import { IMeal, IMealContextProvider } from "@/interfaces";
 import { supabase } from "@/utils/supabase";
 import { FontAwesome } from "@expo/vector-icons";
+import { endOfDay, startOfDay } from "date-fns";
 import * as React from "react";
 import { createContext, useContext } from "react";
 import { toast } from "sonner-native";
 import { useAuth } from "./auth";
+
 export const MealContext = createContext<IMealContextProvider>({
   addMeal: async () => {},
   getMealById: async (id: string): Promise<IMeal> => ({} as IMeal),
@@ -47,17 +49,24 @@ export const MealContextProvider = ({
   };
 
   const getDailyMeals = async () => {
+    setLoading(true);
+    const today = new Date();
+    const formattedDate = today.toISOString().split("T")[0];
     const { data, error } = await supabase
       .from("meals")
       .select("*")
       .eq("id_tenant", profile.id_tenant)
       .eq("stock", true)
+      .eq("created_at", formattedDate)
       .order("created_at", { ascending: false });
+
     if (error) {
       console.error("Error fetching daily meals:", error);
       return null;
     }
+
     setDailyMeals(data);
+    setLoading(false);
     return data;
   };
 

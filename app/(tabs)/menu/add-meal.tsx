@@ -9,15 +9,14 @@ import { Button, Divider, List, TextInput } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { toast } from "sonner-native";
+import { router } from "expo-router";
 
-export default function MenuScreen() {
+export default function AddMealScreen() {
   const { addMeal, loading } = useMealContext();
   const [image_url, setImage_url] = React.useState<string>();
   const [cloud_image_url, setCloud_image_url] = React.useState<string>();
   const { categories, getCategories } = useCategoryContext();
   const [expanded, setExpanded] = React.useState(false);
-
-  const headerHeight = useHeaderHeight();
   const {
     control,
     handleSubmit,
@@ -91,6 +90,7 @@ export default function MenuScreen() {
       });
       reset();
     }
+    router.back();
   };
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic">

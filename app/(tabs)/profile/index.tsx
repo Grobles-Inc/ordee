@@ -1,9 +1,10 @@
+import PushNotification from "@/components/push-notification";
 import { useAuth, useOrderContext } from "@/context";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
   Linking,
@@ -16,6 +17,7 @@ import { Button, Divider, ProgressBar, Text } from "react-native-paper";
 export default function ProfileScreen() {
   const { profile, session } = useAuth();
   const [count, setCount] = React.useState(0);
+  const [expoPushToken, setExpoPushToken] = React.useState("");
   const { getOrdersCountByMonth } = useOrderContext();
   const router = useRouter();
   const headerHeight = useHeaderHeight();
@@ -33,6 +35,7 @@ export default function ProfileScreen() {
       style={{ marginTop: headerHeight }}
       contentInsetAdjustmentBehavior="automatic"
     >
+      <PushNotification setExpoPushToken={setExpoPushToken} count={count} />
       <View className="flex flex-col gap-4 items-center justify-center">
         <Image
           accessibilityLabel="profile_logo"

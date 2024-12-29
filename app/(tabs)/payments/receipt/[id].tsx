@@ -1,25 +1,23 @@
 import { useOrderContext } from "@/context";
 import { IOrder } from "@/interfaces";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import * as Print from "expo-print";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { Image, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import {
   ActivityIndicator,
+  Avatar,
   Button,
   Chip,
   Divider,
-  Modal,
-  Portal,
   Text,
 } from "react-native-paper";
 
 export default function ReceiptDetailsScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const [order, setOrder] = useState<IOrder>({} as IOrder);
-  const [modalVisible, setModalVisible] = useState(false);
-  const { getOrderById, loading, updatePaidStatus } = useOrderContext();
+  const { getOrderById, loading } = useOrderContext();
   React.useEffect(() => {
     getOrderById(params.id).then((order) => {
       setOrder(order);
@@ -35,139 +33,152 @@ export default function ReceiptDetailsScreen() {
     });
 
     return `
-      <html>
-        <head>
-          <style>
-            @page {
-              size: 80mm auto;
-              margin: 0;
-            }
-
+    <!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page {
+            size: 80mm auto;
+            margin: 0;
+        }
+        @media print {
             body {
-              font-family: 'Courier New', monospace;
-              width: 80mm;
-              margin: 0;
-              padding: 5mm;
-              box-sizing: border-box;
+                width: 80mm !important;
             }
-
-            /* Para impresión */
-            @media print {
-              body {
-                width: 80mm;
-              }
-              .page-break {
+            .page-break {
                 page-break-after: always;
-              }
             }
-            .logo {
-              text-align: center;
-              font-size: 24px;
-              margin-bottom: 20px;
-            }
-            .logo h1 {
-              font-size: 24px;
-            }
-            .logo img {
-              max-width: 150px;
-              height: auto;
-              margin: 0 auto;
-              display: block;
-            }
-            .header-info {
-              font-size: 12px;
-              text-align: center;
-              margin-bottom: 20px;
-            }
-            .table-info {
-              margin-bottom: 15px;
-              border-bottom: 1px solid #ccc;
-              padding-bottom: 5px;
-            }
-            .items {
-              width: 100%;
-              margin-bottom: 15px;
-            }
-            .items td {
-              padding: 3px 0;
-            }
-            .price-col {
-              text-align: right;
-            }
-            .total-section {
-              border-top: 1px solid #ccc;
-              padding-top: 10px;
-              margin-top: 10px;
-            }
-            .datetime {
-              text-align: center;
-              font-size: 12px;
-              margin-top: 10px;
-            }
-            .footer {
-              text-align: center;
-              font-size: 12px;
-              margin-top: 20px;
-            }
-          </style>
-        </head>
-        <body>
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 8px;
+            font-size: 12px;
+        }
+        .header-info {
+            text-align: center;
+            margin-bottom: 8px;
+        }
 
-        <div class="header-info">
-        <img src="${order.tenants?.logo}" alt="logo" width="100" height="100" >
-          <div class="logo">
-            <h1>${order.tenants?.name}</h1>
-          <div class="table-info">
-            Mesa: ${order.id_table}<br>
-            Atendido por: ${order?.users?.name}<br>
-            Para llevar: ${order.to_go ? "Sí" : "No"}
-          </div>
+        .logo img {
+            max-width: 60px;
+            height: auto;
+            margin-bottom: 4px;
+            isplay: flex;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .logo h1 {
+            margin: 0;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .items {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0;
+            text-align: left;
+        }
+        .items th {
+            font-size: 11px;
+            padding: 2px;
+            border-bottom: 1px solid #000;
+            white-space: nowrap;
+        }
+        .items td {
+            padding: 2px;
+            font-size: 11px;
+            border-bottom: 1px dotted #ccc;
+        }
+        .item-name {
+            max-width: 100x;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        .quantity-col {
+            width: 30px;
+            text-align: center;
+        }
+        .price-col {
+            width: 40px;
+            text-align: right;
+            white-space: nowrap;
+        }
+        .total-section {
+            margin: 8px 0;
+            padding: 4px 0;
+            text-align: left;
+            border-bottom: 1px solid #000;
+            font-size: 12px;
+        }
+        .datetime {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            margin: 4px 0;
+            opacity: 0.7;
+        }
+        .datetime div {
+            margin-right: 8px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-info">
+        <div class="logo">
+               <img src="${order.tenants?.logo}" alt="logo">
 
-          <table class="items">
+        <h1>${order.tenants?.name}</h1>
+        </div>
+        <table class="items">
             <tr>
-              <th align="left">Ítem</th>
-              <th align="center">Uds.</th>
-              <th align="right">Precio</th>
-              <th align="right">Total</th>
+                <th align="left">Ítem</th>
+                <th align="center">Uds.</th>
+                <th align="right">Precio</th>
+                <th align="right">Total</th>
             </tr>
             ${order?.items
               .map(
                 (item) => `
-              <tr>
-                <td>${item.name}</td>
-                <td align="center">${item.quantity}</td>
-                <td class="price-col">${item.price.toFixed(2)}</td>
-                <td class="price-col">${(item.price * item.quantity).toFixed(
-                  2
-                )}</td>
-              </tr>
+                <tr>
+                    <td class="item-name">${item.name}</td>
+                    <td class="quantity-col">${item.quantity}</td>
+                    <td class="price-col">${item.price.toFixed(2)}</td>
+                    <td class="price-col">${(
+                      item.price * item.quantity
+                    ).toFixed(2)}</td>
+                </tr>
             `
               )
               .join("")}
-          </table>
-
-          <div class="total-section">
+        </table>
+        <div class="total-section">
             <table width="100%">
-
-              <tr>
-                <td><strong>Total:</strong></td>
-                <td align="right"><strong>S/. ${order.total.toFixed(
-                  2
-                )}</strong></td>
-              </tr>
+                <tr>
+                    <td><strong>Total:</strong></td>
+                    <td align="right"><strong>S/. ${order.total.toFixed(
+                      2
+                    )}</strong></td>
+                </tr>
             </table>
-          </div>
-
-          <div class="datetime">
-            Fecha: ${dateStr}<br>
-            Hora: ${timeStr}
-          </div>
-
-          <div class="footer">
-            GRACIAS POR SU VISITA<br>
-          </div>
-        </body>
-      </html>
+        </div>
+        <div class="datetime">
+            <div>Mesa: ${order.id_table}</div>
+            <div>Fecha: ${dateStr}</div>
+            <div>Hora: ${timeStr}</div>
+        </div>
+        <div class="footer">
+            GRACIAS POR SU VISITA!
+        </div>
+    </div>
+</body>
+</html>
     `;
   };
   const printOrder = async () => {
@@ -176,6 +187,13 @@ export default function ReceiptDetailsScreen() {
       html,
     });
   };
+  const orderDate = new Date(order.date ? order.date : Date.now());
+  const dateStr = orderDate.toLocaleDateString("es-ES", {
+    month: "2-digit",
+    day: "numeric",
+    year: "2-digit",
+  });
+
   return (
     <>
       <ScrollView
@@ -192,9 +210,9 @@ export default function ReceiptDetailsScreen() {
           <View className="flex flex-col gap-10">
             <View className="flex flex-col gap-4">
               <View className="flex flex-row gap-2">
-                <Chip>{order.users?.name}</Chip>
-                <Chip>{order.to_go ? "Para llevar" : "Para mesa"}</Chip>
+                <Chip icon="account">{order.tenants?.name}</Chip>
                 {order.free && <Chip>Gratis</Chip>}
+                <Chip icon="calendar-check">{dateStr}</Chip>
               </View>
               {order.id_customer && (
                 <View className="flex flex-col gap-1 items-start">
@@ -254,7 +272,7 @@ export default function ReceiptDetailsScreen() {
           borderRadius: 32,
           width: "90%",
         }}
-        icon="file-download-outline"
+        icon="printer-outline"
         onPress={printOrder}
       >
         Imprimir Comprobante

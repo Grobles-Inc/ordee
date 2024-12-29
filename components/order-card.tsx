@@ -34,7 +34,10 @@ export default function OrderCard({ order }: { order: IOrder }) {
         right={(props) => (
           <View className="flex flex-col gap-2">
             <View className="flex flex-row items-center gap-2 mr-4">
-              <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
+              <Text
+                variant="bodyMedium"
+                style={{ fontWeight: "bold", textTransform: "uppercase" }}
+              >
                 {formattedDate}
               </Text>
               <FontAwesome6 name="chevron-right" size={16} color="#a1a1aa" />

@@ -17,16 +17,18 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 const MORE_ICON = Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical";
 export default function MenuScreen() {
-  const { getMealsByCategoryId, loading, getDailyMeals } = useMealContext();
+  const { getMealsByCategoryId, loading, getDailyMeals, meals } =
+    useMealContext();
   const [mealsByCategoryId, setMealsByCategoryId] = React.useState<
     IMeal[] | undefined
   >();
   const { categories, getCategories } = useCategoryContext();
-  const [categoryId, setCategoryId] = React.useState<string | undefined>("2");
+  const [categoryId, setCategoryId] = React.useState<string | undefined>("");
   const [refreshing, setRefreshing] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
   React.useEffect(() => {
     getCategories();
+    getDailyMeals();
   }, []);
   async function onRefresh() {
     setRefreshing(true);
@@ -110,9 +112,12 @@ export default function MenuScreen() {
         {loading && <ActivityIndicator className="mt-20" />}
         <FlashList
           refreshing={refreshing}
+          contentContainerStyle={{
+            padding: 16,
+          }}
           onRefresh={onRefresh}
           renderItem={({ item: meal }) => <MealCard meal={meal} />}
-          data={mealsByCategoryId}
+          data={categoryId ? mealsByCategoryId : meals}
           estimatedItemSize={200}
           horizontal={false}
           ListEmptyComponent={

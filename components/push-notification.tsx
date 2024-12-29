@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from "react";
-import { Text, View, Button, Platform } from "react-native";
+import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
+import { useEffect, useRef } from "react";
+import { Platform } from "react-native";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -12,30 +12,46 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export default function PushNotification() {
-  const [expoPushToken, setExpoPushToken] = useState("");
-  const [channels, setChannels] = useState<Notifications.NotificationChannel[]>(
-    []
-  );
-  const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
-  >(undefined);
+export default function PushNotification({
+  setExpoPushToken,
+  count,
+}: {
+  setExpoPushToken: React.Dispatch<React.SetStateAction<string>>;
+  count: number;
+}) {
   const notificationListener = useRef<Notifications.EventSubscription>();
   const responseListener = useRef<Notifications.EventSubscription>();
 
+  useEffect(() => {
+    const scheduleNotification = async () => {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Límite de órdenes alcanzado",
+          body: "Se ha alcanzado el límite de 500 órdenes para este mes",
+          data: { data: "500", test: { test1: "152" } },
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: 3,
+        },
+      });
+    };
+
+    if (count === 500) {
+      scheduleNotification();
+    }
+  }, [count]);
   useEffect(() => {
     registerForPushNotificationsAsync().then(
       (token) => token && setExpoPushToken(token)
     );
 
     if (Platform.OS === "android") {
-      Notifications.getNotificationChannelsAsync().then((value) =>
-        setChannels(value ?? [])
-      );
+      Notifications.getNotificationChannelsAsync();
     }
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
-        setNotification(notification);
+        console.log(notification);
       });
 
     responseListener.current =
@@ -52,54 +68,7 @@ export default function PushNotification() {
         Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
-
-  return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "space-around",
-      }}
-    >
-      <Text>Your expo push token: {expoPushToken}</Text>
-      <Text>{`Channels: ${JSON.stringify(
-        channels.map((c) => c.id),
-        null,
-        2
-      )}`}</Text>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Text>
-          Title: {notification && notification.request.content.title}{" "}
-        </Text>
-        <Text>Body: {notification && notification.request.content.body}</Text>
-        <Text>
-          Data:{" "}
-          {notification && JSON.stringify(notification.request.content.data)}
-        </Text>
-      </View>
-      <Button
-        title="Mostrar Notification"
-        onPress={async () => {
-          await schedulePushNotification();
-        }}
-      />
-    </View>
-  );
-}
-
-async function schedulePushNotification() {
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "Límite de ordenes alcanzado",
-      body: "Se ha alcanzado el límite de 500 ordenes para este mes",
-      data: { data: "500", test: { test1: "152" } },
-    },
-    trigger: {
-      //MODIFIED FROM DOCS
-      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-      seconds: 3,
-    },
-  });
+  return null;
 }
 
 async function registerForPushNotificationsAsync() {

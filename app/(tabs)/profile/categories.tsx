@@ -1,8 +1,9 @@
 import { useCategoryContext } from "@/context/category";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
-import { Alert, ScrollView, View } from "react-native";
+import { Alert, ScrollView } from "react-native";
 import { ActivityIndicator, Card, IconButton, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -51,6 +52,9 @@ export default function CategoriesScreen() {
             >
               <Card.Title
                 title={`${category.name}`}
+                left={(props) => (
+                  <FontAwesome5 name="tag" color="#FF6247" {...props} />
+                )}
                 right={(props) => (
                   <IconButton
                     {...props}

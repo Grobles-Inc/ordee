@@ -1,3 +1,4 @@
+import { useOrderContext } from "@/context";
 import { useCategoryContext } from "@/context/category";
 import { useMealContext } from "@/context/meals";
 import { IMeal } from "@/interfaces";
@@ -27,11 +28,16 @@ export default function OrderItemsAccordion({
     getCategories,
     loading: categoriesLoading,
   } = useCategoryContext();
+  const { updatingOrder } = useOrderContext();
   const { getMealsByCategoryId, loading: mealsLoading } = useMealContext();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [categoryMeals, setCategoryMeals] = useState<Record<string, IMeal[]>>(
     {}
   );
+
+  useEffect(() => {
+    setItems(updatingOrder?.items || []);
+  }, [updatingOrder]);
 
   const handleQuantityChange = (item: IMeal, quantity: number) => {
     const newItemsSelected = [...items];

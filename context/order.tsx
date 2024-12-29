@@ -10,6 +10,8 @@ export const OrderContext = createContext<IOrderContextProvider>({
   addOrder: async () => {},
   getUnservedOrders: async () => [],
   addTable: async () => {},
+  getOrderForUpdate: async () => ({} as IOrder),
+  updatingOrder: null,
   getOrderById: async (id: string): Promise<IOrder> => ({} as IOrder),
   orders: [],
   getOrdersCountByMonth: async () => 0,
@@ -32,6 +34,7 @@ export const OrderContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [orders, setOrders] = React.useState<IOrder[]>([]);
+  const [updatingOrder, setUpdatingOrder] = React.useState<IOrder | null>(null);
   const [order, setOrder] = React.useState<IOrder>({} as IOrder);
   const { profile } = useAuth();
   const [paidOrders, setPaidOrders] = React.useState<IOrder[]>([]);
@@ -206,6 +209,19 @@ export const OrderContextProvider = ({
     return data;
   };
 
+  const getOrderForUpdate = async (id: string) => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("id", id)
+      .single();
+    if (error) throw error;
+    setLoading(false);
+    setUpdatingOrder(data);
+    return data;
+  };
+
   async function getUnservedOrders() {
     setLoading(true);
     const { data, error } = await supabase
@@ -307,7 +323,8 @@ export const OrderContextProvider = ({
       .from("orders")
       .select("*")
       .eq("paid", false)
-      .eq("id_tenant", profile?.id_tenant);
+      .eq("id_tenant", profile?.id_tenant)
+      .order("date", { ascending: false });
     if (error) throw error;
     setLoading(false);
     return data;
@@ -324,11 +341,13 @@ export const OrderContextProvider = ({
         paidOrders,
         getPaidOrders,
         getUnservedOrders,
+        updatingOrder,
         updateOrder,
         addOrder,
         addTable,
         updateOrderServedStatus,
         order,
+        getOrderForUpdate,
         getDailyPaidOrders,
         getOrdersCountByMonth,
         updatePaidStatus,
