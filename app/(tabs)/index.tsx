@@ -39,6 +39,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useOrderContext } from "@/context";
+import { toast } from "sonner-native";
+import { FontAwesome } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 
 function TableSvg({ table, index }: { table: ITable; index: number }) {
   const rotation = useSharedValue(90);
@@ -57,6 +60,33 @@ function TableSvg({ table, index }: { table: ITable; index: number }) {
       transform: [{ rotateY: `${rotation.value}deg` }],
     };
   });
+  const deleteTable = async (id: string) => {
+    await supabase.from("tables").delete().eq("id", id);
+  };
+
+  function onLongPress() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Alert.alert("Borrar mesa", "¿Estás seguro de borrar esta mesa?", [
+      {
+        text: "Cancelar",
+        style: "cancel",
+      },
+      {
+        text: "Aceptar",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await deleteTable(table.id as string);
+            toast.success("Mesa borrada!", {
+              icon: <FontAwesome name="check-circle" size={20} color="green" />,
+            });
+          } catch (error: any) {
+            alert("Error al eliminar: " + error.message);
+          }
+        },
+      },
+    ]);
+  }
 
   function onPress() {
     if (table.status) {
@@ -82,7 +112,7 @@ function TableSvg({ table, index }: { table: ITable; index: number }) {
 
   return (
     <Animated.View style={animatedStyle}>
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={onPress} onLongPress={onLongPress}>
         <View className="flex flex-col items-center justify-center">
           {table.status ? (
             <Text className="text-2xl font-bold dark:text-white">
@@ -157,11 +187,10 @@ export default function TablesScreen() {
     }
   }, []);
 
-  const setupSubscription = useCallback(() => {
-    if (channelRef.current) return;
-
-    channelRef.current = supabase
-      .channel("table-changes")
+  useEffect(() => {
+    getTables();
+    supabase
+      .channel("db-changes")
       .on(
         "postgres_changes",
         {
@@ -169,25 +198,23 @@ export default function TablesScreen() {
           schema: "public",
           table: "tables",
         },
-        () => {
+        (payload) => {
           getTables();
         }
       )
       .subscribe();
-  }, [getTables]);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       getTables();
-      setupSubscription();
-
       return () => {
         if (channelRef.current) {
           channelRef.current.unsubscribe();
           channelRef.current = null;
         }
       };
-    }, [getTables, setupSubscription])
+    }, [getTables])
   );
 
   if (isLoading) {

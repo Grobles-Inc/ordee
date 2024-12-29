@@ -192,7 +192,7 @@ export default function AddOrderScreen() {
       const orderData: IOrder = {
         ...data,
         served: false,
-
+        to_go: data.to_go,
         id_user: profile.id,
         paid: false,
         id_table: id_table,

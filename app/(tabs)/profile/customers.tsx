@@ -1,4 +1,6 @@
+import { CustomerSkeleton } from "@/components/skeleton/customer";
 import { useCustomer } from "@/context/customer";
+import { supabase } from "@/utils/supabase";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
@@ -12,12 +14,21 @@ import {
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function CustomersScreen() {
-  const { deleteCustomer, customers, getCustomers, loading, addCustomer } =
-    useCustomer();
-
+  const { deleteCustomer, customers, getCustomers, loading } = useCustomer();
   React.useEffect(() => {
     getCustomers();
-  }, [customers]);
+    supabase.channel("db-changes").on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "customers",
+      },
+      (payload) => {
+        getCustomers();
+      }
+    );
+  }, []);
 
   const onDelete = (id: string) => {
     Alert.alert("Eliminar", "¿Estás seguro de eliminar este cliente?", [
@@ -44,13 +55,19 @@ export default function CustomersScreen() {
       contentInsetAdjustmentBehavior="automatic"
       className="p-4 bg-white dark:bg-zinc-900"
     >
-      {loading && <ActivityIndicator className="mt-20" />}
+      {loading && (
+        <View className="flex flex-col gap-2 p-4">
+          <CustomerSkeleton />
+          <CustomerSkeleton />
+          <CustomerSkeleton />
+        </View>
+      )}
       <FlashList
         renderItem={({ item: customer }) => (
           <Card
             key={customer.id}
             style={{
-              marginVertical: 8,
+              margin: 8,
             }}
           >
             <Card.Title

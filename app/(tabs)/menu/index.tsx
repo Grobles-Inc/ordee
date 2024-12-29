@@ -2,6 +2,7 @@ import MealCard from "@/components/meal-card";
 import { useCategoryContext } from "@/context/category";
 import { useMealContext } from "@/context/meals";
 import { IMeal } from "@/interfaces";
+import { supabase } from "@/utils/supabase";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -29,6 +30,20 @@ export default function MenuScreen() {
   React.useEffect(() => {
     getCategories();
     getDailyMeals();
+    supabase
+      .channel("db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "meals",
+        },
+        (payload) => {
+          getDailyMeals();
+        }
+      )
+      .subscribe();
   }, []);
   async function onRefresh() {
     setRefreshing(true);

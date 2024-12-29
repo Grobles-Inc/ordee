@@ -1,4 +1,5 @@
 import PushNotification from "@/components/push-notification";
+import { CounterSkeleton } from "@/components/skeleton/order-counter";
 import { useAuth, useOrderContext } from "@/context";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -18,7 +19,7 @@ export default function ProfileScreen() {
   const { profile, session } = useAuth();
   const [count, setCount] = React.useState(0);
   const [expoPushToken, setExpoPushToken] = React.useState("");
-  const { getOrdersCountByMonth } = useOrderContext();
+  const { getOrdersCountByMonth, loading } = useOrderContext();
   const router = useRouter();
   const headerHeight = useHeaderHeight();
   const colorScheme = useColorScheme();
@@ -62,6 +63,7 @@ export default function ProfileScreen() {
         </View>
       </View>
       <View className="flex flex-col gap-4 mt-10 items-start ">
+        {loading && <CounterSkeleton />}
         <View className="bg-zinc-100 p-4 rounded-xl dark:bg-zinc-800 w-full flex flex-col gap-4">
           <Text variant="titleSmall" style={{ color: "gray" }}>
             Ordenes Mensuales

@@ -1,5 +1,6 @@
 import { useOrderContext } from "@/context";
 import { IOrder } from "@/interfaces";
+import { supabase } from "@/utils/supabase";
 import { AntDesign } from "@expo/vector-icons";
 import * as Print from "expo-print";
 import { useLocalSearchParams } from "expo-router";
@@ -25,6 +26,22 @@ export default function OrderDetailsScreen() {
       setOrder(order);
     });
   }, [params.id]);
+
+  React.useEffect(() => {
+    supabase.channel("db-changes").on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "orders",
+      },
+      (payload) => {
+        getOrderById(params.id).then((order) => {
+          setOrder(order);
+        });
+      }
+    );
+  }, []);
 
   const confirmUpdate = () => {
     if (order?.id) {
@@ -283,7 +300,7 @@ export default function OrderDetailsScreen() {
             onDismiss={() => setModalVisible(false)}
             contentContainerStyle={{
               borderRadius: 16,
-              padding: 16,
+              padding: 24,
               marginHorizontal: 16,
               display: "flex",
               gap: 10,
@@ -312,10 +329,7 @@ export default function OrderDetailsScreen() {
               <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
                 Imprimir Comprobante
               </Text>
-              <Text>
-                Estás seguro de proceder con esta operación ? La order ahora se
-                registrará como pagada.
-              </Text>
+              <Text>La orden ahora se registrará como pagada.</Text>
             </View>
 
             <View className="flex flex-col gap-4  mt-10">

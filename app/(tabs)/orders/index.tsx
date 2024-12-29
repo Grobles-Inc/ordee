@@ -5,31 +5,27 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
 import { View } from "react-native";
-import { Appbar, Text } from "react-native-paper";
+import { ActivityIndicator, Appbar, Text } from "react-native-paper";
 import { supabase } from "@/utils/supabase";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { OrderCardSkeleton } from "@/components/skeleton/card";
 
 export default function OrdersScreen() {
-  const { getUnpaidOrders, loading } = useOrderContext();
-  const [orders, setOrders] = React.useState<IOrder[]>([]);
+  const { getUnpaidOrders, loading, unpaidOrders } = useOrderContext();
 
   async function onRefresh() {
-    getUnpaidOrders().then((orders) => {
-      setOrders(orders);
-    });
+    getUnpaidOrders();
   }
 
   React.useEffect(() => {
-    getUnpaidOrders().then((orders) => {
-      setOrders(orders);
-    });
+    getUnpaidOrders();
     const subscription = supabase
       .channel("orders")
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "orders" },
+        { event: "*", schema: "public", table: "orders" },
         (payload) => {
-          setOrders((prevOrders) => [payload.new as IOrder, ...prevOrders]);
+          getUnpaidOrders();
         }
       )
       .subscribe();
@@ -49,12 +45,19 @@ export default function OrdersScreen() {
         />
       </Appbar.Header>
       <View className="flex-1 ">
+        {loading && (
+          <View className="flex flex-col gap-2 p-4">
+            <OrderCardSkeleton />
+            <OrderCardSkeleton />
+            <OrderCardSkeleton />
+          </View>
+        )}
         <FlashList
           contentContainerStyle={{
             padding: 16,
           }}
           renderItem={({ item: order }) => <OrderCard order={order} />}
-          data={orders}
+          data={unpaidOrders}
           refreshing={loading}
           onRefresh={onRefresh}
           estimatedItemSize={200}
