@@ -89,13 +89,12 @@ export default function ProfileScreen() {
           >
             <View className=" flex flex-col gap-4 w-4/5">
               <Text
-                className="text-white font-medium"
                 variant="titleLarge"
-                style={{ fontWeight: "bold" }}
+                style={{ fontWeight: "bold", color: "white" }}
               >
                 Adquirir Pro
               </Text>
-              <Text className="text-white opacity-80 ">
+              <Text className="opacity-80 " style={{ color: "white" }}>
                 Para poder registrar ilimitadamante ordenes y demas
                 funcionalidades premium.
               </Text>

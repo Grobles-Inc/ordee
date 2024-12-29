@@ -1,12 +1,16 @@
 import { useAuth } from "@/context";
 import React, { useState } from "react";
-import { View, Image, ScrollView } from "react-native";
+import {
+  View,
+  Image,
+  ScrollView,
+  useColorScheme,
+  Appearance,
+} from "react-native";
 import { Button, RadioButton, Text } from "react-native-paper";
 
-type AppearanceOption = "light" | "dark" | "system";
-
 export default function SettingsScreen() {
-  const [appearance, setAppearance] = useState<AppearanceOption>("light");
+  const colorScheme = useColorScheme();
   const { signOut } = useAuth();
 
   return (
@@ -22,8 +26,8 @@ export default function SettingsScreen() {
           />
           <RadioButton.Android
             value="light"
-            status={appearance === "light" ? "checked" : "unchecked"}
-            onPress={() => setAppearance("light")}
+            status={colorScheme === "light" ? "checked" : "unchecked"}
+            onPress={() => colorScheme === "light"}
             color="#007AFF"
           />
           <Text className=" capitalize">Claro</Text>
@@ -35,8 +39,8 @@ export default function SettingsScreen() {
           />
           <RadioButton.Android
             value="dark"
-            status={appearance === "dark" ? "checked" : "unchecked"}
-            onPress={() => setAppearance("dark")}
+            status={colorScheme === "dark" ? "checked" : "unchecked"}
+            onPress={() => colorScheme === "dark"}
             color="#007AFF"
           />
           <Text className=" capitalize">Oscuro</Text>
