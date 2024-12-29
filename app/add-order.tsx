@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Alert, ScrollView, View } from "react-native";
 import { Appbar, Button, Divider, Switch, Text } from "react-native-paper";
 import { toast } from "sonner-native";
+import * as Notifications from "expo-notifications";
 
 export default function AddOrderScreen() {
   const { number, id_table, id_order } = useLocalSearchParams<{
@@ -26,11 +27,31 @@ export default function AddOrderScreen() {
     updateOrder,
     loading: orderLoading,
     deleteOrder,
+    getOrdersCountByMonth,
   } = useOrderContext();
   const { profile } = useAuth();
   const { getCustomers, customers } = useCustomer();
   const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [count, setCount] = useState<number | null>(0);
   const [isRegisterDisabled, setIsRegisterDisabled] = useState(false);
+
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+    }),
+  });
+
+  if (count === 500) {
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Límite de órdenes alcanzado",
+        body: "Se ha alcanzado el límite de 500 órdenes para este mes",
+      },
+      trigger: 2,
+    });
+  }
   if (!profile) return null;
   async function getOrderById(id: string) {
     const { data, error } = await supabase
@@ -49,6 +70,7 @@ export default function AddOrderScreen() {
 
   useEffect(() => {
     getCustomers();
+    getOrdersCountByMonth().then((count) => setCount(count));
   }, []);
 
   useEffect(() => {
