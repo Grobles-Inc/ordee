@@ -113,9 +113,10 @@ export default function DailyReportScreen() {
     peakHour: "",
   });
   const [loading, setLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const now = new Date();
+    return format(now, 'yyyy-MM-dd');
+  });
   const [dailyTotals, setDailyTotals] = useState<{ [key: string]: number }>({});
 
   const loadDailySales = async () => {
@@ -296,7 +297,9 @@ export default function DailyReportScreen() {
             </View>
           </View>
           <Calendar
-            onDayPress={(day: any) => setSelectedDate(day.dateString)}
+            onDayPress={(day: any) => {
+              setSelectedDate(day.dateString);
+            }}
             theme={isDarkMode ? darkTheme : lightTheme}
             style={{
               borderRadius: 8,
