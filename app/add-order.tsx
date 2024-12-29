@@ -63,7 +63,6 @@ export default function AddOrderScreen() {
     if (id_order) {
       getOrderForUpdate(id_order);
     }
-    console.log(updatingOrder);
   }, [id_order]);
 
   function onDelete() {
@@ -245,7 +244,7 @@ export default function AddOrderScreen() {
           titleStyle={{ fontWeight: "bold", color: "white" }}
         />
         <Appbar.Action
-          icon="delete-outline"
+          icon={updatingOrder ? "delete-outline" : "eraser"}
           color="white"
           onPress={updatingOrder ? onDelete : onReset}
         />

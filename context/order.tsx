@@ -34,6 +34,7 @@ export const OrderContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [orders, setOrders] = React.useState<IOrder[]>([]);
+  //FIX: Cause this state is a context state, it's causing bugs in add order screen, cause already exists data, try the bug tapping on Edit and then go to '/tabs' and add new order
   const [updatingOrder, setUpdatingOrder] = React.useState<IOrder | null>(null);
   const [order, setOrder] = React.useState<IOrder>({} as IOrder);
   const { profile } = useAuth();

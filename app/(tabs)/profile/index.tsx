@@ -56,9 +56,9 @@ export default function ProfileScreen() {
             </Text>
             <Text style={{ color: "gray" }}>{session?.user.email}</Text>
           </View>
-          <Button onPress={() => alert("Editar Perfil")} mode="contained">
+          {/* <Button onPress={() => alert("Editar Perfil")} mode="contained">
             Editar perfil
-          </Button>
+          </Button> */}
         </View>
       </View>
       <View className="flex flex-col gap-4 mt-10 items-start ">

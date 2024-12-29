@@ -30,7 +30,9 @@ export default function OrderCard({ order }: { order: IOrder }) {
         title={"Mesa " + order.id_table}
         subtitle={order.served ? null : "En espera"}
         subtitleStyle={{ color: "gray" }}
-        left={(props) => <Avatar.Icon color="white" {...props} icon="food" />}
+        left={(props) => (
+          <Avatar.Icon color="white" {...props} icon="food-fork-drink" />
+        )}
         right={(props) => (
           <View className="flex flex-col gap-2">
             <View className="flex flex-row items-center gap-2 mr-4">
