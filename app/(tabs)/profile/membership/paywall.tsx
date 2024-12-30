@@ -1,14 +1,29 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
-import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Button } from "react-native-paper";
-import { useHeaderHeight } from "@react-navigation/elements";
 
 const PaywallScreen = () => {
   const router = useRouter();
   const [planSelected, setPlanSelected] = useState("esencial");
   const [isMonthly, setIsMonthly] = useState(true);
+
+  function onSubmit() {
+    Alert.alert(
+      "¡Gracias por comprar!",
+      `¡Ya estás usando el plan ${planSelected} facturado ${
+        isMonthly ? "mensualmente" : "anualmente"
+      }!`
+    );
+  }
 
   return (
     <ScrollView
@@ -16,7 +31,7 @@ const PaywallScreen = () => {
       contentInsetAdjustmentBehavior="automatic"
     >
       {/* Logo */}
-      <View className="flex-row items-center justify-center mb-6">
+      <View className="flex-row items-center justify-center mb-4">
         <Image
           source={require("../../../../assets/images/logo.png")}
           style={{ width: 100, height: 100 }}
@@ -24,10 +39,10 @@ const PaywallScreen = () => {
       </View>
 
       {/* Header */}
-      <Text className="text-center text-xl font-bold text-white mb-1">
+      <Text className="text-center text-2xl font-bold  mb-1 dark:text-white">
         Comience a usar Pro
       </Text>
-      <Text className="text-center text-gray-500 mb-6">
+      <Text className="text-center opacity-40 mb-6 dark:text-white">
         Cancela en cualquier momento
       </Text>
 
@@ -35,13 +50,13 @@ const PaywallScreen = () => {
       <View className="flex-row justify-center mb-6">
         <TouchableOpacity
           className={`px-8 py-3 rounded-l-full ${
-            isMonthly ? "bg-[#FF6247]" : "bg-gray-300"
+            isMonthly ? "bg-[#FF6247]" : "bg-gray-100 dark:bg-zinc-800"
           }`}
           onPress={() => setIsMonthly(true)}
         >
           <Text
             className={`font-bold ${
-              isMonthly ? "text-white" : "text-gray-700"
+              isMonthly ? "text-white" : "text-zinc-900 dark:text-zinc-200"
             }`}
           >
             Mensual
@@ -49,13 +64,13 @@ const PaywallScreen = () => {
         </TouchableOpacity>
         <TouchableOpacity
           className={`px-8 py-3 rounded-r-full ${
-            !isMonthly ? "bg-[#FF6247]" : "bg-gray-300"
+            !isMonthly ? "bg-[#FF6247]" : "bg-gray-100 dark:bg-zinc-800"
           }`}
           onPress={() => setIsMonthly(false)}
         >
           <Text
             className={`font-bold ${
-              !isMonthly ? "text-white" : "text-gray-700"
+              !isMonthly ? "text-white" : "text-zinc-900 dark:text-zinc-200"
             }`}
           >
             Anual
@@ -69,17 +84,19 @@ const PaywallScreen = () => {
         <TouchableOpacity onPress={() => setPlanSelected("esencial")}>
           <View
             className={` p-4 border border-gray-400  rounded-2xl ${
-              planSelected === "esencial" ? "border-[#FF6247] border-2 " : ""
+              planSelected === "esencial"
+                ? "border-[#FF6247] border-2 dark:bg-orange-800/20 bg-orange-500/10 "
+                : ""
             }`}
           >
             <Text className="text-[#FF6247] text-lg font-bold text-center mb-1">
               Esencial
             </Text>
-            <Text className="text-white text-center mb-2 text-lg">
-              {isMonthly ? "S/. 20.00/mes" : "S/. 15.00/año"}
+            <Text className=" text-center  font-bold  my-2 text-2xl dark:text-white">
+              {isMonthly ? "S/. 20.00/mes" : "S/. 15.00/mes"}
             </Text>
-            <Text className="text-gray-400 text-sm text-center mb-2">
-              Incluye órdenes ilimitadas.
+            <Text className="text-gray-400 text-sm text-center mb-8">
+              Flexibilidad para tus órdenes
             </Text>
             <View>
               <View className="flex-row items-center mb-1">
@@ -98,17 +115,19 @@ const PaywallScreen = () => {
         <TouchableOpacity onPress={() => setPlanSelected("premium")}>
           <View
             className={` p-4 border border-gray-400  rounded-2xl ${
-              planSelected === "premium" ? "border-[#FF6247] border-2" : ""
+              planSelected === "premium"
+                ? "border-[#FF6247] border-2  dark:bg-orange-800/20 bg-orange-500/10"
+                : ""
             }`}
           >
             <Text className="text-[#FF6247] text-lg font-bold text-center mb-1">
               Premium
             </Text>
-            <Text className="text-white text-center mb-2 text-lg">
-              {isMonthly ? "S/. 20.00/mes" : "S/. 15.00/año"}
+            <Text className="font-bold text-center my-2 text-2xl dark:text-white">
+              {isMonthly ? "S/. 30.00/mes" : "S/. 20.00/mes"}
             </Text>
-            <Text className="text-gray-400 text-sm text-center mb-2">
-              Incluye órdenes y cuentas ilimitadas.
+            <Text className="text-gray-400 text-sm text-center mb-8 ">
+              Incluye órdenes y cuentas ilimitadas
             </Text>
             <View className="flex flex-col *:mb-4">
               <View className="flex-row items-center mb-1">
@@ -135,8 +154,14 @@ const PaywallScreen = () => {
       {/* Beneficios */}
 
       {/* Botones */}
-      <View className="flex flex-col gap-2 mt-10">
-        <Button mode="contained" onPress={() => router.back()}>
+      <View className="flex flex-col gap-2 mt-4">
+        <Button
+          mode="contained"
+          onPress={() => {
+            onSubmit();
+            router.back();
+          }}
+        >
           Adquirir
         </Button>
         <Button mode="text" onPress={() => router.back()}>
