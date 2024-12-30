@@ -4,11 +4,13 @@ import { supabase } from "@/utils/supabase";
 import { IOrder, IOrderContextProvider, ITable } from "@/interfaces";
 import { router } from "expo-router";
 import { toast } from "sonner-native";
+import { startOfToday, endOfToday, addHours } from "date-fns";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "./auth";
 export const OrderContext = createContext<IOrderContextProvider>({
   addOrder: async () => {},
   getUnservedOrders: async () => [],
+  getOrdersCountByDay: async () => 0,
   addTable: async () => {},
   getOrderForUpdate: async () => ({} as IOrder),
   updatingOrder: null,
@@ -52,6 +54,32 @@ export const OrderContextProvider = ({
       .gte("date", new Date(currentYear, currentMonth, 1).toISOString())
       .lt("date", new Date(currentYear, currentMonth + 1, 1).toISOString());
     if (error) throw error;
+    setLoading(false);
+    return count;
+  };
+
+  const getOrdersCountByDay = async () => {
+    setLoading(true);
+
+    // Get the start and end of today in Peru time (UTC-5)
+    const now = new Date();
+    const startOfDay = startOfToday(); // Local time start of today
+    const endOfDay = endOfToday(); // Local time end of today
+
+    // Adjust for UTC-5 (Peru Time)
+    const utcOffset = -5; // Peru is UTC-5
+    const startOfDayUTC = addHours(startOfDay, -utcOffset); // Convert to UTC
+    const endOfDayUTC = addHours(endOfDay, -utcOffset); // Convert to UTC
+
+    const { error, count } = await supabase
+      .from("orders")
+      .select("*", { count: "exact" })
+      .eq("id_tenant", profile.id_tenant)
+      .gte("date", startOfDayUTC.toISOString())
+      .lt("date", endOfDayUTC.toISOString());
+
+    if (error) throw error;
+
     setLoading(false);
     return count;
   };
@@ -313,6 +341,7 @@ export const OrderContextProvider = ({
         addTable,
         updateOrderServedStatus,
         order,
+        getOrdersCountByDay,
         getOrderForUpdate,
         getDailyPaidOrders,
         getOrdersCountByMonth,

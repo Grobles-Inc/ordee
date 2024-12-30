@@ -19,12 +19,12 @@ export default function ProfileScreen() {
   const { profile, session } = useAuth();
   const [count, setCount] = React.useState(0);
   const [expoPushToken, setExpoPushToken] = React.useState("");
-  const { getOrdersCountByMonth, loading } = useOrderContext();
+  const { getOrdersCountByDay, loading } = useOrderContext();
   const router = useRouter();
   const headerHeight = useHeaderHeight();
   const colorScheme = useColorScheme();
   React.useEffect(() => {
-    getOrdersCountByMonth().then((count) => setCount(count as number));
+    getOrdersCountByDay().then((count) => setCount(count as number));
   }, []);
 
   const value = count / 500;
@@ -63,16 +63,15 @@ export default function ProfileScreen() {
         </View>
       </View>
       <View className="flex flex-col gap-4 mt-10 items-start ">
-        {loading && <CounterSkeleton />}
         <View className="bg-zinc-100 p-4 rounded-xl dark:bg-zinc-800 w-full flex flex-col gap-4">
           <Text variant="titleSmall" style={{ color: "gray" }}>
-            Ordenes Mensuales
+            Ordenes Diarias
           </Text>
 
           <View>
             <View className="flex-row justify-between mb-2">
               <Text className="text-gray-700">{count}</Text>
-              <Text className="font-semibold">500</Text>
+              <Text className="font-semibold">50</Text>
             </View>
             <ProgressBar
               progress={Number(value.toFixed(2))}
@@ -89,7 +88,8 @@ export default function ProfileScreen() {
           <TouchableOpacity
             className="flex-row flex items-center justify-between  p-4"
             onPress={() =>
-              Linking.openURL("https://cal.com/miguel-requena/meeting-ordee")
+              // Linking.openURL("https://cal.com/miguel-requena/meeting-ordee")
+              router.push("/(tabs)/profile/membership")
             }
           >
             <View className=" flex flex-col gap-4 w-4/5">

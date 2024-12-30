@@ -29,6 +29,7 @@ export interface IOrderContextProvider {
   addOrder: (order: IOrder) => Promise<void>;
   updateOrderServedStatus: (id: string) => Promise<void>;
   unpaidOrders: IOrder[];
+  getOrdersCountByDay: () => Promise<number | null>;
   getOrderForUpdate: (id: string) => Promise<IOrder>;
   getUnservedOrders: () => Promise<IOrder[]>;
   setUpdatingOrder: (order: IOrder | null) => void;

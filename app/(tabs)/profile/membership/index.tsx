@@ -1,9 +1,9 @@
 import { useAuth } from "@/context";
 import { AntDesign } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Alert, Linking, SafeAreaView, View } from "react-native";
-import { Button, Divider, Text } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { SafeAreaView, View } from "react-native";
+import { Button, Divider, Text } from "react-native-paper";
 
 export default function Membership() {
   const router = useRouter();
@@ -17,16 +17,8 @@ export default function Membership() {
     day: "2-digit",
   });
 
-  const acquiredAtFormatted = new Date(
-    profile.tenants.updated_at
-  ).toLocaleDateString("es-ES", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-
   return (
-    <SafeAreaView className="p-4 bg-white dark:bg-zinc-900">
+    <SafeAreaView className="p-4 bg-white dark:bg-zinc-900 h-screen-safe">
       <View className="flex flex-col gap-6 px-4 py-8 ">
         <View className="flex flex-row gap-4 items-center ">
           <Image
@@ -90,7 +82,6 @@ export default function Membership() {
             ? "La renovación de la membresía tiene un costo de S/.20.00 nuevos soles por mes."
             : "La renovación de la membresía tiene un costo de S/.00.00 nuevos soles por mes."}
         </Text>
-        <Divider />
 
         <Button
           mode="contained"
@@ -98,7 +89,7 @@ export default function Membership() {
             router.push("/(tabs)/profile/membership/paywall");
           }}
         >
-          Adquirir Pro
+          Ver Planes
         </Button>
       </View>
     </SafeAreaView>
