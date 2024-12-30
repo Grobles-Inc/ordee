@@ -3,8 +3,11 @@ import { AntDesign } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Alert, SafeAreaView, View } from "react-native";
 import { Button, Divider, Text } from "react-native-paper";
+import { useRouter } from "expo-router";
+
 
 export default function Membership() {
+  const router = useRouter();
   const { profile } = useAuth();
   if (!profile.tenants) return null;
   const createdAtFormatted = new Date(
@@ -92,12 +95,14 @@ export default function Membership() {
 
         <Button
           mode="contained"
-          onPress={() => {
-            Alert.alert(
-              "Adquisicion",
-              "Abrir el modal de paywall screen de Ordee"
-            );
-          }}
+          // onPress={() => {
+          //   // Alert.alert(
+          //   //   "Adquisicion",
+          //   //   "Abrir el modal de paywall screen de Ordee"
+          //   // );
+            
+          // }}
+          onPress={() => router.push("/(tabs)/profile/paywall")}
         >
           Adquirir Pro
         </Button>
