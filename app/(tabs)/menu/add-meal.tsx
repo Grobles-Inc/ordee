@@ -169,11 +169,11 @@ export default function AddMealScreen() {
                 onChangeText={onChange}
                 mode="outlined"
                 keyboardType="numeric"
-                error={!!errors.name}
+                error={!!errors.price}
               />
-              {errors.quantity && (
+              {errors.price && (
                 <Text className="text-red-500 ml-4">
-                  {errors.quantity.message}
+                  {errors.price.message}
                 </Text>
               )}
             </View>

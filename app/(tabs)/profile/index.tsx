@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { Button, Divider, ProgressBar, Text } from "react-native-paper";
 export default function ProfileScreen() {
-  const { profile, session } = useAuth();
+  const { profile, session, getProfile } = useAuth();
   const [count, setCount] = React.useState(0);
   const [expoPushToken, setExpoPushToken] = React.useState("");
   const { getOrdersCountByDay } = useOrderContext();
@@ -66,13 +66,16 @@ export default function ProfileScreen() {
         <View className="flex flex-col items-center gap-4">
           <View className="flex flex-col items-center">
             <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-              {profile.tenants?.name}
+              {profile.name}
             </Text>
             <Text style={{ color: "gray" }}>{session?.user.email}</Text>
           </View>
-          {/* <Button onPress={() => alert("Editar Perfil")} mode="contained">
+          <Button
+            onPress={() => router.push("/(tabs)/profile/edit")}
+            mode="contained"
+          >
             Editar perfil
-          </Button> */}
+          </Button>
         </View>
       </View>
       <View className="flex flex-col gap-4 mt-10 items-start ">
@@ -148,7 +151,7 @@ export default function ProfileScreen() {
           mode="text"
         >
           Categorías
-        </Button> */}
+        </Button>
         <Button
           icon="account-heart-outline"
           onPress={() => router.push("/(tabs)/profile/customers")}
