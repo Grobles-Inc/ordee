@@ -83,9 +83,9 @@ const PaywallScreen = () => {
         {/* Plan Esencial */}
         <TouchableOpacity onPress={() => setPlanSelected("esencial")}>
           <View
-            className={` p-4 border border-gray-400  rounded-2xl ${
+            className={` p-4 border   rounded-2xl ${
               planSelected === "esencial"
-                ? "border-[#FF6247] border-2 dark:bg-orange-800/20 bg-orange-500/10 "
+                ? "border-[#FF6247]   border-2 dark:bg-orange-800/20 bg-orange-500/10 "
                 : ""
             }`}
           >
@@ -114,7 +114,7 @@ const PaywallScreen = () => {
         {/* Plan Premium */}
         <TouchableOpacity onPress={() => setPlanSelected("premium")}>
           <View
-            className={` p-4 border border-gray-400  rounded-2xl ${
+            className={` p-4 border  rounded-2xl ${
               planSelected === "premium"
                 ? "border-[#FF6247] border-2  dark:bg-orange-800/20 bg-orange-500/10"
                 : ""

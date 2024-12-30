@@ -179,18 +179,6 @@ export default function ProfileLayout() {
             headerLargeTitleShadowVisible: false,
           }}
         />
-        <Stack.Screen
-          name="paywall"
-          options={{
-            title: "",
-            headerLargeTitle: true,
-            headerBackVisible: true,
-            headerShadowVisible: true,
-            headerLargeTitleShadowVisible: false,
-            // this should be transparaent
-            headerStyle: { backgroundColor: "transparent" },
-          }}
-        />
       </Stack>
       <BottomSheet
         ref={customerBottomSheetRef}

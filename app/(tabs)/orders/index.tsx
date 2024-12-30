@@ -12,11 +12,9 @@ import { OrderCardSkeleton } from "@/components/skeleton/card";
 
 export default function OrdersScreen() {
   const { getUnpaidOrders, loading, unpaidOrders } = useOrderContext();
-
   async function onRefresh() {
     getUnpaidOrders();
   }
-
   React.useEffect(() => {
     getUnpaidOrders();
     const subscription = supabase

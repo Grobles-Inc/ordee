@@ -61,12 +61,9 @@ export const OrderContextProvider = ({
   const getOrdersCountByDay = async () => {
     setLoading(true);
 
-    // Get the start and end of today in Peru time (UTC-5)
-    const now = new Date();
     const startOfDay = startOfToday(); // Local time start of today
     const endOfDay = endOfToday(); // Local time end of today
 
-    // Adjust for UTC-5 (Peru Time)
     const utcOffset = -5; // Peru is UTC-5
     const startOfDayUTC = addHours(startOfDay, -utcOffset); // Convert to UTC
     const endOfDayUTC = addHours(endOfDay, -utcOffset); // Convert to UTC

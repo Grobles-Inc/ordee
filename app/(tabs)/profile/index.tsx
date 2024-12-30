@@ -1,6 +1,7 @@
 import PushNotification from "@/components/push-notification";
 import { CounterSkeleton } from "@/components/skeleton/order-counter";
 import { useAuth, useOrderContext } from "@/context";
+import { supabase } from "@/utils/supabase";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Image } from "expo-image";
@@ -25,9 +26,23 @@ export default function ProfileScreen() {
   const colorScheme = useColorScheme();
   React.useEffect(() => {
     getOrdersCountByDay().then((count) => setCount(count as number));
+    supabase
+      .channel("db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "meals",
+        },
+        (payload) => {
+          getOrdersCountByDay().then((count) => setCount(count as number));
+        }
+      )
+      .subscribe();
   }, []);
 
-  const value = count / 500;
+  const value = count / 50;
 
   return (
     <ScrollView
@@ -81,34 +96,36 @@ export default function ProfileScreen() {
             />
           </View>
         </View>
-        <LinearGradient
-          colors={["#FF6347", "#FF4500"]}
-          style={{ marginTop: 10, borderRadius: 10, width: "100%" }}
-        >
-          <TouchableOpacity
-            className="flex-row flex items-center justify-between  p-4"
-            onPress={() =>
-              // Linking.openURL("https://cal.com/miguel-requena/meeting-ordee")
-              router.push("/(tabs)/profile/membership")
-            }
+        {profile.tenants?.plans?.name === "free" && (
+          <LinearGradient
+            colors={["#FF6347", "#FF4500"]}
+            style={{ marginTop: 10, borderRadius: 10, width: "100%" }}
           >
-            <View className=" flex flex-col gap-4 w-4/5">
-              <Text
-                variant="titleLarge"
-                style={{ fontWeight: "bold", color: "white" }}
-              >
-                Adquirir Pro
-              </Text>
-              <Text className="opacity-80 " style={{ color: "white" }}>
-                Para poder registrar ilimitadamante ordenes y demas
-                funcionalidades premium.
-              </Text>
-            </View>
-            <View className="bg-white/20 rounded-full p-2 ">
-              <FontAwesome5 name="check-circle" size={32} color="white" />
-            </View>
-          </TouchableOpacity>
-        </LinearGradient>
+            <TouchableOpacity
+              className="flex-row flex items-center justify-between  p-4"
+              onPress={() =>
+                // Linking.openURL("https://cal.com/miguel-requena/meeting-ordee")
+                router.push("/(tabs)/profile/membership")
+              }
+            >
+              <View className=" flex flex-col gap-4 w-4/5">
+                <Text
+                  variant="titleLarge"
+                  style={{ fontWeight: "bold", color: "white" }}
+                >
+                  Adquirir Pro
+                </Text>
+                <Text className="opacity-80 " style={{ color: "white" }}>
+                  Para poder registrar ilimitadamante ordenes y demas
+                  funcionalidades premium.
+                </Text>
+              </View>
+              <View className="bg-white/20 rounded-full p-2 ">
+                <FontAwesome5 name="check-circle" size={32} color="white" />
+              </View>
+            </TouchableOpacity>
+          </LinearGradient>
+        )}
         <Divider className="my-4" />
         <Button
           icon="account-group-outline"

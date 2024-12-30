@@ -1,6 +1,5 @@
 import { IAuthContextProvider, IUser } from "@/interfaces";
 import { supabase } from "@/utils/supabase";
-import { supabaseAdmin } from "@/utils/supabaseAdmin";
 import { FontAwesome } from "@expo/vector-icons";
 import { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -59,7 +58,7 @@ export function AuthContextProvider({
     setLoading(true);
     const { data, error, status } = await supabase
       .from("accounts")
-      .select("*, tenants:id_tenant(*)")
+      .select("*, tenants:id_tenant(plans(*))")
       .eq("id", id)
       .single();
     if (error && status !== 406) {

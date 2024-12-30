@@ -10,7 +10,7 @@ export default function Membership() {
   const { profile } = useAuth();
   if (!profile.tenants) return null;
   const createdAtFormatted = new Date(
-    profile.tenants.created_at
+    profile.tenants?.created_at
   ).toLocaleDateString("es-ES", {
     year: "numeric",
     month: "2-digit",
@@ -28,7 +28,11 @@ export default function Membership() {
 
           <View className="flex flex-col gap-1">
             <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-              {profile.tenants?.is_premium ? "Plan Pro" : "Plan Gratuito"}
+              {profile.tenants?.plans?.name === "essential"
+                ? "Plan Essential"
+                : profile.tenants?.plans?.name === "pro"
+                ? "Plan Pro"
+                : "Plan Gratuito"}
             </Text>
 
             <Text
@@ -75,12 +79,12 @@ export default function Membership() {
 
         <Text>Monto de Recargo</Text>
         <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-          {profile.tenants?.is_premium ? "S/. 20.00 / mes" : "S/. 00.00 / mes"}
+          S/. {profile.tenants?.plans?.price.toFixed(2)} soles /{" "}
+          {profile.tenants?.plans?.billing === "monthly" ? "mes" : "año"}
         </Text>
         <Text style={{ color: "gray" }}>
-          {profile.tenants?.is_premium
-            ? "La renovación de la membresía tiene un costo de S/.20.00 nuevos soles por mes."
-            : "La renovación de la membresía tiene un costo de S/.00.00 nuevos soles por mes."}
+          La renovación de la membresía tiene un costo de S/. S/.{" "}
+          {profile.tenants.plans?.price.toFixed(2)} nuevos soles.
         </Text>
 
         <Button

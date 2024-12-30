@@ -146,18 +146,6 @@ export default function MenuScreen() {
               <Text style={{ color: "gray" }}>No hay items para mostrar</Text>
             </SafeAreaView>
           }
-          ListFooterComponent={
-            <Text
-              variant="bodyMedium"
-              style={{
-                opacity: 0.3,
-                margin: 16,
-                textAlign: "center",
-              }}
-            >
-              Items para el menú del día {new Date().toLocaleDateString()}
-            </Text>
-          }
         />
       </View>
     </>
