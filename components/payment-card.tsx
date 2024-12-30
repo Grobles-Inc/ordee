@@ -1,23 +1,16 @@
 import { IOrder } from "@/interfaces";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { View } from "react-native";
-import {
-  ActivityIndicator,
-  Avatar,
-  Card,
-  IconButton,
-  Text,
-} from "react-native-paper";
+import { Card, Text } from "react-native-paper";
 
 export default function PaymentCard({ order }: { order: IOrder }) {
-  if (!order.date) return <ActivityIndicator />;
   const formattedDate = new Date(order.date ?? new Date()).toLocaleString(
     "es-ES",
     {
       day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+      month: "short",
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
@@ -27,8 +20,8 @@ export default function PaymentCard({ order }: { order: IOrder }) {
   return (
     <Card
       style={{
-        marginHorizontal: 10,
         marginVertical: 8,
+        shadowOpacity: 0,
       }}
       onPress={() => {
         router.push(`/(tabs)/payments/receipt/${order.id}`);
@@ -36,14 +29,21 @@ export default function PaymentCard({ order }: { order: IOrder }) {
     >
       <Card.Title
         title={"Mesa " + order.id_table}
-        titleStyle={{ fontWeight: "bold", fontSize: 16 }}
-        subtitleStyle={{ fontSize: 12 }}
+        subtitleStyle={{
+          fontSize: 12,
+          color: "gray",
+          textTransform: "uppercase",
+        }}
         subtitle={formattedDate}
-        left={(props) => <Avatar.Icon color="white" {...props} icon="dolby" />}
+        left={(props) => (
+          <FontAwesome6 name="file-invoice-dollar" color="#22c55e" {...props} />
+        )}
         right={(props) => (
-          <View className="flex flex-row items-center">
-            <Text variant="bodyMedium">S/. {order.total.toFixed(2)}</Text>
-            <IconButton {...props} icon="chevron-right" />
+          <View className="flex flex-row items-center  gap-2 mr-4">
+            <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
+              S/. {order.total.toFixed(2)}
+            </Text>
+            <FontAwesome6 name="chevron-right" size={16} color="#a1a1aa" />
           </View>
         )}
       />

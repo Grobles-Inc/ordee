@@ -1,25 +1,21 @@
+import { ORDEE_THEME } from "@/constants/ordee";
 import { AuthContextProvider, OrderContextProvider } from "@/context";
+import { CategoryContextProvider } from "@/context/category";
+import { CustomerContextProvider } from "@/context/customer";
 import { MealContextProvider } from "@/context/meals";
+import { DARK_NAV_THEME, NAV_THEME } from "@/utils/constants";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { Toaster } from "sonner-native";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
-import {
-  MD3LightTheme as DefaultTheme,
-  PaperProvider,
-} from "react-native-paper";
-import "react-native-reanimated";
-import "../styles/global.css";
-import { CustomerContextProvider } from "@/context/customer";
-import { NAV_THEME } from "@/utils/constants";
+import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import {
-  ThemeProvider,
-  DefaultTheme as DefaultNavigationTheme,
-} from "@react-navigation/native";
-import { CategoryContextProvider } from "@/context/category";
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
+import "react-native-reanimated";
+import { Toaster } from "sonner-native";
+import "../styles/global.css";
 // Import your global CSS file
 
 export {
@@ -32,14 +28,8 @@ export const unstable_settings = {
   initialRouteName: "(tabs)",
 };
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: "tomato",
-    secondary: "yellow",
-  },
-};
+const customLightTheme = { ...MD3LightTheme, colors: ORDEE_THEME.light };
+const customDarkTheme = { ...MD3DarkTheme, colors: ORDEE_THEME.dark };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -69,16 +59,25 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === "dark";
+  const paperTheme = isDarkMode ? customDarkTheme : customLightTheme;
+
   return (
     <AuthContextProvider>
       <GestureHandlerRootView>
         <ThemeProvider
           value={{
-            ...DefaultNavigationTheme,
-            colors: NAV_THEME,
+            ...DefaultTheme,
+            colors: {
+              ...DefaultTheme.colors,
+              ...NAV_THEME,
+              ...(isDarkMode ? DARK_NAV_THEME : {}),
+            },
+            dark: isDarkMode,
           }}
         >
-          <PaperProvider theme={theme}>
+          <PaperProvider theme={paperTheme}>
             <OrderContextProvider>
               <CategoryContextProvider>
                 <MealContextProvider>

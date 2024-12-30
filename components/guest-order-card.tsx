@@ -2,7 +2,7 @@ import { useOrderContext } from "@/context";
 import { IOrder } from "@/interfaces";
 import React from "react";
 import { Alert, View } from "react-native";
-import { Avatar, Button, Card, Divider, Text } from "react-native-paper";
+import { Card, Divider, IconButton, Text } from "react-native-paper";
 
 export default function OrderCard({ order }: { order: IOrder }) {
   const { updateOrderServedStatus } = useOrderContext();
@@ -24,52 +24,39 @@ export default function OrderCard({ order }: { order: IOrder }) {
     <Card
       style={{
         margin: 8,
+        backgroundColor: "white",
+        shadowOpacity: 0,
       }}
     >
       <Card.Title
         title={"Mesa " + order.id_table}
-        titleStyle={{ fontSize: 20 }}
+        titleStyle={{ fontSize: 20, fontWeight: "bold" }}
         subtitle={order.to_go ? "Para Llevar" : "Para Comer"}
-        subtitleStyle={{ fontSize: 12 }}
-        left={(props) => <Avatar.Icon color="white" {...props} icon="food" />}
+        subtitleStyle={{ color: "gray" }}
         right={() => (
-          <Button
+          <IconButton
             mode="contained"
+            containerColor="#FF6247"
+            iconColor="white"
             icon="check"
             style={{ marginRight: 8 }}
             onPress={() => onOrderStatusChange(order.id ? order.id : "")}
-          >
-            Preparar
-          </Button>
+          />
         )}
       />
-      <Card.Content>
-        <View className="flex flex-col gap-4 ">
+      <Card.Content style={{ paddingTop: 20 }}>
+        <View className="flex flex-col gap-2">
           <View className="flex flex-row justify-between">
-            <Text variant="titleSmall">Item</Text>
-            <Text variant="titleSmall">Cantidad</Text>
+            <Text variant="bodySmall" style={{ color: "gray" }}>
+              Items
+            </Text>
+            <Text variant="bodySmall" style={{ color: "gray" }}>
+              Porciones
+            </Text>
           </View>
           <Divider />
-          {order.entradas.map((item, index) => (
+          {order.items.map((item, index) => (
             <View key={index} className="flex flex-row justify-between">
-              <Text className="w-36">{item.name}</Text>
-              <Text>{item.quantity}</Text>
-            </View>
-          ))}
-          {order.fondos.map((item, index) => (
-            <View key={index} className="flex flex-row w-full justify-between">
-              <Text className="w-36">{item.name}</Text>
-              <Text>{item.quantity}</Text>
-            </View>
-          ))}
-          {order.bebidas.map((item, index) => (
-            <View key={index} className="flex flex-row w-full justify-between">
-              <Text className="w-36">{item.name}</Text>
-              <Text>{item.quantity}</Text>
-            </View>
-          ))}
-          {order.helados.map((item, index) => (
-            <View key={index} className="flex flex-row w-full justify-between">
               <Text className="w-36">{item.name}</Text>
               <Text>{item.quantity}</Text>
             </View>

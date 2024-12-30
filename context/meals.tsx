@@ -1,14 +1,19 @@
 import { IMeal, IMealContextProvider } from "@/interfaces";
 import { supabase } from "@/utils/supabase";
 import { FontAwesome } from "@expo/vector-icons";
+import { endOfDay, startOfDay } from "date-fns";
 import * as React from "react";
 import { createContext, useContext } from "react";
 import { toast } from "sonner-native";
+import { useAuth } from "./auth";
+
 export const MealContext = createContext<IMealContextProvider>({
   addMeal: async () => {},
   getMealById: async (id: string): Promise<IMeal> => ({} as IMeal),
   meals: [],
   meal: {} as IMeal,
+  getMealsByCategoryId: async () => [] as IMeal[],
+  loading: false,
   deleteMeal: async () => {},
   getDailyMeals: async () => [] as IMeal[],
   changeMealAvailability: async () => {},
@@ -20,10 +25,16 @@ export const MealContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [meals, setDailyMeals] = React.useState<IMeal[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const { profile } = useAuth();
   const [meal, setMeal] = React.useState<IMeal>({} as IMeal);
 
-  const addMeal = async (Meal: IMeal) => {
-    const { error } = await supabase.from("meals").insert(Meal);
+  const addMeal = async (meal: IMeal) => {
+    setLoading(true);
+    const { error } = await supabase.from("meals").insert({
+      ...meal,
+      id_tenant: profile.id_tenant,
+    });
     if (error) {
       console.error("Error adding meal:", error);
       toast.error("Error al agregar item!", {
@@ -34,12 +45,19 @@ export const MealContextProvider = ({
     toast.success("Item agregado al menú!", {
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
+    setLoading(false);
   };
 
   const getDailyMeals = async () => {
+    setLoading(true);
+    const today = new Date();
+    const formattedDate = today.toISOString().split("T")[0];
     const { data, error } = await supabase
       .from("meals")
       .select("*")
+      .eq("id_tenant", profile.id_tenant)
+      .eq("stock", true)
+      .eq("created_at", formattedDate)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -47,25 +65,9 @@ export const MealContextProvider = ({
       return null;
     }
 
-    const mealsToDelete = data.filter((meal) => meal.quantity === 0);
-
-    await Promise.all(
-      mealsToDelete.map(async (meal) => {
-        const { error: deleteError } = await supabase
-          .from("meals")
-          .delete()
-          .eq("id", meal.id);
-
-        if (deleteError) {
-          console.error("Error deleting meal:", deleteError);
-        }
-      })
-    );
-
-    const remainingMeals = data.filter((meal) => meal.quantity > 0);
-    setDailyMeals(remainingMeals);
-
-    return remainingMeals;
+    setDailyMeals(data);
+    setLoading(false);
+    return data;
   };
 
   const changeMealAvailability = async (id: string, quantity: number) => {
@@ -85,7 +87,21 @@ export const MealContextProvider = ({
     });
   };
 
+  const getMealsByCategoryId = async (id: string) => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("meals")
+      .select("*")
+      .eq("id_category", id)
+      .eq("stock", true)
+      .eq("id_tenant", profile.id_tenant);
+    if (error) throw error;
+    setLoading(false);
+    return data;
+  };
+
   const deleteMeal = async (id: string) => {
+    setLoading(true);
     const { error } = await supabase.from("meals").delete().eq("id", id);
     if (error) {
       console.error("Error deleting meal:", error);
@@ -97,47 +113,29 @@ export const MealContextProvider = ({
     toast.success("Item eliminado!", {
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
+    setLoading(false);
   };
 
   async function getMealById(id: string) {
+    setLoading(true);
     const { data, error } = await supabase
       .from("meals")
-      .select("*, users:id_waiter(name)")
+      .select("*, users:id_user(name)")
       .eq("id", id)
       .single();
     if (error) throw error;
     setMeal(data);
+    setLoading(false);
     return data;
   }
-
-  React.useEffect(() => {
-    getDailyMeals();
-
-    const channel = supabase
-      .channel("meals_changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "meals",
-        },
-        () => {
-          getDailyMeals();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
 
   return (
     <MealContext.Provider
       value={{
         meals,
         deleteMeal,
+        loading,
+        getMealsByCategoryId,
         getMealById,
         changeMealAvailability,
         getDailyMeals,

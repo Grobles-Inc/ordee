@@ -1,4 +1,11 @@
-import { ICustomer, IMeal, IUser } from "@/interfaces";
+import { ICustomer, IMeal, ITenant, IUser } from "@/interfaces";
+
+export interface ITable {
+  id?: string;
+  status: boolean;
+  number: number;
+  id_tenant?: string;
+}
 
 export interface IOrder {
   id?: string;
@@ -6,32 +13,38 @@ export interface IOrder {
   date?: Date;
   users?: IUser;
   customers?: ICustomer;
-  id_fixed_customer?: string | null;
-  id_waiter: string;
+  tenants?: ITenant;
+  id_tenant: string;
+  id_customer?: string | null;
+  id_user: string;
   free?: boolean;
   served: boolean;
   to_go: boolean;
   paid: boolean;
-  entradas: IMeal[];
-  fondos: IMeal[];
-  bebidas: IMeal[];
-  helados: IMeal[];
+  items: IMeal[];
   total: number;
 }
 
 export interface IOrderContextProvider {
-  addOrder: (order: IOrder, tableId: string) => Promise<void>;
+  addOrder: (order: IOrder) => Promise<void>;
   updateOrderServedStatus: (id: string) => Promise<void>;
+  unpaidOrders: IOrder[];
+  getOrdersCountByDay: () => Promise<number | null>;
+  getOrderForUpdate: (id: string) => Promise<IOrder>;
   getUnservedOrders: () => Promise<IOrder[]>;
+  setUpdatingOrder: (order: IOrder | null) => void;
+  updatingOrder: IOrder | null;
+  getOrdersCountByMonth: () => Promise<number | null>;
+  updatePaidStatus: (id: string, paid: boolean) => Promise<void>;
   getPaidOrders: () => Promise<IOrder[]>;
+  addTable: (table: ITable) => Promise<void>;
   loading: boolean;
   updateOrder: (order: IOrder) => Promise<void>;
   getOrderById: (id: string) => Promise<IOrder>;
-  orders: IOrder[];
   order: IOrder;
   paidOrders: IOrder[];
   deleteOrder: (id: string) => Promise<void>;
-  getOrders: () => Promise<IOrder[]>;
+
   getDailyPaidOrders: () => Promise<IOrder[]>;
   getUnpaidOrders: () => Promise<IOrder[]>;
 }

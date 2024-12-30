@@ -3,33 +3,15 @@ import { router, Stack } from "expo-router";
 import React from "react";
 import { Button } from "react-native";
 
-export default function WaiterLayout() {
+export default function UserLayout() {
   const { order } = useOrderContext();
-
   return (
     <Stack>
       <Stack.Screen
         name="index"
         options={{
           title: "Pedidos",
-          headerLargeTitle: true,
-          headerShadowVisible: false,
-          // headerSearchBarOptions: {
-          //   placeholder: "Buscar ...",
-          //   hideWhenScrolling: true,
-          //   cancelButtonText: "Cancelar",
-          //   onChangeText: (event) => {
-          //     const search = event.nativeEvent.text;
-          //     router.setParams({
-          //       search: search,
-          //     });
-          //   },
-          //   onCancelButtonPress: () => {
-          //     router.setParams({
-          //       search: undefined,
-          //     });
-          //   },
-          // },
+          headerShown: false,
           headerLargeTitleShadowVisible: false,
         }}
       />
@@ -37,6 +19,8 @@ export default function WaiterLayout() {
         name="details/[id]"
         options={{
           title: "Mesa " + order.id_table,
+          headerLargeTitle: true,
+          headerLargeTitleShadowVisible: false,
           headerRight: () => {
             return order.paid ? null : (
               <Button

@@ -9,9 +9,7 @@ export default function MenuLayout() {
         name="index"
         options={{
           title: "Menú del Día",
-          headerLargeTitle: true,
-          headerShadowVisible: false,
-
+          headerShown: false,
           // headerSearchBarOptions: {
           //   placeholder: "Buscar ...",
           //   hideWhenScrolling: true,
@@ -36,11 +34,8 @@ export default function MenuLayout() {
         options={{
           title: "Agregar Item",
           headerBackTitle: "Menú",
-          headerLargeTitle: true,
           presentation: "modal",
           headerBackVisible: true,
-          headerShadowVisible: false,
-          headerLargeTitleShadowVisible: false,
           headerRight: () => (
             <Button
               title="Cancelar"

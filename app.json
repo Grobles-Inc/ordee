@@ -4,23 +4,25 @@
     "slug": "pos-restaurant",
     "version": "1.1.1",
     "orientation": "portrait",
-    "icon": "./assets/images/logoFinal.png",
+    "icon": "./assets/images/logo.png",
     "scheme": "pos-restaurant",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/logoFinal.png",
+      "image": "./assets/images/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "userInterfaceStyle": "automatic"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logoFinal.png",
+        "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
+      "userInterfaceStyle": "automatic",
       "package": "com.miguelparis.posrestaurant"
     },
     "web": {
@@ -29,7 +31,13 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Ordee tendra acceso a tus fotos para poder agregarlas a tus menues."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

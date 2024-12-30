@@ -1,23 +1,31 @@
 import * as React from "react";
 import { createContext, useContext } from "react";
 import { supabase } from "@/utils/supabase";
-import { IOrder, IOrderContextProvider } from "@/interfaces";
+import { IOrder, IOrderContextProvider, ITable } from "@/interfaces";
 import { router } from "expo-router";
 import { toast } from "sonner-native";
+import { startOfToday, endOfToday, addHours } from "date-fns";
 import { FontAwesome } from "@expo/vector-icons";
+import { useAuth } from "./auth";
 export const OrderContext = createContext<IOrderContextProvider>({
   addOrder: async () => { },
   getUnservedOrders: async () => [],
+  getOrdersCountByDay: async () => 0,
+  addTable: async () => {},
+  getOrderForUpdate: async () => ({} as IOrder),
+  updatingOrder: null,
+  setUpdatingOrder: () => {},
   getOrderById: async (id: string): Promise<IOrder> => ({} as IOrder),
-  orders: [],
+  getOrdersCountByMonth: async () => 0,
   order: {} as IOrder,
   loading: false,
   getPaidOrders: async () => [],
-  updateOrder: async () => { },
-  deleteOrder: async () => { },
-  getOrders: async () => [],
-  updateOrderServedStatus: async () => { },
+  updateOrder: async () => {},
+  deleteOrder: async () => {},
+  updateOrderServedStatus: async () => {},
   paidOrders: [],
+  updatePaidStatus: async () => {},
+  unpaidOrders: [],
   getDailyPaidOrders: async () => [],
   getUnpaidOrders: async () => [],
 });
@@ -27,213 +35,180 @@ export const OrderContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [orders, setOrders] = React.useState<IOrder[]>([]);
+  const [unpaidOrders, setUnpaidOrders] = React.useState<IOrder[]>([]);
+  const [updatingOrder, setUpdatingOrder] = React.useState<IOrder | null>(null);
   const [order, setOrder] = React.useState<IOrder>({} as IOrder);
+  const { profile } = useAuth();
   const [paidOrders, setPaidOrders] = React.useState<IOrder[]>([]);
   const [loading, setLoading] = React.useState(false);
 
-  React.useEffect(() => {
-    const subscription = supabase
-      .channel("orders")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "orders" },
-        async (payload) => {
-          // Recargar los pedidos cuando haya cambios
-          if (
-            payload.eventType === "INSERT" ||
-            payload.eventType === "UPDATE" ||
-            payload.eventType === "DELETE"
-          ) {
-            await getOrders();
-            await getPaidOrders();
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  const addOrder = async (order: IOrder, tableId: string) => {
+  const getOrdersCountByMonth = async () => {
     setLoading(true);
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const { error, count } = await supabase
+      .from("orders")
+      .select("*", { count: "exact" })
+      .eq("id_tenant", profile.id_tenant)
+      .gte("date", new Date(currentYear, currentMonth, 1).toISOString())
+      .lt("date", new Date(currentYear, currentMonth + 1, 1).toISOString());
+    if (error) throw error;
+    setLoading(false);
+    return count;
+  };
+
+  const getOrdersCountByDay = async () => {
+    setLoading(true);
+
+    const startOfDay = startOfToday(); // Local time start of today
+    const endOfDay = endOfToday(); // Local time end of today
+
+    const utcOffset = -5; // Peru is UTC-5
+    const startOfDayUTC = addHours(startOfDay, -utcOffset); // Convert to UTC
+    const endOfDayUTC = addHours(endOfDay, -utcOffset); // Convert to UTC
+
+    const { error, count } = await supabase
+      .from("orders")
+      .select("*", { count: "exact" })
+      .eq("id_tenant", profile.id_tenant)
+      .gte("date", startOfDayUTC.toISOString())
+      .lt("date", endOfDayUTC.toISOString());
+
+    if (error) throw error;
+
+    setLoading(false);
+    return count;
+  };
+
+  const addOrder = async (order: IOrder) => {
+    setLoading(true);
+
     try {
-      for (const item of order.entradas) {
-        const { data: mealData, error: mealError } = await supabase
-          .from("meals")
-          .select("quantity")
-          .eq("id", item.id)
-          .single();
-
-        if (mealError) {
-          console.error("Error retrieving meal quantity:", mealError);
-          alert("Error al verificar inventario");
-          return;
-        }
-
-        // Check if there's enough quantity
-        if (mealData.quantity < item.quantity) {
-          toast.error(`${item.name} fuera de stock!`, {
-            icon: <FontAwesome name="times-circle" size={20} color="red" />,
-          });
-          return;
-        }
-
-        // Update meal quantity
-        const { error: updateError } = await supabase
-          .from("meals")
-          .update({ quantity: mealData.quantity - item.quantity })
-          .eq("id", item.id);
-
-        if (updateError) {
-          console.error("Error updating meal quantity:", updateError);
-          alert("Error al actualizar inventario");
-          return;
-        }
-      }
-      for (const item of order.fondos) {
-        const { data: mealData, error: mealError } = await supabase
-          .from("meals")
-          .select("quantity")
-          .eq("id", item.id)
-          .single();
-
-        if (mealError) {
-          console.error("Error retrieving meal quantity:", mealError);
-          alert("Error al verificar inventario");
-          return;
-        }
-
-        // Check if there's enough quantity
-        if (mealData.quantity < item.quantity) {
-          toast.error(`${item.name} fuera de stock!`, {
-            icon: <FontAwesome name="times-circle" size={20} color="red" />,
-          });
-          return;
-        }
-
-        // Update meal quantity
-        const { error: updateError } = await supabase
-          .from("meals")
-          .update({ quantity: mealData.quantity - item.quantity })
-          .eq("id", item.id);
-
-        if (updateError) {
-          console.error("Error updating meal quantity:", updateError);
-          alert("Error al actualizar inventario");
-          return;
-        }
-      }
-      for (const item of order.bebidas) {
-        const { data: mealData, error: mealError } = await supabase
-          .from("meals")
-          .select("quantity")
-          .eq("id", item.id)
-          .single();
-
-        if (mealError) {
-          console.error("Error retrieving meal quantity:", mealError);
-          alert("Error al verificar inventario");
-          return;
-        }
-
-        // Check if there's enough quantity
-        if (mealData.quantity < item.quantity) {
-          toast.error(`${item.name} fuera de stock!`, {
-            icon: <FontAwesome name="times-circle" size={20} color="red" />,
-          });
-          return;
-        }
-
-        // Update meal quantity
-        const { error: updateError } = await supabase
-          .from("meals")
-          .update({ quantity: mealData.quantity - item.quantity })
-          .eq("id", item.id);
-
-        if (updateError) {
-          console.error("Error updating meal quantity:", updateError);
-          alert("Error al actualizar inventario");
-          return;
-        }
-      }
-      for (const item of order.helados) {
-        const { data: mealData, error: mealError } = await supabase
-          .from("meals")
-          .select("quantity")
-          .eq("id", item.id)
-          .single();
-
-        if (mealError) {
-          console.error("Error retrieving meal quantity:", mealError);
-          alert("Error al verificar inventario");
-          return;
-        }
-
-        // Check if there's enough quantity
-        if (mealData.quantity < item.quantity) {
-          toast.error(`${item.name} fuera de stock!`, {
-            icon: <FontAwesome name="times-circle" size={20} color="red" />,
-          });
-          return;
-        }
-
-        // Update meal quantity
-        const { error: updateError } = await supabase
-          .from("meals")
-          .update({ quantity: mealData.quantity - item.quantity })
-          .eq("id", item.id);
-
-        if (updateError) {
-          console.error("Error updating meal quantity:", updateError);
-          alert("Error al actualizar inventario");
-          return;
-        }
-      }
-      const { data: orderData, error: orderError } = await supabase
-        .from("orders")
-        .insert(order);
+      const { error: orderError } = await supabase.from("orders").insert({
+        ...order,
+        id_tenant: profile.id_tenant,
+      });
 
       if (orderError) {
-        console.error("Error inserting order:", orderError);
-        alert("Error al registrar pedido");
+        if (orderError.code === "P0001") {
+          console.error("Error:", orderError.message);
+          alert("Límite de 100 órdenes por día alcanzado para este negocio.");
+        } else {
+          console.error("Error inserting order:", orderError);
+          alert("Error inserting order");
+        }
+        setLoading(false);
+        return;
+      }
+
+      const updates = await Promise.all(
+        order.items.map(async (meal) => {
+          const { data: currentMeal, error: fetchError } = await supabase
+            .from("meals")
+            .select("quantity")
+            .eq("id", meal.id)
+            .eq("id_tenant", profile.id_tenant)
+            .single();
+          if (fetchError) {
+            console.error("Error fetching meal quantity:", fetchError);
+            alert("Error fetching meal quantity");
+            return null;
+          }
+          const newQuantity = currentMeal.quantity - meal.quantity;
+          return {
+            id: meal.id,
+            quantity: newQuantity,
+            id_tenant: profile.id_tenant,
+          };
+        })
+      );
+
+      const validUpdates = updates.filter((update) => update !== null);
+
+      const { error: mealsError } = await supabase
+        .from("meals")
+        .upsert(validUpdates);
+      if (mealsError) {
+        console.error("Error updating meals:", mealsError);
+        setLoading(false);
         return;
       }
 
       if (!order.to_go) {
-        const { data: tableData, error: tableError } = await supabase
+        const { error: tableError } = await supabase
           .from("tables")
           .update({ status: false })
-          .eq("id", tableId);
+          .eq("id", order.id_table);
 
         if (tableError) {
           console.error("Error updating table status:", tableError);
-          alert("Error al actualizar status da mesa");
+          setLoading(false);
           return;
         }
       }
-      setLoading(false);
+
       toast.success("Pedido agregado!", {
         icon: <FontAwesome name="check-circle" size={20} color="green" />,
       });
       router.back();
     } catch (error) {
       console.error("Unexpected error:", error);
-      alert("Error al procesar pedido");
+      toast.success("Error al procesar pedido", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getOrders = async () => {
+  async function addTable(table: ITable) {
+    setLoading(true);
+    const { error } = await supabase.from("tables").insert({
+      ...table,
+      id_tenant: profile.id_tenant,
+    });
+    if (error) {
+      console.error("Error adding table:", error);
+      toast.error("Error al agregar mesa!", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
+      return;
+    }
+    toast.success("Mesa agregada!", {
+      icon: <FontAwesome name="check-circle" size={20} color="green" />,
+    });
+    setLoading(false);
+  }
+
+  const updatePaidStatus = async (id: string, paid: boolean) => {
+    await supabase.from("orders").update({ paid }).eq("id", id).select();
+    const { error } = await supabase
+      .from("tables")
+      .update({ status: true })
+      .eq("id", order.id_table)
+      .select();
+    if (error) {
+      toast.error("Error al actualizar estado de la mesa!", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
+      return;
+    }
+    toast.success("Estado de la mesa actualizado!", {
+      icon: <FontAwesome name="check-circle" size={20} color="green" />,
+    });
+  };
+
+  const getOrderForUpdate = async (id: string) => {
     setLoading(true);
     const { data, error } = await supabase
       .from("orders")
       .select("*")
-      .order("date", { ascending: false });
+      .eq("id", id)
+      .single();
     if (error) throw error;
-    setOrders(data);
     setLoading(false);
+    setUpdatingOrder(data);
     return data;
   };
 
@@ -242,6 +217,7 @@ export const OrderContextProvider = ({
     const { data, error } = await supabase
       .from("orders")
       .select("*")
+      .eq("id_tenant", profile?.id_tenant)
       .eq("served", false);
     if (error) throw error;
     setLoading(false);
@@ -254,6 +230,7 @@ export const OrderContextProvider = ({
       .from("orders")
       .select("*")
       .eq("paid", true)
+      .eq("id_tenant", profile?.id_tenant)
       .order("date", { ascending: false });
     if (error) throw error;
     setPaidOrders(data);
@@ -281,7 +258,6 @@ export const OrderContextProvider = ({
     toast.success("Pedido eliminado!", {
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
-    setOrders((prevOrders) => prevOrders.filter((order) => order.id !== id));
   };
 
   async function getOrderById(id: string) {
@@ -289,7 +265,7 @@ export const OrderContextProvider = ({
     const { data, error } = await supabase
       .from("orders")
       .select(
-        "*, users:id_waiter(name), customers:id_fixed_customer(full_name)"
+        "*, users:id_user(name), customers:id_customer(full_name), tenants:id_tenant(name, logo)"
       )
       .eq("id", id)
       .single();
@@ -311,6 +287,7 @@ export const OrderContextProvider = ({
     router.back();
     if (error) console.error("Update Error", error);
     setLoading(false);
+    setUpdatingOrder(null);
   }
 
   async function getDailyPaidOrders() {
@@ -322,9 +299,9 @@ export const OrderContextProvider = ({
       .from("orders")
       .select("*")
       .eq("paid", true)
+      .eq("id_tenant", profile?.id_tenant)
       .gte("date", today.toISOString())
       .order("date");
-
     if (error) throw error;
     setLoading(false);
     return data;
@@ -335,8 +312,11 @@ export const OrderContextProvider = ({
     const { data, error } = await supabase
       .from("orders")
       .select("*")
-      .eq("paid", false);
+      .eq("paid", false)
+      .eq("id_tenant", profile?.id_tenant)
+      .order("date", { ascending: false });
     if (error) throw error;
+    setUnpaidOrders(data);
     setLoading(false);
     return data;
   }
@@ -344,19 +324,25 @@ export const OrderContextProvider = ({
   return (
     <OrderContext.Provider
       value={{
-        orders,
-        getOrders,
+        unpaidOrders,
         deleteOrder,
         loading,
         getOrderById,
         paidOrders,
         getPaidOrders,
         getUnservedOrders,
+        updatingOrder,
         updateOrder,
         addOrder,
+        setUpdatingOrder,
+        addTable,
         updateOrderServedStatus,
         order,
+        getOrdersCountByDay,
+        getOrderForUpdate,
         getDailyPaidOrders,
+        getOrdersCountByMonth,
+        updatePaidStatus,
         getUnpaidOrders,
       }}
     >

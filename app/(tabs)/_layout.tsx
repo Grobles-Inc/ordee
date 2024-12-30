@@ -4,26 +4,16 @@ import { useAuth } from "@/context";
 import { Image } from "expo-image";
 import { Redirect, Tabs } from "expo-router";
 import React from "react";
-import { ActivityIndicator } from "react-native-paper";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { profile: user, isAuthenticated, loading } = useAuth();
-
-  if (loading) {
-    return <ActivityIndicator />;
-  }
-
-  if (!isAuthenticated) {
-    return <Redirect href="/(auth)/sign-in" />;
-  }
-
+  const { profile } = useAuth();
   const tabConfigurations = {
-    chef: [
+    guest: [
       {
         name: "index",
         title: "Mesas",
-        icon: ["mingcute:album-2-fill.svg", "mingcute:album-2-line.svg"],
+        icon: ["mingcute:board-fill.svg", "mingcute:board-line.svg"],
       },
       {
         name: "menu",
@@ -34,17 +24,20 @@ export default function TabLayout() {
         name: "payments",
         title: "Pagos",
         href: null,
-        icon: ["mingcute:inbox-2-fill.svg", "mingcute:inbox-2-line.svg"],
+        icon: [
+          "mingcute:currency-dollar-fill.svg",
+          "mingcute:currency-dollar-line.svg",
+        ],
       },
       {
-        name: "chef-order",
+        name: "guest-order",
         title: "Ordenes",
         icon: ["mingcute:clipboard-fill.svg", "mingcute:clipboard-line.svg"],
       },
       {
         name: "my-profile",
         title: "Mi Perfil",
-        icon: ["mingcute:user-2-fill.svg", "mingcute:user-2-line.svg"],
+        icon: ["mingcute:user-3-fill.svg", "mingcute:user-3-line.svg"],
       },
       {
         name: "orders",
@@ -56,14 +49,14 @@ export default function TabLayout() {
         name: "profile",
         title: "Mi Perfil",
         href: null,
-        icon: ["mingcute:user-2-fill.svg", "mingcute:user-2-line.svg"],
+        icon: ["mingcute:user-3-fill.svg", "mingcute:user-3-line.svg"],
       },
     ],
     admin: [
       {
         name: "index",
         title: "Mesas",
-        icon: ["mingcute:album-2-fill.svg", "mingcute:album-2-line.svg"],
+        icon: ["mingcute:board-fill.svg", "mingcute:board-line.svg"],
       },
       {
         name: "menu",
@@ -73,11 +66,14 @@ export default function TabLayout() {
       {
         name: "payments",
         title: "Pagos",
-        icon: ["mingcute:inbox-2-fill.svg", "mingcute:inbox-2-line.svg"],
+        icon: [
+          "mingcute:currency-dollar-fill.svg",
+          "mingcute:currency-dollar-line.svg",
+        ],
       },
       {
-        name: "chef-order",
-        title: "Chef",
+        name: "guest-order",
+        title: "Guest",
         href: null,
         icon: ["mingcute:clipboard-fill.svg", "mingcute:clipboard-line.svg"],
       },
@@ -90,19 +86,19 @@ export default function TabLayout() {
         name: "my-profile",
         title: "Mi Perfil",
         href: null,
-        icon: ["mingcute:user-2-fill.svg", "mingcute:user-2-line.svg"],
+        icon: ["mingcute:user-3-fill.svg", "mingcute:user-3-line.svg"],
       },
       {
         name: "profile",
         title: "Mi Perfil",
-        icon: ["mingcute:user-2-fill.svg", "mingcute:user-2-line.svg"],
+        icon: ["mingcute:user-3-fill.svg", "mingcute:user-3-line.svg"],
       },
     ],
-    waiter: [
+    user: [
       {
         name: "index",
         title: "Mesas",
-        icon: ["mingcute:album-2-fill.svg", "mingcute:album-2-line.svg"],
+        icon: ["mingcute:board-fill.svg", "mingcute:board-line.svg"],
       },
       {
         name: "orders",
@@ -112,7 +108,7 @@ export default function TabLayout() {
       {
         name: "my-profile",
         title: "Mi Perfil",
-        icon: ["mingcute:user-2-fill.svg", "mingcute:user-2-line.svg"],
+        icon: ["mingcute:user-3-fill.svg", "mingcute:user-3-line.svg"],
       },
       {
         name: "menu",
@@ -124,11 +120,14 @@ export default function TabLayout() {
         name: "payments",
         title: "Pagos",
         href: null,
-        icon: ["mingcute:inbox-2-fill.svg", "mingcute:inbox-2-line.svg"],
+        icon: [
+          "mingcute:currency-dollar-fill.svg",
+          "mingcute:currency-dollar-line.svg",
+        ],
       },
       {
-        name: "chef-order",
-        title: "Chef",
+        name: "guest-order",
+        title: "Guest",
         href: null,
         icon: ["mingcute:clipboard-fill.svg", "mingcute:clipboard-line.svg"],
       },
@@ -136,7 +135,7 @@ export default function TabLayout() {
         name: "profile",
         title: "Mi Perfil",
         href: null,
-        icon: ["mingcute:user-2-fill.svg", "mingcute:user-2-line.svg"],
+        icon: ["mingcute:user-3-fill.svg", "mingcute:user-3-line.svg"],
       },
     ],
   };
@@ -152,7 +151,6 @@ export default function TabLayout() {
     freezeOnBlur: true,
   };
 
-  // Function to create tab icon
   const createTabIcon = (focusedIcon: string, unfocusedIcon: string) => {
     return ({ color, focused }: { color: string; focused: boolean }) => (
       <Image
@@ -164,15 +162,9 @@ export default function TabLayout() {
       />
     );
   };
-
-  // Role-specific tab configurations
-
-  // Determine the correct tab configuration based on user role
-  // Default to an empty array if role is not recognized, which will trigger a redirect
   const tabs =
-    tabConfigurations[user.role as keyof typeof tabConfigurations] || [];
+    tabConfigurations[profile?.role as keyof typeof tabConfigurations] || [];
 
-  // If no tabs are found for the role, redirect to sign-in
   if (tabs.length === 0) {
     return <Redirect href="/(auth)/sign-in" />;
   }
@@ -185,6 +177,7 @@ export default function TabLayout() {
           name={tab.name}
           options={{
             title: tab.title,
+            headerShown: tab.name === "my-profile",
             href: tab.href,
             tabBarIcon: createTabIcon(
               `https://api.iconify.design/${tab.icon[0]}`,

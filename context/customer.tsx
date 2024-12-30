@@ -4,6 +4,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { createContext, useContext, useState } from "react";
 import { Alert } from "react-native";
 import { toast } from "sonner-native";
+import { useAuth } from "./auth";
 
 const CustomerContext = createContext<ICustomerContextProvider>({
   customer: {} as ICustomer,
@@ -22,6 +23,7 @@ export function CustomerContextProvider({
 }) {
   const [loading, setLoading] = useState(false);
   const [customers, setCustomers] = useState<ICustomer[]>([]);
+  const { profile } = useAuth();
   const [customer, setCustomer] = useState<ICustomer>({} as ICustomer);
 
   const getCustomerById = async (id: string) => {
@@ -52,7 +54,10 @@ export function CustomerContextProvider({
 
   const addCustomer = async (customer: ICustomer) => {
     setLoading(true);
-    const { error } = await supabase.from("fixed_customers").insert(customer);
+    const { error } = await supabase.from("customers").insert({
+      ...customer,
+      id_tenant: profile.id_tenant,
+    });
     if (error) {
       toast.error("Error al agregar cliente!", {
         icon: <FontAwesome name="times-circle" size={20} color="red" />,
@@ -66,10 +71,7 @@ export function CustomerContextProvider({
   };
 
   const deleteCustomer = async (id: string) => {
-    const { error } = await supabase
-      .from("fixed_customers")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("customers").delete().eq("id", id);
 
     if (error) {
       toast.error("Error al eliminar cliente!", {
@@ -85,12 +87,11 @@ export function CustomerContextProvider({
 
   const getCustomers = async () => {
     const { data, error } = await supabase
-      .from("fixed_customers")
+      .from("customers")
       .select("*")
-      .order("full_name");
-
+      .order("full_name")
+      .eq("id_tenant", profile.id_tenant);
     if (error) throw error;
-
     setCustomers(data);
     return data;
   };

@@ -10,6 +10,7 @@ export default function PaymentsLayout() {
         options={{
           title: "Pedidos Pagados",
           headerShadowVisible: false,
+          headerShown: false,
           headerLargeTitle: true,
           // headerSearchBarOptions: {
           //   placeholder: "Buscar ...",
@@ -34,7 +35,7 @@ export default function PaymentsLayout() {
         options={({ route }) => {
           const { id } = route.params as { id: string };
           return {
-            title: "Mesa #" + order.id_table,
+            title: "Mesa " + order.id_table,
             headerBackTitle: "Pagos",
             headerLargeTitle: true,
             headerBackVisible: true,

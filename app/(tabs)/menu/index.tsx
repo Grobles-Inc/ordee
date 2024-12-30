@@ -1,90 +1,153 @@
 import MealCard from "@/components/meal-card";
+import { useCategoryContext } from "@/context/category";
 import { useMealContext } from "@/context/meals";
+import { IMeal } from "@/interfaces";
 import { supabase } from "@/utils/supabase";
 import { FlashList } from "@shopify/flash-list";
-import { router, useLocalSearchParams } from "expo-router";
+import { Image } from "expo-image";
+import { router } from "expo-router";
 import React from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
-import { ActivityIndicator, FAB } from "react-native-paper";
+import { Platform, View } from "react-native";
+import {
+  ActivityIndicator,
+  Appbar,
+  Divider,
+  Menu,
+  Text,
+} from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+const MORE_ICON = Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical";
 export default function MenuScreen() {
-  const { search } = useLocalSearchParams<{ search?: string }>();
-  const { meals, getDailyMeals } = useMealContext();
+  const { getMealsByCategoryId, loading, getDailyMeals, meals } =
+    useMealContext();
+  const [mealsByCategoryId, setMealsByCategoryId] = React.useState<
+    IMeal[] | undefined
+  >();
+  const { categories, getCategories } = useCategoryContext();
+  const [categoryId, setCategoryId] = React.useState<string>();
   const [refreshing, setRefreshing] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  const onRefresh = React.useCallback(async () => {
-    setRefreshing(true);
-    setIsLoading(true);
-    try {
-      await getDailyMeals();
-    } catch (error) {
-      console.error("Error refreshing meals:", error);
-    } finally {
-      setRefreshing(false);
-      setIsLoading(false);
-    }
-  }, [getDailyMeals]);
+  const [visible, setVisible] = React.useState(false);
   React.useEffect(() => {
+    getCategories();
     getDailyMeals();
-    const channel = supabase.channel("meals-changes").on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "meals",
-      },
-      () => {
-        getDailyMeals();
-      }
-    );
-
-    return () => {
-      channel.unsubscribe();
-    };
+    supabase
+      .channel("db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "meals",
+        },
+        (payload) => {
+          getDailyMeals();
+        }
+      )
+      .subscribe();
   }, []);
+  async function onRefresh() {
+    setRefreshing(true);
+    await getDailyMeals();
+    setRefreshing(false);
+  }
 
-  const filteredMeals = React.useMemo(() => {
-    if (!search) return meals;
-    const lowercasedSearch = search.toLowerCase();
-    return meals.filter(
-      (meals) =>
-        meals.name.toString().includes(lowercasedSearch) ||
-        meals.category.toString().includes(lowercasedSearch)
-    );
-  }, [search, meals]);
+  React.useEffect(() => {
+    getMealsByCategoryId(categoryId as string).then((meals) => {
+      setMealsByCategoryId(meals);
+    });
+  }, [categoryId]);
 
-  if (!meals) return <ActivityIndicator />;
-  if (isLoading && !meals?.length) return <ActivityIndicator />;
   return (
-    <View className="flex-1">
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        className=" bg-white flex-1 h-screen-safe"
-      >
-        <FlashList
-          contentContainerStyle={{}}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+    <>
+      <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
+        <Appbar.Content
+          title="Menú del Día"
+          titleStyle={{ fontWeight: "bold" }}
+        />
+        <Menu
+          visible={visible}
+          style={{
+            paddingTop: 50,
+            paddingRight: 10,
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+          contentStyle={{
+            borderRadius: 12,
+          }}
+          onDismiss={() => setVisible(false)}
+          anchor={
+            <Appbar.Action icon={MORE_ICON} onPress={() => setVisible(true)} />
           }
+        >
+          <Menu.Item
+            onPress={() => {
+              router.push("/menu/add-meal");
+              setVisible(false);
+            }}
+            leadingIcon="plus"
+            title="Agregar nuevo item"
+          />
+          <Divider />
+
+          <Text
+            style={{
+              color: "gray",
+            }}
+            className="m-2"
+          >
+            Categorías
+          </Text>
+          <Divider />
+          {categories.map((category) => (
+            <Menu.Item
+              key={category.id}
+              trailingIcon={category.id === categoryId ? "check" : undefined}
+              onPress={() => {
+                setCategoryId(category.id);
+                setVisible(false);
+              }}
+              title={category.name}
+            />
+          ))}
+          {categories.length === 0 && (
+            <Menu.Item
+              style={{
+                opacity: 0.3,
+              }}
+              title="No hay categorías"
+              onPress={() => {
+                setVisible(false);
+              }}
+            />
+          )}
+        </Menu>
+      </Appbar.Header>
+      <View className="flex-1">
+        {loading && <ActivityIndicator className="mt-20" />}
+        <FlashList
+          refreshing={refreshing}
+          contentContainerStyle={{
+            padding: 16,
+          }}
+          onRefresh={onRefresh}
           renderItem={({ item: meal }) => <MealCard meal={meal} />}
-          data={filteredMeals}
+          data={categoryId ? mealsByCategoryId : meals}
           estimatedItemSize={200}
           horizontal={false}
+          ListEmptyComponent={
+            <SafeAreaView className="flex flex-col  items-center justify-center mt-20">
+              <Image
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/128/17768/17768786.png",
+                }}
+                style={{ width: 100, height: 100, opacity: 0.5 }}
+              />
+              <Text style={{ color: "gray" }}>No hay items para mostrar</Text>
+            </SafeAreaView>
+          }
         />
-      </ScrollView>
-      <FAB
-        icon="toy-brick-plus-outline"
-        variant="tertiary"
-        style={{
-          position: "absolute",
-          margin: 16,
-          right: 0,
-          bottom: 0,
-        }}
-        onPress={() => router.push("/menu/add-meal")}
-      />
-    </View>
+      </View>
+    </>
   );
 }

@@ -4,13 +4,14 @@ import { FontAwesome } from "@expo/vector-icons";
 import * as React from "react";
 import { createContext, useContext } from "react";
 import { toast } from "sonner-native";
+import { useAuth } from "./auth";
 export const CategoryContext = createContext<ICategoryContextProvider>({
   addCategory: async () => {},
   getCategoryById: async (id: string): Promise<ICategory> => ({} as ICategory),
   categories: [],
   category: {} as ICategory,
   loading: false,
-  getCategories: async (id_tenant: string) => [],
+  getCategories: async () => [],
   deleteCategory: async () => {},
 });
 
@@ -21,12 +22,15 @@ export const CategoryContextProvider = ({
 }) => {
   const [categories, setCategories] = React.useState<ICategory[]>([]);
   const [category, setCategory] = React.useState<ICategory>({} as ICategory);
+  const { profile } = useAuth();
   const [loading, setLoading] = React.useState(false);
 
   const addCategory = async (category: ICategory) => {
-    const { error } = await supabase.from("categories").insert(category);
+    const { error } = await supabase.from("categories").insert({
+      ...category,
+      id_tenant: profile.id_tenant,
+    });
     if (error) {
-      console.error("Error adding category:", error);
       toast.error("Error al agregar categoría!", {
         icon: <FontAwesome name="times-circle" size={20} color="red" />,
       });
@@ -37,12 +41,12 @@ export const CategoryContextProvider = ({
     });
   };
 
-  const getCategories = async (id_tenant: string) => {
+  const getCategories = async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("categories")
       .select("*")
-      .eq("id_tenant", id_tenant);
+      .eq("id_tenant", profile.id_tenant);
     if (error) {
       console.error("Error getting categories:", error);
       return;

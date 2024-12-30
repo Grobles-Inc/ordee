@@ -4,13 +4,16 @@ export interface IMeal {
   price: number;
   created_at?: Date;
   image_url: string;
-  category: "entradas" | "fondos" | "bebidas" | "helados";
+  id_category: string;
+  category?: string;
   quantity: number;
 }
 
 export interface IMealContextProvider {
   addMeal: (Meal: IMeal) => Promise<void>;
   getMealById: (id: string) => Promise<IMeal>;
+  loading: boolean;
+  getMealsByCategoryId: (id: string) => Promise<IMeal[]>;
   changeMealAvailability: (id: string, quantity: number) => Promise<void>;
   meals: IMeal[];
   meal: IMeal;
