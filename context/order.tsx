@@ -12,6 +12,7 @@ export const OrderContext = createContext<IOrderContextProvider>({
   addTable: async () => {},
   getOrderForUpdate: async () => ({} as IOrder),
   updatingOrder: null,
+  setUpdatingOrder: () => {},
   getOrderById: async (id: string): Promise<IOrder> => ({} as IOrder),
   getOrdersCountByMonth: async () => 0,
   order: {} as IOrder,
@@ -33,8 +34,6 @@ export const OrderContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [unpaidOrders, setUnpaidOrders] = React.useState<IOrder[]>([]);
-
-  //FIX: Cause this state is a context state, it's causing bugs in add order screen, cause already exists data, try the bug tapping on Edit and then go to '/tabs' and add new order
   const [updatingOrder, setUpdatingOrder] = React.useState<IOrder | null>(null);
   const [order, setOrder] = React.useState<IOrder>({} as IOrder);
   const { profile } = useAuth();
@@ -263,6 +262,7 @@ export const OrderContextProvider = ({
     router.back();
     if (error) console.error("Update Error", error);
     setLoading(false);
+    setUpdatingOrder(null);
   }
 
   async function getDailyPaidOrders() {
@@ -309,6 +309,7 @@ export const OrderContextProvider = ({
         updatingOrder,
         updateOrder,
         addOrder,
+        setUpdatingOrder,
         addTable,
         updateOrderServedStatus,
         order,

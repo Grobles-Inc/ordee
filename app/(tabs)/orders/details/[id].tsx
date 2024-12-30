@@ -3,9 +3,15 @@ import { IOrder } from "@/interfaces";
 import { supabase } from "@/utils/supabase";
 import { AntDesign } from "@expo/vector-icons";
 import * as Print from "expo-print";
-import { useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
-import { Image, ScrollView, View } from "react-native";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  Image,
+  RefreshControl,
+  ScrollView,
+  useColorScheme,
+  View,
+} from "react-native";
 import {
   ActivityIndicator,
   Button,
@@ -19,6 +25,8 @@ import {
 export default function OrderDetailsScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const [order, setOrder] = useState<IOrder>({} as IOrder);
+  const colorScheme = useColorScheme();
+  const [refreshing, setRefreshing] = React.useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const { getOrderById, loading, updatePaidStatus } = useOrderContext();
   React.useEffect(() => {
@@ -26,22 +34,31 @@ export default function OrderDetailsScreen() {
       setOrder(order);
     });
   }, [params.id]);
-
-  React.useEffect(() => {
-    supabase.channel("db-changes").on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "orders",
-      },
-      (payload) => {
-        getOrderById(params.id).then((order) => {
-          setOrder(order);
-        });
-      }
-    );
+  useEffect(() => {
+    supabase
+      .channel("db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "tables",
+        },
+        (payload) => {
+          getOrderById(params.id).then((order) => {
+            setOrder(order);
+          });
+        }
+      )
+      .subscribe();
   }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getOrderById(params.id).then((order) => {
+        setOrder(order);
+      });
+    }, [])
+  );
 
   const confirmUpdate = () => {
     if (order?.id) {
@@ -49,8 +66,15 @@ export default function OrderDetailsScreen() {
     }
     printOrder();
     setModalVisible(false);
+    router.push("/(tabs)/orders");
   };
-
+  async function onRefresh() {
+    setRefreshing(true);
+    await getOrderById(params.id).then((order) => {
+      setOrder(order);
+    });
+    setRefreshing(false);
+  }
   const generateHTML = () => {
     const now = new Date();
     const dateStr = now.toLocaleDateString();
@@ -219,6 +243,9 @@ export default function OrderDetailsScreen() {
       <ScrollView
         className="p-4 bg-white dark:bg-zinc-900"
         contentInsetAdjustmentBehavior="automatic"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         {loading && (
           <View className="h-screen-safe flex-1 items-center justify-center">
@@ -304,7 +331,7 @@ export default function OrderDetailsScreen() {
               marginHorizontal: 16,
               display: "flex",
               gap: 10,
-              backgroundColor: "#fff",
+              backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
               shadowColor: "#000",
               shadowOffset: {
                 width: 0,
