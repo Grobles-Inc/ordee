@@ -96,10 +96,7 @@ export default function Membership() {
         <Button
           mode="contained"
           onPress={() => {
-            Alert.alert(
-              "Adquisicion",
-              "Abrir el modal de paywall screen de Ordee"
-            );
+            router.push("/(tabs)/profile/paywall");
           }}
         >
           Adquirir Pro
