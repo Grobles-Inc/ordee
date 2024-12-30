@@ -7,7 +7,7 @@ import { Calendar, LocaleConfig } from "react-native-calendars";
 import { BarChart } from "react-native-gifted-charts";
 import { ActivityIndicator, Text } from "react-native-paper";
 import { toZonedTime, format } from "date-fns-tz";
-import { FontAwesome6 } from "@expo/vector-icons";
+import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
 
 const lightTheme = {
   todayTextColor: "#FF6247",
@@ -115,7 +115,7 @@ export default function DailyReportScreen() {
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => {
     const now = new Date();
-    return format(now, 'yyyy-MM-dd');
+    return format(now, "yyyy-MM-dd");
   });
   const [dailyTotals, setDailyTotals] = useState<{ [key: string]: number }>({});
 
@@ -277,16 +277,25 @@ export default function DailyReportScreen() {
                 Total: S/. {totalDailySales.toFixed(2)}
               </Text>
             </View>
-            <BarChart
-              data={dailySales}
-              barWidth={30}
-              barBorderRadius={6}
-              xAxisThickness={0}
-              yAxisThickness={0}
-              yAxisTextStyle={styles.chartText}
-              xAxisLabelTextStyle={styles.chartText}
-              noOfSections={5}
-            />
+            <View className="flex flex-col gap-2 justify-center items-center">
+              <BarChart
+                data={dailySales}
+                barWidth={30}
+                barBorderRadius={6}
+                xAxisThickness={0}
+                yAxisThickness={0}
+                yAxisTextStyle={styles.chartText}
+                xAxisLabelTextStyle={styles.chartText}
+                noOfSections={5}
+              />
+              <View className="flex flex-row gap-2 items-center">
+                <AntDesign name="swapleft" size={20} color="#FF6247" />
+                <Text variant="labelSmall" style={{ color: "gray" }}>
+                  Desliza a la izquierda
+                </Text>
+                <AntDesign name="swapright" size={20} color="#FF6247" />
+              </View>
+            </View>
             <View className="p-4 bg-white dark:bg-zinc-900 rounded-lg">
               <SalesDetails
                 title="Total de pedidos"

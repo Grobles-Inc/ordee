@@ -18,7 +18,7 @@ export default function Membership() {
   });
 
   return (
-    <SafeAreaView className="p-4 bg-white dark:bg-zinc-900 h-screen-safe">
+    <SafeAreaView className="p-4 bg-white dark:bg-zinc-900 h-screen-safe flex-1 justify-between">
       <View className="flex flex-col gap-6 px-4 py-8 ">
         <View className="flex flex-row gap-4 items-center ">
           <Image
@@ -59,8 +59,8 @@ export default function Membership() {
           </View>
           <View className="flex flex-col gap-4 p-4">
             <Text>
-              Esta información es de caracter informativo y no puede ser editada
-              o modificada. Se cauteloso con la información que compartas.
+              Se aplican límites y restricciones para la membresía con el plan
+              gratuito. Tienes permitidas sólo 50 ordenes por día.
             </Text>
 
             <View className="flex flex-row gap-1 items-center">
@@ -82,20 +82,18 @@ export default function Membership() {
           S/. {profile.tenants?.plans?.price.toFixed(2)} soles /{" "}
           {profile.tenants?.plans?.billing === "monthly" ? "mes" : "año"}
         </Text>
-        <Text style={{ color: "gray" }}>
-          La renovación de la membresía tiene un costo de S/. S/.{" "}
-          {profile.tenants.plans?.price.toFixed(2)} nuevos soles.
-        </Text>
-
-        <Button
-          mode="contained"
-          onPress={() => {
-            router.push("/(tabs)/profile/membership/paywall");
-          }}
-        >
-          Ver Planes
-        </Button>
       </View>
+      <Button
+        style={{
+          margin: 16,
+        }}
+        mode="contained"
+        onPress={() => {
+          router.push("/(tabs)/profile/membership/paywall");
+        }}
+      >
+        Ver Planes
+      </Button>
     </SafeAreaView>
   );
 }

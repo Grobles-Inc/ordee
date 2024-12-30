@@ -1,5 +1,4 @@
 import PushNotification from "@/components/push-notification";
-import { CounterSkeleton } from "@/components/skeleton/order-counter";
 import { useAuth, useOrderContext } from "@/context";
 import { supabase } from "@/utils/supabase";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -9,7 +8,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
-  Linking,
   ScrollView,
   TouchableOpacity,
   useColorScheme,
@@ -20,7 +18,7 @@ export default function ProfileScreen() {
   const { profile, session } = useAuth();
   const [count, setCount] = React.useState(0);
   const [expoPushToken, setExpoPushToken] = React.useState("");
-  const { getOrdersCountByDay, loading } = useOrderContext();
+  const { getOrdersCountByDay } = useOrderContext();
   const router = useRouter();
   const headerHeight = useHeaderHeight();
   const colorScheme = useColorScheme();
@@ -78,53 +76,56 @@ export default function ProfileScreen() {
         </View>
       </View>
       <View className="flex flex-col gap-4 mt-10 items-start ">
-        <View className="bg-zinc-100 p-4 rounded-xl dark:bg-zinc-800 w-full flex flex-col gap-4">
-          <Text variant="titleSmall" style={{ color: "gray" }}>
-            Ordenes Diarias
-          </Text>
-
-          <View>
-            <View className="flex-row justify-between mb-2">
-              <Text className="text-gray-700">{count}</Text>
-              <Text className="font-semibold">50</Text>
-            </View>
-            <ProgressBar
-              progress={Number(value.toFixed(2))}
-              style={{ height: 10, borderRadius: 5 }}
-              color={colorScheme === "dark" ? "#FF6347" : "#FF4500"}
-              className="h-2 rounded-full"
-            />
-          </View>
-        </View>
         {profile.tenants?.plans?.name === "free" && (
-          <LinearGradient
-            colors={["#FF6347", "#FF4500"]}
-            style={{ marginTop: 10, borderRadius: 10, width: "100%" }}
-          >
-            <TouchableOpacity
-              className="flex-row flex items-center justify-between  p-4"
-              onPress={() =>
-                // Linking.openURL("https://cal.com/miguel-requena/meeting-ordee")
-                router.push("/(tabs)/profile/membership")
-              }
+          <>
+            <View className="bg-zinc-100 p-4 rounded-xl dark:bg-zinc-800 w-full flex flex-col gap-4">
+              <Text variant="titleSmall" style={{ color: "gray" }}>
+                Ordenes Diarias
+              </Text>
+
+              <View>
+                <View className="flex-row justify-between mb-2">
+                  <Text className="text-gray-700">{count}</Text>
+                  <Text className="font-semibold">50</Text>
+                </View>
+                <ProgressBar
+                  progress={Number(value.toFixed(2))}
+                  style={{ height: 10, borderRadius: 5 }}
+                  color={colorScheme === "dark" ? "#FF6347" : "#FF4500"}
+                  className="h-2 rounded-full"
+                />
+              </View>
+            </View>
+
+            <LinearGradient
+              colors={["#FF6347", "#FF4500"]}
+              style={{ marginTop: 10, borderRadius: 10, width: "100%" }}
             >
-              <View className=" flex flex-col gap-4 w-4/5">
-                <Text
-                  variant="titleLarge"
-                  style={{ fontWeight: "bold", color: "white" }}
-                >
-                  Adquirir Pro
-                </Text>
-                <Text className="opacity-80 " style={{ color: "white" }}>
-                  Para poder registrar ilimitadamante ordenes y demas
-                  funcionalidades premium.
-                </Text>
-              </View>
-              <View className="bg-white/20 rounded-full p-2 ">
-                <FontAwesome5 name="check-circle" size={32} color="white" />
-              </View>
-            </TouchableOpacity>
-          </LinearGradient>
+              <TouchableOpacity
+                className="flex-row flex items-center justify-between  p-4"
+                onPress={() =>
+                  // Linking.openURL("https://cal.com/miguel-requena/meeting-ordee")
+                  router.push("/(tabs)/profile/membership")
+                }
+              >
+                <View className=" flex flex-col gap-4 w-4/5">
+                  <Text
+                    variant="titleLarge"
+                    style={{ fontWeight: "bold", color: "white" }}
+                  >
+                    Adquirir Pro
+                  </Text>
+                  <Text className="opacity-80 " style={{ color: "white" }}>
+                    Para poder registrar ilimitadamante ordenes y demas
+                    funcionalidades premium.
+                  </Text>
+                </View>
+                <View className="bg-white/20 rounded-full p-2 ">
+                  <FontAwesome5 name="check-circle" size={32} color="white" />
+                </View>
+              </TouchableOpacity>
+            </LinearGradient>
+          </>
         )}
         <Divider className="my-4" />
         <Button
