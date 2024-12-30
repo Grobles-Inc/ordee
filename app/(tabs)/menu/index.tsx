@@ -24,7 +24,7 @@ export default function MenuScreen() {
     IMeal[] | undefined
   >();
   const { categories, getCategories } = useCategoryContext();
-  const [categoryId, setCategoryId] = React.useState<string | undefined>("");
+  const [categoryId, setCategoryId] = React.useState<string>();
   const [refreshing, setRefreshing] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
   React.useEffect(() => {
