@@ -5,7 +5,6 @@ import { Alert, Linking, SafeAreaView, View } from "react-native";
 import { Button, Divider, Text } from "react-native-paper";
 import { useRouter } from "expo-router";
 
-
 export default function Membership() {
   const router = useRouter();
   const { profile } = useAuth();
@@ -31,7 +30,7 @@ export default function Membership() {
       <View className="flex flex-col gap-6 px-4 py-8 ">
         <View className="flex flex-row gap-4 items-center ">
           <Image
-            source={require("../../../assets/images/logo.png")}
+            source={require("../../../../assets/images/logo.png")}
             style={{ width: 100, height: 100 }}
           />
 
@@ -96,7 +95,7 @@ export default function Membership() {
         <Button
           mode="contained"
           onPress={() => {
-            router.push("/(tabs)/profile/paywall");
+            router.push("/(tabs)/profile/membership/paywall");
           }}
         >
           Adquirir Pro

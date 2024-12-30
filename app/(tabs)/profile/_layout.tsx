@@ -189,7 +189,6 @@ export default function ProfileLayout() {
             headerLargeTitleShadowVisible: false,
             // this should be transparaent
             headerStyle: { backgroundColor: "transparent" },
-            
           }}
         />
       </Stack>
