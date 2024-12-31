@@ -1,19 +1,8 @@
 import { IMeal, IOrder } from "@/interfaces";
 import { supabase } from "./supabase";
-type DayTotals = {
-  [key in
-    | "Monday"
-    | "Tuesday"
-    | "Wednesday"
-    | "Thursday"
-    | "Friday"
-    | "Saturday"
-    | "Sunday"]: number;
-};
 type MonthlyTotals = {
   [key: string]: number;
 };
-
 
 const calculateOrderTotal = (order: IOrder): number => {
   const getMealsTotal = (meals: IMeal[]) =>
