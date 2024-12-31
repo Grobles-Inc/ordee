@@ -12,6 +12,7 @@ import React, {
 } from "react";
 import {
   Alert,
+  RefreshControl,
   ScrollView,
   TouchableOpacity,
   useColorScheme,
@@ -145,10 +146,17 @@ export default function TablesScreen() {
   const channelRef = useRef<any>(null);
   const { addTable } = useOrderContext();
   const colorScheme = useColorScheme();
+  const [refreshing, setRefreshing] = useState(false);
   const tableBottomSheetRef = useRef<BottomSheet>(null);
   const [number, setNumber] = useState<number>(0);
   const snapPoints = useMemo(() => ["40%"], []);
   const isDarkMode = colorScheme === "dark";
+
+  async function onRefresh() {
+    setRefreshing(true);
+    await getTables();
+    setRefreshing(false);
+  }
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop
@@ -247,7 +255,12 @@ export default function TablesScreen() {
       </View>
       <Divider style={{ marginTop: 16 }} />
 
-      <ScrollView contentContainerStyle={{ paddingVertical: 40 }}>
+      <ScrollView
+        contentContainerStyle={{ paddingVertical: 40 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View className="flex-row flex-wrap justify-center items-center  gap-8">
           {tables.map((table, index) => (
             <TableSvg key={table.id} table={table} index={index} />

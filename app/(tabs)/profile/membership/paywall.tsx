@@ -7,15 +7,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
 import React, { useEffect, useState } from "react";
-import {
-  Image,
-  Linking,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { Button, Chip } from "react-native-paper";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Button } from "react-native-paper";
 
 const PaywallScreen = () => {
   const router = useRouter();
@@ -37,18 +30,16 @@ const PaywallScreen = () => {
     }
   };
   const handleBuy = async () => {
-    if (selectedPlan) {
-      console.log("Comprar plan:", selectedPlan);
-      const planData = await handleIntegrationMP(
-        selectedPlan,
-        profile.tenants?.name,
-        profile?.name,
-        session?.user.email
-      );
-      openBrowserAsync(planData);
-    } else {
-      console.log("No plan selected");
-    }
+    console.log("Comprar plan:", selectedPlan);
+    const planData = await handleIntegrationMP(
+      //TODO: Id is more informative than the name of the tenant, should be added to the payload of the handleIntegrationMP function
+      selectedPlan,
+      profile.tenants?.name,
+      profile?.name,
+      session?.user.email
+    );
+
+    openBrowserAsync(planData);
   };
   const FREE_FEATURES_END = 6;
   const ESSENTIAL_FEATURES_END = 11;

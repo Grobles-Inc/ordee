@@ -346,11 +346,8 @@ export default function AddOrderScreen() {
       <Button
         mode="contained"
         style={{
-          position: "absolute",
           bottom: 40,
-          left: 8,
-          right: 8,
-          marginHorizontal: 20,
+          marginHorizontal: 16,
         }}
         onPress={updatingOrder ? handleSubmit(onUpdate) : handleSubmit(onAdd)}
         loading={orderLoading}

@@ -135,7 +135,9 @@ export default function CustomerFinder({
             estimatedItemSize={76}
             ListEmptyComponent={
               <View style={{ padding: 16, alignItems: "center" }}>
-                <Text variant="bodyMedium">No se encontraron clientes</Text>
+                <Text variant="bodySmall" style={{ color: "gray" }}>
+                  No se encontraron clientes
+                </Text>
               </View>
             }
           />
