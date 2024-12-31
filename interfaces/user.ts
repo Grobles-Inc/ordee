@@ -7,6 +7,7 @@ export interface ITenant {
   created_at: Date;
   is_premium: boolean;
   updated_at: Date;
+  id_plan: number;
 }
 export interface IUser {
   id: string;
