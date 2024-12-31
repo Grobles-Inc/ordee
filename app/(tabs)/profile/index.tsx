@@ -119,7 +119,7 @@ export default function ProfileScreen() {
                     Adquirir Pro
                   </Text>
                   <Text className="opacity-80 " style={{ color: "white" }}>
-                    Para poder registrar ilimitadamante ordenes y demas
+                    Para poder registrar ilimitadamante órdenes y demás
                     funcionalidades premium.
                   </Text>
                 </View>

@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, Chip } from "react-native-paper";
 
 const PaywallScreen = () => {
   const router = useRouter();
@@ -42,6 +42,37 @@ const PaywallScreen = () => {
       console.log("No plan selected");
     }
   };
+  const FREE_FEATURES_END = 6;
+  const ESSENTIAL_FEATURES_END = 11;
+
+  const getFeaturesForPlan = (planType: "free" | "essential" | "pro") => {
+    switch (planType) {
+      case "free":
+        return features.slice(0, FREE_FEATURES_END);
+      case "essential":
+        return features.slice(FREE_FEATURES_END, ESSENTIAL_FEATURES_END);
+      case "pro":
+        return features.slice(ESSENTIAL_FEATURES_END);
+      default:
+        return [];
+    }
+  };
+  const features = [
+    "50 ordenes por día",
+    "Registro de Clientes",
+    "Registro de Categorías",
+    "Reporte diario",
+    "Administración del Menú",
+    "Impresión de Comprobantes",
+    "Todos los del plan Free incluidos",
+    "Sin anuncios",
+    "Soporte Agendado",
+    "Órdenes ilimitadas",
+    "Administración de Usuarios",
+    "Todos los del plan Essential incluidos",
+    "Request de features en próximas versiones",
+    "Soporte 24/7",
+  ];
 
   const isDisabled = selectedPlan?.id === profile.tenants?.plans?.id;
 
@@ -111,67 +142,42 @@ const PaywallScreen = () => {
               onPress={() => setSelectedPlan(plan)}
             >
               <View
-                className={` p-4 border   rounded-2xl ${
+                className={` p-4 border    rounded-2xl ${
                   selectedPlan?.id === plan.id
-                    ? "border-[#FF6247]   border-2 dark:bg-orange-800/20 bg-orange-500/10 "
-                    : ""
+                    ? "border-[#FF6247]  border-2 dark:bg-orange-800/20 bg-orange-500/10 "
+                    : "border-zinc-200 dark:border-zinc-600"
                 }`}
               >
+                {profile.tenants?.plans?.id === plan.id && (
+                  <Text className="bg-teal-400 w-28 text-center  rounded-full px-2 py-1">
+                    Plan Actual
+                  </Text>
+                )}
+
                 <Text className="text-[#FF6247] text-lg font-bold text-center mb-1">
                   {plan.name.charAt(0).toUpperCase() + plan.name.slice(1)}
                 </Text>
                 <Text className=" text-center  font-bold  my-2 text-2xl dark:text-white">
                   S/. {plan.price.toFixed(2)} {isMonthly ? "/mes" : "/año"}
                 </Text>
-                <Text className="text-gray-400 text-sm text-center mb-8">
+                <Text className="text-zinc-500 dark:text-zinc-400 text-sm text-center mb-8">
                   {plan.name === "free"
-                    ? "Incluye órdenes limitadas."
+                    ? "Funcionalidades básicas."
                     : plan.name === "essential"
                     ? "Incluye órdenes ilimitadas."
                     : "Incluye órdenes y cuentas ilimitadas."}
                 </Text>
                 <View>
-                  <View className="flex-row items-center mb-1">
-                    <MaterialIcons
-                      name="check-circle"
-                      size={20}
-                      color="#FF6247"
-                    />
-                    <Text className="text-gray-500 ml-2">
-                      {plan.name === "free"
-                        ? "Órdenes limitadas"
-                        : "Órdenes ilimitadas"}
-                    </Text>
-                  </View>
-                  {plan.name === "pro" && (
-                    <View className="flex-row items-center mb-1">
-                      <MaterialIcons
-                        name="check-circle"
-                        size={20}
-                        color="#FF6A00"
-                      />
-                      <Text className="text-gray-500 ml-2">
-                        Cuentas ilimitadas
+                  {getFeaturesForPlan(
+                    plan.name as "free" | "essential" | "pro"
+                  ).map((feature, index) => (
+                    <View key={index} className="flex-row items-center mb-1">
+                      <MaterialIcons name="check" size={20} color="#FF6247" />
+                      <Text className="text-zinc-500 dark:text-zinc-400 ml-2">
+                        {feature}
                       </Text>
                     </View>
-                  )}
-
-                  <View className="flex-row items-center mb-1">
-                    <MaterialIcons
-                      name="check-circle"
-                      size={20}
-                      color="#FF6247"
-                    />
-                    <Text className="text-gray-500 ml-2">Soporte 24/7</Text>
-                  </View>
-                  <View className="flex-row items-center mb-1">
-                    <MaterialIcons
-                      name="check-circle"
-                      size={20}
-                      color="#FF6A00"
-                    />
-                    <Text className="text-gray-500 ml-2">Sin anuncios</Text>
-                  </View>
+                  ))}
                 </View>
               </View>
             </TouchableOpacity>
