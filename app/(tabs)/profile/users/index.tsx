@@ -3,27 +3,29 @@ import { useAuth } from "@/context/auth";
 import { supabase } from "@/utils/supabase";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
-import React from "react";
+import React, { useEffect } from "react";
 import { Alert, ScrollView, View } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function UsersScreen() {
-  const { deleteUser, users, getUsers, profile, loading } = useAuth();
-  React.useEffect(() => {
-    getUsers(profile.id_tenant);
-    supabase.channel("db-changes").on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "accounts",
-      },
-      (payload) => {
-        getUsers(profile.id_tenant);
-      }
-    );
+  const { deleteUser, users, getUsers, loading } = useAuth();
+  useEffect(() => {
+    getUsers();
+    const channel = supabase
+      .channel("accounts-changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "accounts" },
+        () => getUsers()
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
   }, []);
+
   const onDelete = (id: string) => {
     Alert.alert("Eliminar", "¿Estás seguro de eliminar este usuario?", [
       {
@@ -31,7 +33,6 @@ export default function UsersScreen() {
         style: "destructive",
         onPress: async () => {
           deleteUser(id);
-          console.log("deleteUser", id);
         },
       },
       {
@@ -53,7 +54,7 @@ export default function UsersScreen() {
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
-      className="p-4 dark:bg-zinc-900"
+      className=" dark:bg-zinc-900"
     >
       {loading && (
         <View className="flex flex-col gap-2 p-4">
@@ -63,12 +64,12 @@ export default function UsersScreen() {
         </View>
       )}
       <FlashList
+        contentContainerStyle={{ paddingHorizontal: 16 }}
         renderItem={({ item: user }) => (
           <Card
             key={user.id}
             style={{
               marginVertical: 8,
-              shadowOpacity: 0,
             }}
           >
             <Card.Title

@@ -45,7 +45,7 @@ export interface IAuthContextProvider {
   loading: boolean;
   signOut: () => void;
   deleteUser: (id: string) => void;
-  getUsers: (id_tenant: string) => void;
+  getUsers: () => void;
   users: IUser[];
 }
 export interface ICustomerContextProvider {

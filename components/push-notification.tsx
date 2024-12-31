@@ -50,9 +50,7 @@ export default function PushNotification({
       Notifications.getNotificationChannelsAsync();
     }
     notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        console.log(notification);
-      });
+      Notifications.addNotificationReceivedListener((notification) => {});
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
