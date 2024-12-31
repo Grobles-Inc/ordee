@@ -1,6 +1,5 @@
 import { IAuthContextProvider, IUser } from "@/interfaces";
 import { supabase } from "@/utils/supabase";
-import { supabaseAdmin } from "@/utils/supabaseAdmin";
 import { FontAwesome } from "@expo/vector-icons";
 import { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -8,6 +7,7 @@ import { ActivityIndicator } from "react-native-paper";
 import { toast } from "sonner-native";
 const AuthContext = createContext<IAuthContextProvider>({
   signOut: () => {},
+  updateProfile: () => {},
   session: null,
   getProfile: async () => {},
   deleteUser: async () => {},
@@ -59,7 +59,7 @@ export function AuthContextProvider({
     setLoading(true);
     const { data, error, status } = await supabase
       .from("accounts")
-      .select("*, tenants:id_tenant(*)")
+      .select("*, tenants:id_tenant(*,*,plans(*))")
       .eq("id", id)
       .single();
     if (error && status !== 406) {
@@ -95,6 +95,24 @@ export function AuthContextProvider({
     setUsers(users.filter((user) => user.id !== id));
   };
 
+  const updateProfile = async (user: IUser) => {
+    setLoading(true);
+    const { error } = await supabase
+      .from("accounts")
+      .update(user)
+      .eq("id", user.id);
+    if (error) {
+      toast.error("Error al actualizar perfil!", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
+      console.log("ERROR", error);
+      return;
+    }
+    toast.success("Perfil actualizado!", {
+      icon: <FontAwesome name="check-circle" size={20} color="green" />,
+    });
+    setLoading(false);
+  };
   const getUsers = async (id_tenant: string) => {
     setLoading(true);
     const { data, error } = await supabase
@@ -122,6 +140,7 @@ export function AuthContextProvider({
         signOut,
         getProfile,
         deleteUser,
+        updateProfile,
         getUsers,
         users,
       }}

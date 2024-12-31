@@ -1,10 +1,12 @@
+import { CategorySkeleton } from "@/components/skeleton/category";
 import { useCategoryContext } from "@/context/category";
+import { supabase } from "@/utils/supabase";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
-import { Alert, ScrollView } from "react-native";
-import { ActivityIndicator, Card, IconButton, Text } from "react-native-paper";
+import { Alert, ScrollView, View } from "react-native";
+import { Card, IconButton, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CategoriesScreen() {
@@ -12,6 +14,17 @@ export default function CategoriesScreen() {
     useCategoryContext();
   React.useEffect(() => {
     getCategories();
+    supabase.channel("db-changes").on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "categories",
+      },
+      (payload) => {
+        getCategories();
+      }
+    );
   }, []);
 
   const onDelete = (id: string) => {
@@ -40,7 +53,13 @@ export default function CategoriesScreen() {
         contentInsetAdjustmentBehavior="automatic"
         className=" bg-white dark:bg-zinc-900"
       >
-        {loading && <ActivityIndicator className="mt-20" />}
+        {loading && (
+          <View className="flex flex-col gap-2 p-4">
+            <CategorySkeleton />
+            <CategorySkeleton />
+            <CategorySkeleton />
+          </View>
+        )}
         <FlashList
           renderItem={({ item: category }) => (
             <Card

@@ -2,6 +2,7 @@ import MealCard from "@/components/meal-card";
 import { useCategoryContext } from "@/context/category";
 import { useMealContext } from "@/context/meals";
 import { IMeal } from "@/interfaces";
+import { supabase } from "@/utils/supabase";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -23,12 +24,26 @@ export default function MenuScreen() {
     IMeal[] | undefined
   >();
   const { categories, getCategories } = useCategoryContext();
-  const [categoryId, setCategoryId] = React.useState<string | undefined>("");
+  const [categoryId, setCategoryId] = React.useState<string>();
   const [refreshing, setRefreshing] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
   React.useEffect(() => {
     getCategories();
     getDailyMeals();
+    supabase
+      .channel("db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "meals",
+        },
+        (payload) => {
+          getDailyMeals();
+        }
+      )
+      .subscribe();
   }, []);
   async function onRefresh() {
     setRefreshing(true);
@@ -130,18 +145,6 @@ export default function MenuScreen() {
               />
               <Text style={{ color: "gray" }}>No hay items para mostrar</Text>
             </SafeAreaView>
-          }
-          ListFooterComponent={
-            <Text
-              variant="bodyMedium"
-              style={{
-                opacity: 0.3,
-                margin: 16,
-                textAlign: "center",
-              }}
-            >
-              Items para el menú del día {new Date().toLocaleDateString()}
-            </Text>
           }
         />
       </View>

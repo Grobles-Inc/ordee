@@ -4,26 +4,28 @@ import { supabase } from "@/utils/supabase";
 import { IOrder, IOrderContextProvider, ITable } from "@/interfaces";
 import { router } from "expo-router";
 import { toast } from "sonner-native";
+import { startOfToday, endOfToday, addHours } from "date-fns";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "./auth";
 export const OrderContext = createContext<IOrderContextProvider>({
   addOrder: async () => {},
   getUnservedOrders: async () => [],
+  getOrdersCountByDay: async () => 0,
   addTable: async () => {},
   getOrderForUpdate: async () => ({} as IOrder),
   updatingOrder: null,
+  setUpdatingOrder: () => {},
   getOrderById: async (id: string): Promise<IOrder> => ({} as IOrder),
-  orders: [],
   getOrdersCountByMonth: async () => 0,
   order: {} as IOrder,
   loading: false,
   getPaidOrders: async () => [],
   updateOrder: async () => {},
   deleteOrder: async () => {},
-  getOrders: async () => [],
   updateOrderServedStatus: async () => {},
   paidOrders: [],
   updatePaidStatus: async () => {},
+  unpaidOrders: [],
   getDailyPaidOrders: async () => [],
   getUnpaidOrders: async () => [],
 });
@@ -33,40 +35,15 @@ export const OrderContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [orders, setOrders] = React.useState<IOrder[]>([]);
-  //FIX: Cause this state is a context state, it's causing bugs in add order screen, cause already exists data, try the bug tapping on Edit and then go to '/tabs' and add new order
+  const [unpaidOrders, setUnpaidOrders] = React.useState<IOrder[]>([]);
   const [updatingOrder, setUpdatingOrder] = React.useState<IOrder | null>(null);
   const [order, setOrder] = React.useState<IOrder>({} as IOrder);
   const { profile } = useAuth();
   const [paidOrders, setPaidOrders] = React.useState<IOrder[]>([]);
   const [loading, setLoading] = React.useState(false);
 
-  React.useEffect(() => {
-    const subscription = supabase
-      .channel("orders")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "orders" },
-        async (payload) => {
-          // Recargar los pedidos cuando haya cambios
-          if (
-            payload.eventType === "INSERT" ||
-            payload.eventType === "UPDATE" ||
-            payload.eventType === "DELETE"
-          ) {
-            await getOrders();
-            await getPaidOrders();
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
   const getOrdersCountByMonth = async () => {
+    setLoading(true);
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
@@ -77,6 +54,30 @@ export const OrderContextProvider = ({
       .gte("date", new Date(currentYear, currentMonth, 1).toISOString())
       .lt("date", new Date(currentYear, currentMonth + 1, 1).toISOString());
     if (error) throw error;
+    setLoading(false);
+    return count;
+  };
+
+  const getOrdersCountByDay = async () => {
+    setLoading(true);
+
+    const startOfDay = startOfToday(); // Local time start of today
+    const endOfDay = endOfToday(); // Local time end of today
+
+    const utcOffset = -5; // Peru is UTC-5
+    const startOfDayUTC = addHours(startOfDay, -utcOffset); // Convert to UTC
+    const endOfDayUTC = addHours(endOfDay, -utcOffset); // Convert to UTC
+
+    const { error, count } = await supabase
+      .from("orders")
+      .select("*", { count: "exact" })
+      .eq("id_tenant", profile.id_tenant)
+      .gte("date", startOfDayUTC.toISOString())
+      .lt("date", endOfDayUTC.toISOString());
+
+    if (error) throw error;
+
+    setLoading(false);
     return count;
   };
 
@@ -134,10 +135,10 @@ export const OrderContextProvider = ({
         return;
       }
 
-      if (order.to_go) {
+      if (!order.to_go) {
         const { error: tableError } = await supabase
           .from("tables")
-          .update({ status: true })
+          .update({ status: false })
           .eq("id", order.id_table);
 
         if (tableError) {
@@ -196,18 +197,6 @@ export const OrderContextProvider = ({
     toast.success("Estado de la mesa actualizado!", {
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
-  };
-  const getOrders = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("id_tenant", profile.id_tenant)
-      .order("date", { ascending: false });
-    if (error) throw error;
-    setOrders(data);
-    setLoading(false);
-    return data;
   };
 
   const getOrderForUpdate = async (id: string) => {
@@ -269,7 +258,6 @@ export const OrderContextProvider = ({
     toast.success("Pedido eliminado!", {
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
-    setOrders((prevOrders) => prevOrders.filter((order) => order.id !== id));
   };
 
   async function getOrderById(id: string) {
@@ -299,6 +287,7 @@ export const OrderContextProvider = ({
     router.back();
     if (error) console.error("Update Error", error);
     setLoading(false);
+    setUpdatingOrder(null);
   }
 
   async function getDailyPaidOrders() {
@@ -327,6 +316,7 @@ export const OrderContextProvider = ({
       .eq("id_tenant", profile?.id_tenant)
       .order("date", { ascending: false });
     if (error) throw error;
+    setUnpaidOrders(data);
     setLoading(false);
     return data;
   }
@@ -334,8 +324,7 @@ export const OrderContextProvider = ({
   return (
     <OrderContext.Provider
       value={{
-        orders,
-        getOrders,
+        unpaidOrders,
         deleteOrder,
         loading,
         getOrderById,
@@ -345,9 +334,11 @@ export const OrderContextProvider = ({
         updatingOrder,
         updateOrder,
         addOrder,
+        setUpdatingOrder,
         addTable,
         updateOrderServedStatus,
         order,
+        getOrdersCountByDay,
         getOrderForUpdate,
         getDailyPaidOrders,
         getOrdersCountByMonth,

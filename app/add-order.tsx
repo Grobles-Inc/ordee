@@ -5,13 +5,13 @@ import { useCustomer } from "@/context/customer";
 import { IMeal, IOrder } from "@/interfaces";
 import { supabase } from "@/utils/supabase";
 import { FontAwesome } from "@expo/vector-icons";
+import * as Notifications from "expo-notifications";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, ScrollView, View } from "react-native";
 import { Appbar, Button, Divider, Switch, Text } from "react-native-paper";
 import { toast } from "sonner-native";
-import * as Notifications from "expo-notifications";
 
 export default function AddOrderScreen() {
   const { number, id_table, id_order } = useLocalSearchParams<{
@@ -130,11 +130,11 @@ export default function AddOrderScreen() {
   });
 
   const onUpdate = async (data: IOrder) => {
-    if (data.items.length === 0) {
+    if (itemsSelected.length === 0) {
       toast.error("Orden sin productos", {
         description: "Debes agregar al menos un producto a la orden",
         duration: 6000,
-        icon: <FontAwesome name="exclamation-triangle" size={24} />,
+        icon: <FontAwesome name="exclamation-triangle" size={24} color="red" />,
       });
       return;
     }
@@ -192,7 +192,7 @@ export default function AddOrderScreen() {
       const orderData: IOrder = {
         ...data,
         served: false,
-
+        to_go: data.to_go,
         id_user: profile.id,
         paid: false,
         id_table: id_table,

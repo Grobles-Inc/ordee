@@ -115,6 +115,23 @@ export default function ProfileLayout() {
           }}
         />
         <Stack.Screen
+          name="edit"
+          options={{
+            title: "Editar Perfil",
+            headerLargeTitle: true,
+            headerBackVisible: true,
+            headerShadowVisible: true,
+            headerLargeTitleShadowVisible: false,
+            headerRight: () => (
+              <NativeButton
+                title="Cancelar"
+                color="#FF6247"
+                onPress={() => router.back()}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen
           name="membership"
           options={{
             title: "Membresía",
@@ -177,19 +194,6 @@ export default function ProfileLayout() {
             headerBackVisible: true,
             headerShadowVisible: true,
             headerLargeTitleShadowVisible: false,
-          }}
-        />
-        <Stack.Screen
-          name="paywall"
-          options={{
-            title: "",
-            headerLargeTitle: true,
-            headerBackVisible: true,
-            headerShadowVisible: true,
-            headerLargeTitleShadowVisible: false,
-            // this should be transparaent
-            headerStyle: { backgroundColor: "transparent" },
-            
           }}
         />
       </Stack>
