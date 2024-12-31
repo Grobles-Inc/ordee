@@ -4,19 +4,11 @@ export interface ITenant {
   id: string;
   name: string;
   id_admin: string;
-  id_plan: string;
   logo: string;
   created_at: Date;
-  plans?: IPlan;
-  queries: number;
-}
-
-export interface IPlan {
-  id: number;
-  name: string;
-  price: number;
-  billing: "monthly" | "annual";
-  orders_limit: number;
+  is_premium: boolean;
+  updated_at: Date;
+  id_plan: number;
 }
 export interface IUser {
   id: string;
