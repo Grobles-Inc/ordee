@@ -3,10 +3,18 @@ import { IPlan } from "@/interfaces";
 import { handleIntegrationMP } from "@/utils/integrationmp";
 import { supabase } from "@/utils/supabase";
 import { MaterialIcons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Linking,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Button, Chip } from "react-native-paper";
 
 const PaywallScreen = () => {
@@ -94,11 +102,14 @@ const PaywallScreen = () => {
 
       {/* Header */}
       <Text className="text-center text-2xl font-bold  mb-1 dark:text-white">
-        Comience a usar Pro
+        Planes Flexibles
       </Text>
-      <Text className="text-center opacity-40 mb-6 dark:text-white">
-        Cancela en cualquier momento
-      </Text>
+      <View className="flex flex-row items-center mb-6 gap-1 justify-center">
+        <Ionicons name="shield-checkmark-outline" size={16} color="gray" />
+        <Text className="text-center opacity-40  dark:text-white">
+          Cancela en cualquier momento
+        </Text>
+      </View>
 
       {/* Toggle Buttons */}
       <View className="flex-row justify-center mb-6">
@@ -182,6 +193,28 @@ const PaywallScreen = () => {
               </View>
             </TouchableOpacity>
           ))}
+        <Text className="text-muted-foreground text-zinc-400 text-center ">
+          Al continuar, estas de acuerdo con nuestros{" "}
+          <Text
+            className="underline"
+            onPress={() =>
+              openBrowserAsync("https://ordee.framer.website/privacy-policy")
+            }
+          >
+            Términos y Condiciones
+          </Text>{" "}
+          y las{" "}
+          <Text
+            className="underline"
+            onPress={() =>
+              openBrowserAsync(
+                "https://ordee.framer.website/terms-and-conditions"
+              )
+            }
+          >
+            Política de Privacidad
+          </Text>
+        </Text>
       </View>
 
       {/* Botones */}

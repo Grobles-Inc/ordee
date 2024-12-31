@@ -8,7 +8,7 @@ import { startOfToday, endOfToday, addHours } from "date-fns";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "./auth";
 export const OrderContext = createContext<IOrderContextProvider>({
-  addOrder: async () => { },
+  addOrder: async () => {},
   getUnservedOrders: async () => [],
   getOrdersCountByDay: async () => 0,
   addTable: async () => {},
@@ -60,23 +60,18 @@ export const OrderContextProvider = ({
 
   const getOrdersCountByDay = async () => {
     setLoading(true);
-
     const startOfDay = startOfToday(); // Local time start of today
     const endOfDay = endOfToday(); // Local time end of today
-
     const utcOffset = -5; // Peru is UTC-5
     const startOfDayUTC = addHours(startOfDay, -utcOffset); // Convert to UTC
     const endOfDayUTC = addHours(endOfDay, -utcOffset); // Convert to UTC
-
     const { error, count } = await supabase
       .from("orders")
       .select("*", { count: "exact" })
       .eq("id_tenant", profile.id_tenant)
       .gte("date", startOfDayUTC.toISOString())
       .lt("date", endOfDayUTC.toISOString());
-
     if (error) throw error;
-
     setLoading(false);
     return count;
   };
