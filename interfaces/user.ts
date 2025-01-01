@@ -9,6 +9,12 @@ export interface ITenant {
   is_premium: boolean;
   updated_at: Date;
   id_plan: number;
+  plans: {
+    id: number;
+    name: string;
+    price: number;
+    billing: string;
+  }
 }
 export interface IUser {
   id: string;
