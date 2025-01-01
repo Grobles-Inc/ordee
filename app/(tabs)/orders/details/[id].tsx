@@ -372,15 +372,7 @@ export default function OrderDetailsScreen() {
       </ScrollView>
       <Button
         mode="contained"
-        style={{
-          position: "absolute",
-          bottom: 0,
-          margin: 20,
-          zIndex: 10,
-          padding: 5,
-          borderRadius: 32,
-          width: "90%",
-        }}
+        style={{ marginHorizontal: 16, marginVertical: 8 }}
         icon="printer-outline"
         onPress={() => {
           setModalVisible(true);

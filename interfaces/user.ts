@@ -4,17 +4,19 @@ export interface ITenant {
   id: string;
   name: string;
   id_admin: string;
+  id_plan: string;
   logo: string;
   created_at: Date;
-  is_premium: boolean;
-  updated_at: Date;
-  id_plan: number;
-  plans: {
-    id: number;
-    name: string;
-    price: number;
-    billing: string;
-  }
+  plans?: IPlan;
+  queries: number;
+}
+
+export interface IPlan {
+  id: number;
+  name: string;
+  price: number;
+  billing: "monthly" | "annual";
+  orders_limit: number;
 }
 export interface IUser {
   id: string;
@@ -43,7 +45,7 @@ export interface IAuthContextProvider {
   loading: boolean;
   signOut: () => void;
   deleteUser: (id: string) => void;
-  getUsers: (id_tenant: string) => void;
+  getUsers: () => void;
   users: IUser[];
 }
 export interface ICustomerContextProvider {

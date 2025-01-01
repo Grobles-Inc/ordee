@@ -1,11 +1,13 @@
 import { useAuth } from "@/context";
 import { supabase } from "@/utils/supabase";
 import { supabaseAdmin } from "@/utils/supabaseAdmin";
+import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ScrollView, Text, View } from "react-native";
 import { Button, List, TextInput } from "react-native-paper";
+import { toast } from "sonner-native";
 
 interface IUser {
   name: string;
@@ -20,7 +22,7 @@ export default function AddUserScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = React.useState(false);
-  const { getUsers, profile } = useAuth();
+  const { profile } = useAuth();
 
   const {
     control,
@@ -76,9 +78,10 @@ export default function AddUserScreen() {
       });
 
       if (profileError) throw profileError;
-      alert("Usuario agregado exitosamente");
+      toast.success("Usuario agregado exitosamente", {
+        icon: <FontAwesome name="check-circle" size={20} color="green" />,
+      });
       reset();
-
       router.back();
     } catch (err: any) {
       console.error("Error:", err);

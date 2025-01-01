@@ -43,9 +43,9 @@ export default function SignInScreen() {
       toast.error("Credenciales incorrectas!", {
         icon: <FontAwesome name="times-circle" size={20} color="red" />,
       });
-      console.error("LOGIN ERROR", error);
+    } else {
+      reset();
     }
-    reset();
     setLoading(false);
   };
 

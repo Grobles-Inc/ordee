@@ -3,11 +3,13 @@ import { useAuth, useOrderContext } from "@/context";
 import { supabase } from "@/utils/supabase";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useFocusEffect } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
+  RefreshControl,
   ScrollView,
   TouchableOpacity,
   useColorScheme,
@@ -15,13 +17,20 @@ import {
 } from "react-native";
 import { Button, Divider, ProgressBar, Text } from "react-native-paper";
 export default function ProfileScreen() {
-  const { profile, session, getProfile } = useAuth();
+  const { profile, session } = useAuth();
   const [count, setCount] = React.useState(0);
+  const [refreshing, setRefreshing] = React.useState(false);
   const [expoPushToken, setExpoPushToken] = React.useState("");
   const { getOrdersCountByDay } = useOrderContext();
   const router = useRouter();
   const headerHeight = useHeaderHeight();
   const colorScheme = useColorScheme();
+
+  async function onRefresh() {
+    setRefreshing(true);
+    await getOrdersCountByDay();
+    setRefreshing(false);
+  }
   React.useEffect(() => {
     getOrdersCountByDay().then((count) => setCount(count as number));
     supabase
@@ -38,12 +47,21 @@ export default function ProfileScreen() {
         }
       )
       .subscribe();
-  }, []);
+  }, [count]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getOrdersCountByDay().then((count) => setCount(count as number));
+    }, [])
+  );
 
   const value = count / 50;
 
   return (
     <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
       className="bg-white dark:bg-zinc-900 "
       contentContainerStyle={{ padding: 16 }}
       style={{ marginTop: headerHeight }}
@@ -92,7 +110,7 @@ export default function ProfileScreen() {
                   <Text className="font-semibold">50</Text>
                 </View>
                 <ProgressBar
-                  progress={Number(value.toFixed(2))}
+                  animatedValue={value}
                   style={{ height: 10, borderRadius: 5 }}
                   color={colorScheme === "dark" ? "#FF6347" : "#FF4500"}
                   className="h-2 rounded-full"
@@ -119,7 +137,7 @@ export default function ProfileScreen() {
                     Adquirir Pro
                   </Text>
                   <Text className="opacity-80 " style={{ color: "white" }}>
-                    Para poder registrar ilimitadamante ordenes y demas
+                    Para poder registrar ilimitadamante órdenes y demás
                     funcionalidades premium.
                   </Text>
                 </View>

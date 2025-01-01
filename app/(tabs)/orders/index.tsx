@@ -1,14 +1,13 @@
 import OrderCard from "@/components/order-card";
+import { OrderCardSkeleton } from "@/components/skeleton/card";
 import { useOrderContext } from "@/context";
-import { IOrder } from "@/interfaces";
+import { supabase } from "@/utils/supabase";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
 import { View } from "react-native";
-import { ActivityIndicator, Appbar, Text } from "react-native-paper";
-import { supabase } from "@/utils/supabase";
+import { Appbar, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { OrderCardSkeleton } from "@/components/skeleton/card";
 
 export default function OrdersScreen() {
   const { getUnpaidOrders, loading, unpaidOrders } = useOrderContext();
@@ -22,7 +21,7 @@ export default function OrdersScreen() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "orders" },
-        (payload) => {
+        () => {
           getUnpaidOrders();
         }
       )

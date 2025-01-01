@@ -92,7 +92,6 @@ export function AuthContextProvider({
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
     setLoading(false);
-    setUsers(users.filter((user) => user.id !== id));
   };
 
   const updateProfile = async (user: IUser) => {
@@ -113,12 +112,12 @@ export function AuthContextProvider({
     });
     setLoading(false);
   };
-  const getUsers = async (id_tenant: string) => {
+  const getUsers = async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("accounts")
       .select("*")
-      .eq("id_tenant", id_tenant)
+      .eq("id_tenant", profile?.id_tenant)
       .neq("id", profile?.id)
       .eq("disabled", false)
       .order("name");
