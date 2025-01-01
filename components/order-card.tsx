@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 import { Avatar, Card, Chip, IconButton, Text } from "react-native-paper";
-export default function OrderCard({ order }: { order: IOrder }) {
+export function OrderCard({ order }: { order: IOrder }) {
   const formattedDate = new Date(order.date ?? new Date()).toLocaleString(
     "es-ES",
     {

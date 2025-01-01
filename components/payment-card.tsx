@@ -5,7 +5,7 @@ import React from "react";
 import { View } from "react-native";
 import { Card, Text } from "react-native-paper";
 
-export default function PaymentCard({ order }: { order: IOrder }) {
+export function PaymentCard({ order }: { order: IOrder }) {
   const formattedDate = new Date(order.date ?? new Date()).toLocaleString(
     "es-ES",
     {

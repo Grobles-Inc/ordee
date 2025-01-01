@@ -1,7 +1,7 @@
-import { useCustomer } from "@/context/customer";
+import { useCustomer } from "@/context";
 import { FlashList } from "@shopify/flash-list";
 import React, { useEffect, useState } from "react";
-import { ScrollView, useColorScheme, View } from "react-native";
+import { useColorScheme, View } from "react-native";
 import {
   IconButton,
   List,
@@ -10,9 +10,9 @@ import {
   Searchbar,
   Text,
 } from "react-native-paper";
-import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import Animated, { FadeInUp } from "react-native-reanimated";
 import { useDebouncedCallback } from "use-debounce";
-export default function CustomerFinder({
+export function CustomerFinder({
   watch,
   setValue,
   setIsRegisterDisabled,

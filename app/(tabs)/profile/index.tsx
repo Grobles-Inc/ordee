@@ -1,6 +1,6 @@
-import PushNotification from "@/components/push-notification";
+import { PushNotification } from "@/components";
 import { useAuth, useOrderContext } from "@/context";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useFocusEffect } from "@react-navigation/native";

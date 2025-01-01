@@ -1,8 +1,7 @@
-import MealCard from "@/components/meal-card";
-import { useCategoryContext } from "@/context/category";
-import { useMealContext } from "@/context/meals";
+import { MealCard } from "@/components";
+import { useCategoryContext, useMealContext } from "@/context";
 import { IMeal } from "@/interfaces";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { router } from "expo-router";

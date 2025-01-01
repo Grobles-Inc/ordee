@@ -1,6 +1,5 @@
 import { useAuth } from "@/context";
-import { supabase } from "@/utils/supabase";
-import { supabaseAdmin } from "@/utils/supabaseAdmin";
+import { supabaseAdmin, supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";

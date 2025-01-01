@@ -1,7 +1,6 @@
 import { IMeal, IMealContextProvider } from "@/interfaces";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
-import { endOfDay, startOfDay } from "date-fns";
 import * as React from "react";
 import { createContext, useContext } from "react";
 import { toast } from "sonner-native";

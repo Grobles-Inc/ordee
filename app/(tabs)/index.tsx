@@ -1,5 +1,5 @@
 import { ITable } from "@/interfaces";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 import { useFocusEffect } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { router } from "expo-router";

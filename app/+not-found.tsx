@@ -1,7 +1,8 @@
+//TODO: Improve this UI because on web could occure a 404 error
 import { Link, Stack } from "expo-router";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Text, View } from "@/components/Themed";
+import { Text, View } from "@/utils/expo/Themed";
 export default function NotFoundScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>

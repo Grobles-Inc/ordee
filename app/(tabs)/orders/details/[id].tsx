@@ -1,6 +1,6 @@
 import { useOrderContext } from "@/context";
 import { IOrder } from "@/interfaces";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 import { AntDesign } from "@expo/vector-icons";
 import * as Print from "expo-print";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";

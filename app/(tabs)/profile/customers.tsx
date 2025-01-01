@@ -1,6 +1,6 @@
-import { CustomerSkeleton } from "@/components/skeleton/customer";
-import { useCustomer } from "@/context/customer";
-import { supabase } from "@/utils/supabase";
+import { CustomerSkeleton } from "@/components";
+import { useCustomer } from "@/context";
+import { supabase } from "@/utils";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";

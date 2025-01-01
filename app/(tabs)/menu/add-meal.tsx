@@ -1,7 +1,5 @@
-import { useCategoryContext } from "@/context/category";
-import { useMealContext } from "@/context/meals";
+import { useCategoryContext, useMealContext } from "@/context";
 import { IMeal } from "@/interfaces";
-import { useHeaderHeight } from "@react-navigation/elements";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ScrollView, Text, View } from "react-native";
@@ -16,7 +14,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { toast } from "sonner-native";
 import { router } from "expo-router";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 
 export default function AddMealScreen() {
   const { addMeal, loading } = useMealContext();

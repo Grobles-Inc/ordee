@@ -1,4 +1,4 @@
-import { useColorScheme } from "@/components/useColorScheme";
+import { useColorScheme } from "@/utils/expo/useColorScheme";
 import Colors from "@/constants/Colors";
 import { useAuth } from "@/context";
 import { Image } from "expo-image";

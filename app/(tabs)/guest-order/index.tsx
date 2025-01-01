@@ -1,4 +1,4 @@
-import OrderCard from "@/components/guest-order-card";
+import { OrderCard } from "@/components";
 import { useOrderContext } from "@/context";
 import { IOrder } from "@/interfaces";
 import { FlashList } from "@shopify/flash-list";

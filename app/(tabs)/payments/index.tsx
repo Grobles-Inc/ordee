@@ -1,7 +1,6 @@
-import OrderCard from "@/components/payment-card";
-import { OrderCardSkeleton } from "@/components/skeleton/card";
+import { OrderCardSkeleton, PaymentCard } from "@/components";
 import { useOrderContext } from "@/context";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
@@ -51,7 +50,7 @@ export default function PaidOrdersScreen() {
             padding: 16,
           }}
           onRefresh={onRefresh}
-          renderItem={({ item: order }) => <OrderCard order={order} />}
+          renderItem={({ item: order }) => <PaymentCard order={order} />}
           data={paidOrders}
           estimatedItemSize={200}
           horizontal={false}

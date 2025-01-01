@@ -1,6 +1,4 @@
-import { useCategoryContext } from "@/context/category";
-import { useCustomer } from "@/context/customer";
-import { PreferencesContext } from "@/context/preference";
+import { useCategoryContext, useCustomer } from "@/context";
 import { ICategory, ICustomer } from "@/interfaces";
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -22,7 +20,6 @@ import { Button, Text } from "react-native-paper";
 export default function ProfileLayout() {
   const customerBottomSheetRef = useRef<BottomSheet>(null);
   const categoryBottomSheetRef = useRef<BottomSheet>(null);
-  const { toggleTheme, isThemeDark } = React.useContext(PreferencesContext);
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const [name, setName] = useState("");

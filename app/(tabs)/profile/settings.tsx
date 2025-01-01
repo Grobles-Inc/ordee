@@ -1,12 +1,6 @@
 import { useAuth } from "@/context";
-import React, { useState } from "react";
-import {
-  View,
-  Image,
-  ScrollView,
-  useColorScheme,
-  Appearance,
-} from "react-native";
+import React from "react";
+import { Image, ScrollView, useColorScheme, View } from "react-native";
 import { Button, RadioButton, Text } from "react-native-paper";
 
 export default function SettingsScreen() {
@@ -15,7 +9,7 @@ export default function SettingsScreen() {
 
   return (
     <ScrollView
-      className="flex-1 p-4 bg-white dark:bg-zinc-900"
+      className=" p-4 bg-white dark:bg-zinc-900"
       contentInsetAdjustmentBehavior="automatic"
     >
       <View className="flex-row justify-between mb-8">
@@ -47,12 +41,12 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      <Text variant="bodyMedium" style={{ color: "gray" }} className=" mb-4">
+      <Text variant="bodyMedium" style={{ color: "gray" }}>
         Selecciona tu modo de visualización y cambia el tema de la aplicación. O
         si deseas accede a la configuración desde la barra de menú en la esquina
         superior derecha.
       </Text>
-      <Button mode="outlined" onPress={signOut}>
+      <Button mode="contained" onPress={signOut} style={{ marginTop: 40 }}>
         Cerrar Sesión
       </Button>
     </ScrollView>

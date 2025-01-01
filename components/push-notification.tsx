@@ -12,7 +12,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export default function PushNotification({
+export function PushNotification({
   setExpoPushToken,
   count,
 }: {

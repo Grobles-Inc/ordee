@@ -1,6 +1,6 @@
-import { useOrderContext } from "@/context/order";
+import { useOrderContext } from "@/context";
 import { IOrder } from "@/interfaces";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, useColorScheme, View } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";

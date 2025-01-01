@@ -4,7 +4,7 @@ import React from "react";
 import { Alert, View } from "react-native";
 import { Card, Divider, IconButton, Text } from "react-native-paper";
 
-export default function OrderCard({ order }: { order: IOrder }) {
+export function OrderCard({ order }: { order: IOrder }) {
   const { updateOrderServedStatus } = useOrderContext();
   const onOrderStatusChange = (id: string) => {
     Alert.alert("Preparado", "Marcar como pedido preparado", [

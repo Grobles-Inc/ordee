@@ -1,6 +1,6 @@
-import { UserSkeleton } from "@/components/skeleton/user";
-import { useAuth } from "@/context/auth";
-import { supabase } from "@/utils/supabase";
+import { UserSkeleton } from "@/components";
+import { useAuth } from "@/context";
+import { supabase } from "@/utils";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React, { useEffect } from "react";

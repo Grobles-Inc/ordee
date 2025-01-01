@@ -4,6 +4,7 @@ import { AppState } from "react-native";
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseRoleKey = process.env.EXPO_PUBLIC_SUPABASE_ROLE_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -13,6 +14,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: false,
   },
 });
+
+export const supabaseAdmin = createClient(supabaseUrl, supabaseRoleKey);
 
 AppState.addEventListener("change", (state) => {
   if (state === "active") {

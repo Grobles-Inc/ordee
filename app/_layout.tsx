@@ -1,9 +1,12 @@
 import { ORDEE_THEME } from "@/constants/ordee";
-import { AuthContextProvider, OrderContextProvider } from "@/context";
-import { CategoryContextProvider } from "@/context/category";
-import { CustomerContextProvider } from "@/context/customer";
-import { MealContextProvider } from "@/context/meals";
-import { DARK_NAV_THEME, NAV_THEME } from "@/utils/constants";
+import {
+  AuthContextProvider,
+  OrderContextProvider,
+  CategoryContextProvider,
+  CustomerContextProvider,
+  MealContextProvider,
+} from "@/context";
+import { DARK_NAV_THEME, NAV_THEME } from "@/utils";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";

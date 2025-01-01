@@ -1,10 +1,10 @@
-import { useMealContext } from "@/context/meals";
+import { useMealContext } from "@/context";
 import { IMeal } from "@/interfaces";
 import React from "react";
 import { Alert } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
 
-export default function MealCard({ meal }: { meal: IMeal }) {
+export function MealCard({ meal }: { meal: IMeal }) {
   const { deleteMeal } = useMealContext();
   const onDelete = (id: string) => {
     Alert.alert("Eliminar", "¿Estás seguro de eliminar este item?", [

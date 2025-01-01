@@ -1,9 +1,8 @@
-import CustomerFinder from "@/components/customer-finder";
-import OrderItemsAccordion from "@/components/items";
+import { CustomerFinder, OrderItemsAccordion } from "@/components";
 import { useAuth, useOrderContext } from "@/context";
-import { useCustomer } from "@/context/customer";
+import { useCustomer } from "@/context";
 import { IMeal, IOrder } from "@/interfaces";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Notifications from "expo-notifications";
 import { router, useLocalSearchParams } from "expo-router";

@@ -1,5 +1,5 @@
 import { ICustomer, ICustomerContextProvider } from "@/interfaces";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import { createContext, useContext, useState } from "react";
 import { Alert } from "react-native";

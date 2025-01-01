@@ -1,7 +1,6 @@
-import OrderCard from "@/components/order-card";
-import { OrderCardSkeleton } from "@/components/skeleton/card";
+import { OrderCardSkeleton, OrderCard } from "@/components";
 import { useOrderContext } from "@/context";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";

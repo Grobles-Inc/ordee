@@ -1,8 +1,6 @@
 import { useAuth } from "@/context";
 import { IPlan } from "@/interfaces";
-import { handleIntegrationMP } from "@/utils/integrationmp";
-import { supabase } from "@/utils/supabase";
-import { sendWhatsAppMeessage } from "@/utils/wpintegration";
+import { sendWhatsAppMeessage, supabase } from "@/utils";
 import { MaterialIcons } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
@@ -30,26 +28,21 @@ const PaywallScreen = () => {
       setPlans(plans);
     }
   };
-  const handleBuy = async () => {
-    console.log("Comprar plan:", selectedPlan);
-    const planData = await handleIntegrationMP(
-      //TODO: Id is more informative than the name of the tenant, should be added to the payload of the handleIntegrationMP function
-      selectedPlan,
-      profile.tenants?.name,
-      profile?.name,
-      session?.user.email
-    );
 
-    openBrowserAsync(planData);
-  };
-  const handleSelectPlanWithWhatsApp =  () => {
+  const handleSelectPlanWithWhatsApp = () => {
     if (selectedPlan) {
-      console.log('Comprar plan:', selectedPlan);
-      sendWhatsAppMeessage(selectedPlan, profile.tenants?.name, profile?.name, session?.user.email, profile.tenants?.id);
+      console.log("Comprar plan:", selectedPlan);
+      sendWhatsAppMeessage(
+        selectedPlan,
+        profile.tenants?.name,
+        profile?.name,
+        session?.user.email,
+        profile.tenants?.id
+      );
     } else {
-      console.log('No plan selected');
+      console.log("No plan selected");
     }
-  }
+  };
   const FREE_FEATURES_END = 6;
   const ESSENTIAL_FEATURES_END = 11;
 
@@ -88,7 +81,10 @@ const PaywallScreen = () => {
     fetchPlans();
   }, []);
   return (
-    <ScrollView className="flex-1 p-5" contentContainerStyle={{ paddingBottom: 30 }}>
+    <ScrollView
+      className="flex-1 p-5"
+      contentContainerStyle={{ paddingBottom: 30 }}
+    >
       {/* Logo */}
       <View className="flex-row items-center justify-center mb-6">
         <Image
@@ -111,16 +107,32 @@ const PaywallScreen = () => {
       {/* Toggle Buttons */}
       <View className="flex-row justify-center mb-6">
         <TouchableOpacity
-          className={`px-4 py-2 rounded-l-md ${isMonthly ? 'bg-orange-500' : 'bg-gray-300'}`}
+          className={`px-4 py-2 rounded-l-md ${
+            isMonthly ? "bg-orange-500" : "bg-gray-300"
+          }`}
           onPress={() => setIsMonthly(true)}
         >
-          <Text className={`font-bold ${isMonthly ? 'text-white' : 'text-gray-700'}`}>Mensual</Text>
+          <Text
+            className={`font-bold ${
+              isMonthly ? "text-white" : "text-gray-700"
+            }`}
+          >
+            Mensual
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className={`px-4 py-2 rounded-r-md ${!isMonthly ? 'bg-orange-500' : 'bg-gray-300'}`}
+          className={`px-4 py-2 rounded-r-md ${
+            !isMonthly ? "bg-orange-500" : "bg-gray-300"
+          }`}
           onPress={() => setIsMonthly(false)}
         >
-          <Text className={`font-bold ${!isMonthly ? 'text-white' : 'text-gray-700'}`}>Anual</Text>
+          <Text
+            className={`font-bold ${
+              !isMonthly ? "text-white" : "text-gray-700"
+            }`}
+          >
+            Anual
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -200,7 +212,11 @@ const PaywallScreen = () => {
 
       {/* Botones */}
       <View className="flex flex-col gap-2 mt-4">
-        <Button mode="contained" onPress={handleSelectPlanWithWhatsApp} disabled={isDisabled}>
+        <Button
+          mode="contained"
+          onPress={handleSelectPlanWithWhatsApp}
+          disabled={isDisabled}
+        >
           Adquirir
         </Button>
         <Button mode="text" onPress={() => router.back()}>

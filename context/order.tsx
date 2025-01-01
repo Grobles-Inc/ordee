@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createContext, useContext } from "react";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils";
 import { IOrder, IOrderContextProvider, ITable } from "@/interfaces";
 import { router } from "expo-router";
 import { toast } from "sonner-native";

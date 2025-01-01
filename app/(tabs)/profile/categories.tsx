@@ -1,6 +1,6 @@
-import { CategorySkeleton } from "@/components/skeleton/category";
-import { useCategoryContext } from "@/context/category";
-import { supabase } from "@/utils/supabase";
+import { CategorySkeleton } from "@/components";
+import { useCategoryContext } from "@/context";
+import { supabase } from "@/utils";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";

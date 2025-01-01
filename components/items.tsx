@@ -1,6 +1,5 @@
 import { useOrderContext } from "@/context";
-import { useCategoryContext } from "@/context/category";
-import { useMealContext } from "@/context/meals";
+import { useCategoryContext, useMealContext } from "@/context";
 import { IMeal } from "@/interfaces";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
@@ -16,7 +15,7 @@ import {
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function OrderItemsAccordion({
+export function OrderItemsAccordion({
   items,
   setItems,
 }: {
