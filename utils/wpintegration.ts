@@ -17,7 +17,7 @@ export const sendWhatsAppMeessage =  (plan: any, user: any, tenant: any, email: 
 Me gustaría contratar el plan "${name}" (${typeBilling}) por un precio de S/. ${price}. 
 
 Mis datos de contacto son:
-- Nombre: ${user}
+- Nombre del Negocio: ${user}
 - Correo electrónico: ${email}
 
 Quedo atento a su confirmación. ¡Gracias!`;
