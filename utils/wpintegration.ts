@@ -1,7 +1,7 @@
 
 import { Linking } from "react-native";
 
-export const sendWhatsAppMeessage =  (plan: any, user: any, tenant: any, email: any) => {
+export const sendWhatsAppMeessage =  (plan: any, user: any, tenant: any, email: any, id: any) => {
 
     const {billing, name, price} = plan;
     let typeBilling = "";
@@ -18,6 +18,7 @@ Me gustaría contratar el plan "${name}" (${typeBilling}) por un precio de S/. $
 
 Mis datos de contacto son:
 - Nombre del Negocio: ${user}
+- Identificador del Negocio: ${id}
 - Correo electrónico: ${email}
 
 Quedo atento a su confirmación. ¡Gracias!`;

@@ -45,7 +45,7 @@ const PaywallScreen = () => {
   const handleSelectPlanWithWhatsApp =  () => {
     if (selectedPlan) {
       console.log('Comprar plan:', selectedPlan);
-      sendWhatsAppMeessage(selectedPlan, profile.tenants?.name, profile?.name, session?.user.email);
+      sendWhatsAppMeessage(selectedPlan, profile.tenants?.name, profile?.name, session?.user.email, profile.tenants?.id);
     } else {
       console.log('No plan selected');
     }
