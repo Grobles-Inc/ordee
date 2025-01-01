@@ -19,7 +19,6 @@ export default function UserLayout() {
           return {
             title: "Agregar Usuario",
             presentation: "modal",
-            headerShadowVisible: false,
             headerRight: () => (
               <Button
                 title="Cancelar"

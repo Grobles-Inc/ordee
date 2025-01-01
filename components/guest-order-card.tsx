@@ -4,7 +4,7 @@ import React from "react";
 import { Alert, View } from "react-native";
 import { Card, Divider, IconButton, Text } from "react-native-paper";
 
-export function OrderCard({ order }: { order: IOrder }) {
+export function GuestOrderCard({ order }: { order: IOrder }) {
   const { updateOrderServedStatus } = useOrderContext();
   const onOrderStatusChange = (id: string) => {
     Alert.alert("Preparado", "Marcar como pedido preparado", [
@@ -23,8 +23,7 @@ export function OrderCard({ order }: { order: IOrder }) {
   return (
     <Card
       style={{
-        margin: 8,
-        backgroundColor: "white",
+        marginVertical: 8,
         shadowOpacity: 0,
       }}
     >

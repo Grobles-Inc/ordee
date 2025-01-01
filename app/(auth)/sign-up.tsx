@@ -6,7 +6,6 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 type TSignUp = {
   email: string;
@@ -17,6 +16,7 @@ type TSignUp = {
 };
 export default function SignUpScreen() {
   const [loading, setLoading] = React.useState(false);
+  const [secureEntry, setSecureEntry] = React.useState(false);
   const {
     control,
     handleSubmit,
@@ -236,12 +236,17 @@ export default function SignUpScreen() {
                 <View className="flex flex-col gap-2">
                   <TextInput
                     label="Contraseña"
-                    secureTextEntry
+                    secureTextEntry={!secureEntry}
+                    right={
+                      <TextInput.Icon
+                        onPress={() => setSecureEntry(!secureEntry)}
+                        icon={secureEntry ? "eye" : "eye-off"}
+                      />
+                    }
                     mode="outlined"
                     error={errors.password ? true : false}
                     onChangeText={onChange}
                     value={value}
-                    right={<TextInput.Icon icon="lock" />}
                   />
                   {errors.password && (
                     <View className="flex flex-row gap-1">

@@ -5,3 +5,4 @@ export * from "./order-card";
 export * from "./payment-card";
 export * from "./push-notification";
 export * from "./skeleton";
+export * from "./guest-order-card";

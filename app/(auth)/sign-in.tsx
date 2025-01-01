@@ -21,6 +21,7 @@ type TLogin = {
 
 export default function SignInScreen() {
   const [loading, setLoading] = React.useState(false);
+  const [secureEntry, setSecureEntry] = React.useState(false);
   const {
     control,
     handleSubmit,
@@ -116,12 +117,17 @@ export default function SignInScreen() {
                   <View className="flex flex-col gap-2">
                     <TextInput
                       label="Contraseña"
-                      secureTextEntry
+                      secureTextEntry={!secureEntry}
+                      right={
+                        <TextInput.Icon
+                          onPress={() => setSecureEntry(!secureEntry)}
+                          icon={secureEntry ? "eye" : "eye-off"}
+                        />
+                      }
                       mode="outlined"
                       error={errors.password ? true : false}
                       onChangeText={onChange}
                       value={value}
-                      right={<TextInput.Icon icon="lock" />}
                     />
                     {errors.password && (
                       <View className="flex flex-row gap-1">

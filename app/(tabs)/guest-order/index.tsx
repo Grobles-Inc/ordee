@@ -1,6 +1,7 @@
-import { OrderCard } from "@/components";
+import { GuestOrderCard } from "@/components";
 import { useOrderContext } from "@/context";
 import { IOrder } from "@/interfaces";
+import { supabase } from "@/utils";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
@@ -13,20 +14,32 @@ export default function HomeScreen() {
   const { getUnservedOrders, loading } = useOrderContext();
   React.useEffect(() => {
     getUnservedOrders().then((orders) => setOrders(orders));
+    supabase.channel("db-changes").on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "orders",
+      },
+      (payload) => {
+        getUnservedOrders().then((orders) => setOrders(orders));
+      }
+    );
   }, []);
 
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       keyboardDismissMode="on-drag"
-      className="p-4"
+      className=" bg-white dark:bg-zinc-800"
       contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
     >
       {loading && <ActivityIndicator style={{ marginTop: 20 }} />}
       <FlashList
-        renderItem={({ item: order }) => <OrderCard order={order} />}
+        renderItem={({ item: order }) => <GuestOrderCard order={order} />}
         data={orders}
         estimatedItemSize={200}
+        contentContainerStyle={{ padding: 16 }}
         horizontal={false}
         ListEmptyComponent={
           <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">

@@ -242,7 +242,6 @@ export const OrderContextProvider = ({
     toast.success("Pedido servido!", {
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
-    console.log("Order updated", error);
     setLoading(false);
   };
 

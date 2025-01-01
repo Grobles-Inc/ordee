@@ -52,10 +52,7 @@ export default function UsersScreen() {
   };
 
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      className=" dark:bg-zinc-900"
-    >
+    <ScrollView contentInsetAdjustmentBehavior="automatic">
       {loading && (
         <View className="flex flex-col gap-2 p-4">
           <UserSkeleton />
@@ -70,11 +67,13 @@ export default function UsersScreen() {
             key={user.id}
             style={{
               marginVertical: 8,
+              shadowOpacity: 0,
             }}
           >
             <Card.Title
               title={`${user.name} ${user.last_name}`}
               subtitle={getRoleLabel(user.role)}
+              subtitleStyle={{ opacity: 0.5 }}
               right={(props) => (
                 <IconButton
                   icon="delete-outline"
@@ -87,6 +86,7 @@ export default function UsersScreen() {
                   style={{
                     width: 45,
                     height: 45,
+                    borderRadius: 100,
                   }}
                   source={{ uri: user.image_url }}
                 />
