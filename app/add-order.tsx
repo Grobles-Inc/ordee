@@ -4,7 +4,6 @@ import { useCustomer } from "@/context";
 import { IMeal, IOrder } from "@/interfaces";
 import { supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
-import * as Notifications from "expo-notifications";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -34,23 +33,6 @@ export default function AddOrderScreen() {
   const [count, setCount] = useState<number | null>(0);
   const [isRegisterDisabled, setIsRegisterDisabled] = useState(false);
 
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: false,
-      shouldSetBadge: false,
-    }),
-  });
-
-  if (count === 500) {
-    Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Límite de órdenes alcanzado",
-        body: "Se ha alcanzado el límite de 500 órdenes para este mes",
-      },
-      trigger: 2,
-    });
-  }
   if (!profile) return null;
 
   useEffect(() => {
