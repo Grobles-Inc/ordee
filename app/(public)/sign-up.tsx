@@ -96,7 +96,7 @@ export default function SignUpScreen() {
       setLoading(false);
     }
 
-    router.push("/(tabs)");
+    router.push("/(auth)/(tabs)");
   };
 
   return (

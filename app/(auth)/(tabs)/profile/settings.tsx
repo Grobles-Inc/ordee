@@ -15,7 +15,7 @@ export default function SettingsScreen() {
       <View className="flex-row justify-between mb-8">
         <View className="items-center">
           <Image
-            source={require("../../../assets/images/light.png")}
+            source={require("../../../../assets/images/light.png")}
             className="w-48 h-72 rounded-lg mb-2"
           />
           <RadioButton.Android
@@ -28,7 +28,7 @@ export default function SettingsScreen() {
         </View>
         <View className="items-center">
           <Image
-            source={require("../../../assets/images/dark.png")}
+            source={require("../../../../assets/images/dark.png")}
             className="w-48 h-72 rounded-lg mb-2"
           />
           <RadioButton.Android

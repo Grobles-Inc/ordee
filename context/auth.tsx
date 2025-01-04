@@ -56,10 +56,10 @@ export function AuthContextProvider({
   }, []);
 
   useEffect(() => {
-    if (!profile && segments[0] !== "(auth)") {
-      router.replace("/(auth)/sign-in");
-    } else if (profile && segments[0] !== "(tabs)") {
-      router.replace("/(tabs)");
+    if (!profile && segments[0] !== "(public)") {
+      router.replace("/(public)/sign-in");
+    } else if (profile && segments[0] !== "(auth)") {
+      router.replace("/(auth)/(tabs)");
     }
   }, [profile, segments]);
 

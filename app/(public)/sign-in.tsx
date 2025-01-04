@@ -72,7 +72,7 @@ export default function SignInScreen() {
                   No tienes credenciales?
                   <Text
                     className=" text-orange-500"
-                    onPress={() => router.push("/(auth)/sign-up")}
+                    onPress={() => router.push("/(public)/sign-up")}
                   >
                     {" "}
                     Crea una cuenta

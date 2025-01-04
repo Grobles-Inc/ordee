@@ -1,11 +1,5 @@
 import Colors from "@/constants/Colors";
-import {
-  CategoryContextProvider,
-  CustomerContextProvider,
-  MealContextProvider,
-  OrderContextProvider,
-  useAuth,
-} from "@/context";
+import { useAuth } from "@/context";
 import { useColorScheme } from "@/utils/expo/useColorScheme";
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
@@ -172,30 +166,22 @@ export default function TabLayout() {
     tabConfigurations[profile?.role as keyof typeof tabConfigurations] || [];
 
   return (
-    <OrderContextProvider>
-      <CategoryContextProvider>
-        <MealContextProvider>
-          <CustomerContextProvider>
-            <Tabs screenOptions={commonScreenOptions}>
-              {tabs.map((tab) => (
-                <Tabs.Screen
-                  key={tab.name}
-                  name={tab.name}
-                  options={{
-                    title: tab.title,
-                    headerShown: tab.name === "my-profile",
-                    href: tab.href,
-                    tabBarIcon: createTabIcon(
-                      `https://api.iconify.design/${tab.icon[0]}`,
-                      `https://api.iconify.design/${tab.icon[1]}`
-                    ),
-                  }}
-                />
-              ))}
-            </Tabs>
-          </CustomerContextProvider>
-        </MealContextProvider>
-      </CategoryContextProvider>
-    </OrderContextProvider>
+    <Tabs screenOptions={commonScreenOptions}>
+      {tabs.map((tab) => (
+        <Tabs.Screen
+          key={tab.name}
+          name={tab.name}
+          options={{
+            title: tab.title,
+            headerShown: tab.name === "my-profile",
+            href: tab.href,
+            tabBarIcon: createTabIcon(
+              `https://api.iconify.design/${tab.icon[0]}`,
+              `https://api.iconify.design/${tab.icon[1]}`
+            ),
+          }}
+        />
+      ))}
+    </Tabs>
   );
 }

@@ -16,10 +16,6 @@ import "../styles/global.css";
 
 export { ErrorBoundary } from "expo-router";
 
-export const unstable_settings = {
-  initialRouteName: "(tabs)",
-};
-
 const customLightTheme = { ...MD3LightTheme, colors: ORDEE_THEME.light };
 const customDarkTheme = { ...MD3DarkTheme, colors: ORDEE_THEME.dark };
 

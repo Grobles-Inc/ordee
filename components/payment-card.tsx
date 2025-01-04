@@ -24,7 +24,7 @@ export function PaymentCard({ order }: { order: IOrder }) {
         shadowOpacity: 0,
       }}
       onPress={() => {
-        router.push(`/(tabs)/payments/receipt/${order.id}`);
+        router.push(`/(auth)/(tabs)/payments/receipt/${order.id}`);
       }}
     >
       <Card.Title

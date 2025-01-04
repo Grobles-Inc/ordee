@@ -21,7 +21,7 @@ export function OrderCard({ order }: { order: IOrder }) {
       }}
       onPress={() => {
         router.push({
-          pathname: "/(tabs)/orders/details/[id]",
+          pathname: "/(auth)/(tabs)/orders/details/[id]",
           params: { id: order.id as string },
         });
       }}

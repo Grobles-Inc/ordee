@@ -88,7 +88,7 @@ const PaywallScreen = () => {
       {/* Logo */}
       <View className="flex-row items-center justify-center mb-6">
         <Image
-          source={require("../../../../assets/images/logo.png")}
+          source={require("../../../../../assets/images/logo.png")}
           style={{ width: 100, height: 100 }}
         />
       </View>

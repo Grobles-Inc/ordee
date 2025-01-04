@@ -66,7 +66,7 @@ export default function OrderDetailsScreen() {
     }
     printOrder();
     setModalVisible(false);
-    router.push("/(tabs)/orders");
+    router.push("/(auth)/(tabs)/orders");
   };
   async function onRefresh() {
     setRefreshing(true);

@@ -1,6 +1,30 @@
+import {
+  CategoryContextProvider,
+  CustomerContextProvider,
+  MealContextProvider,
+  OrderContextProvider,
+} from "@/context";
 import { Stack } from "expo-router";
-import React from "react";
-
-export default function AuthLayout() {
-  return <Stack screenOptions={{ headerShown: false }} />;
+export default function Layout() {
+  return (
+    <OrderContextProvider>
+      <CategoryContextProvider>
+        <MealContextProvider>
+          <CustomerContextProvider>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="(modals)/add-order"
+                options={{
+                  title: "Agregar Orden",
+                  presentation: "card",
+                  headerShown: false,
+                }}
+              />
+            </Stack>
+          </CustomerContextProvider>
+        </MealContextProvider>
+      </CategoryContextProvider>
+    </OrderContextProvider>
+  );
 }

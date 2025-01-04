@@ -87,7 +87,7 @@ export default function ProfileScreen() {
             <Text style={{ color: "gray" }}>{session?.user.email}</Text>
           </View>
           <Button
-            onPress={() => router.push("/(tabs)/profile/edit")}
+            onPress={() => router.push("/(auth)/(tabs)/profile/edit")}
             mode="contained"
           >
             Editar perfil
@@ -124,7 +124,7 @@ export default function ProfileScreen() {
                 className="flex-row flex items-center justify-between  p-4"
                 onPress={() =>
                   // Linking.openURL("https://cal.com/miguel-requena/meeting-ordee")
-                  router.push("/(tabs)/profile/membership")
+                  router.push("/(auth)/(tabs)/profile/membership")
                 }
               >
                 <View className=" flex flex-col gap-4 w-4/5">
@@ -149,41 +149,41 @@ export default function ProfileScreen() {
         <Divider className="my-4" />
         <Button
           icon="account-group-outline"
-          onPress={() => router.push("/(tabs)/profile/users")}
+          onPress={() => router.push("/(auth)/(tabs)/profile/users")}
           mode="text"
         >
           Usuarios
         </Button>
         <Button
           icon="badge-account-outline"
-          onPress={() => router.push("/(tabs)/profile/membership")}
+          onPress={() => router.push("/(auth)/(tabs)/profile/membership")}
           mode="text"
         >
           Membresía
         </Button>
         <Button
           icon="book-open-page-variant-outline"
-          onPress={() => router.push("/(tabs)/profile/categories")}
+          onPress={() => router.push("/(auth)/(tabs)/profile/categories")}
           mode="text"
         >
           Categorías
         </Button>
         <Button
           icon="account-heart-outline"
-          onPress={() => router.push("/(tabs)/profile/customers")}
+          onPress={() => router.push("/(auth)/(tabs)/profile/customers")}
           mode="text"
         >
           Clientes Fijos
         </Button>
         <Button
-          onPress={() => router.push("/(tabs)/profile/daily-report")}
+          onPress={() => router.push("/(auth)/(tabs)/profile/daily-report")}
           mode="text"
           icon="chart-line"
         >
           Reporte Diario
         </Button>
         <Button
-          onPress={() => router.push("/(tabs)/profile/settings")}
+          onPress={() => router.push("/(auth)/(tabs)/profile/settings")}
           mode="text"
           icon="nut"
         >

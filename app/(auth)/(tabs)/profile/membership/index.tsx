@@ -22,7 +22,7 @@ export default function Membership() {
       <View className="flex flex-col gap-6 px-4 py-8 ">
         <View className="flex flex-row gap-4 items-center ">
           <Image
-            source={require("../../../../assets/images/logo.png")}
+            source={require("../../../../../assets/images/logo.png")}
             style={{ width: 100, height: 100 }}
           />
 
@@ -89,7 +89,7 @@ export default function Membership() {
         }}
         mode="contained"
         onPress={() => {
-          router.push("/(tabs)/profile/membership/paywall");
+          router.push("/(auth)/(tabs)/profile/membership/paywall");
         }}
       >
         Ver Planes
