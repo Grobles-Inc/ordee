@@ -1,6 +1,5 @@
 import { CustomerFinder, OrderItemsAccordion } from "@/components";
-import { useAuth, useOrderContext } from "@/context";
-import { useCustomer } from "@/context";
+import { useAuth, useCustomer, useOrderContext } from "@/context";
 import { IMeal, IOrder } from "@/interfaces";
 import { supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";

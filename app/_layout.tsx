@@ -1,16 +1,10 @@
 import { ORDEE_THEME } from "@/constants/ordee";
-import {
-  AuthContextProvider,
-  OrderContextProvider,
-  CategoryContextProvider,
-  CustomerContextProvider,
-  MealContextProvider,
-} from "@/context";
+import { AuthContextProvider } from "@/context";
 import { DARK_NAV_THEME, NAV_THEME } from "@/utils";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { useColorScheme } from "react-native";
@@ -19,22 +13,16 @@ import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 import { Toaster } from "sonner-native";
 import "../styles/global.css";
-// Import your global CSS file
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
+export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: "(tabs)",
 };
 
 const customLightTheme = { ...MD3LightTheme, colors: ORDEE_THEME.light };
 const customDarkTheme = { ...MD3DarkTheme, colors: ORDEE_THEME.dark };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -43,7 +31,6 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -81,32 +68,7 @@ function RootLayoutNav() {
           }}
         >
           <PaperProvider theme={paperTheme}>
-            <OrderContextProvider>
-              <CategoryContextProvider>
-                <MealContextProvider>
-                  <CustomerContextProvider>
-                    <Stack>
-                      <Stack.Screen
-                        name="(tabs)"
-                        options={{ headerShown: false }}
-                      />
-                      <Stack.Screen
-                        name="(auth)"
-                        options={{ headerShown: false }}
-                      />
-                      <Stack.Screen
-                        name="add-order"
-                        options={{
-                          title: "Agregar Orden",
-                          presentation: "card",
-                          headerShown: false,
-                        }}
-                      />
-                    </Stack>
-                  </CustomerContextProvider>
-                </MealContextProvider>
-              </CategoryContextProvider>
-            </OrderContextProvider>
+            <Slot />
           </PaperProvider>
           <Toaster />
         </ThemeProvider>

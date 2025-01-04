@@ -1,8 +1,14 @@
-import { useColorScheme } from "@/utils/expo/useColorScheme";
 import Colors from "@/constants/Colors";
-import { useAuth } from "@/context";
+import {
+  CategoryContextProvider,
+  CustomerContextProvider,
+  MealContextProvider,
+  OrderContextProvider,
+  useAuth,
+} from "@/context";
+import { useColorScheme } from "@/utils/expo/useColorScheme";
 import { Image } from "expo-image";
-import { Redirect, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import React from "react";
 
 export default function TabLayout() {
@@ -165,27 +171,31 @@ export default function TabLayout() {
   const tabs =
     tabConfigurations[profile?.role as keyof typeof tabConfigurations] || [];
 
-  if (tabs.length === 0) {
-    return <Redirect href="/(auth)/sign-in" />;
-  }
-
   return (
-    <Tabs screenOptions={commonScreenOptions}>
-      {tabs.map((tab) => (
-        <Tabs.Screen
-          key={tab.name}
-          name={tab.name}
-          options={{
-            title: tab.title,
-            headerShown: tab.name === "my-profile",
-            href: tab.href,
-            tabBarIcon: createTabIcon(
-              `https://api.iconify.design/${tab.icon[0]}`,
-              `https://api.iconify.design/${tab.icon[1]}`
-            ),
-          }}
-        />
-      ))}
-    </Tabs>
+    <OrderContextProvider>
+      <CategoryContextProvider>
+        <MealContextProvider>
+          <CustomerContextProvider>
+            <Tabs screenOptions={commonScreenOptions}>
+              {tabs.map((tab) => (
+                <Tabs.Screen
+                  key={tab.name}
+                  name={tab.name}
+                  options={{
+                    title: tab.title,
+                    headerShown: tab.name === "my-profile",
+                    href: tab.href,
+                    tabBarIcon: createTabIcon(
+                      `https://api.iconify.design/${tab.icon[0]}`,
+                      `https://api.iconify.design/${tab.icon[1]}`
+                    ),
+                  }}
+                />
+              ))}
+            </Tabs>
+          </CustomerContextProvider>
+        </MealContextProvider>
+      </CategoryContextProvider>
+    </OrderContextProvider>
   );
 }

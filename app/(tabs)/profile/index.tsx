@@ -1,4 +1,3 @@
-import { PushNotification } from "@/components";
 import { useAuth, useOrderContext } from "@/context";
 import { supabase } from "@/utils";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -67,7 +66,6 @@ export default function ProfileScreen() {
       style={{ marginTop: headerHeight }}
       contentInsetAdjustmentBehavior="automatic"
     >
-      <PushNotification setExpoPushToken={setExpoPushToken} count={count} />
       <View className="flex flex-col gap-4 items-center justify-center">
         <Image
           accessibilityLabel="profile_logo"

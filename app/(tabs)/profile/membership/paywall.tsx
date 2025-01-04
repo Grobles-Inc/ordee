@@ -83,7 +83,7 @@ const PaywallScreen = () => {
   return (
     <ScrollView
       className="flex-1 p-5"
-      contentContainerStyle={{ paddingBottom: 30 }}
+      contentContainerStyle={{ paddingVertical: 30 }}
     >
       {/* Logo */}
       <View className="flex-row items-center justify-center mb-6">
@@ -107,28 +107,28 @@ const PaywallScreen = () => {
       {/* Toggle Buttons */}
       <View className="flex-row justify-center mb-6">
         <TouchableOpacity
-          className={`px-4 py-2 rounded-l-md ${
-            isMonthly ? "bg-orange-500" : "bg-gray-300"
+          className={`px-10 py-3 rounded-l-full ${
+            isMonthly ? "bg-[#FF6247]" : "bg-gray-200"
           }`}
           onPress={() => setIsMonthly(true)}
         >
           <Text
-            className={`font-bold ${
-              isMonthly ? "text-white" : "text-gray-700"
+            className={` ${
+              isMonthly ? "text-white font-bold" : "text-gray-700"
             }`}
           >
             Mensual
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className={`px-4 py-2 rounded-r-md ${
-            !isMonthly ? "bg-orange-500" : "bg-gray-300"
+          className={`px-10 py-3 rounded-r-full ${
+            !isMonthly ? "bg-[#FF6247]" : "bg-gray-200"
           }`}
           onPress={() => setIsMonthly(false)}
         >
           <Text
-            className={`font-bold ${
-              !isMonthly ? "text-white" : "text-gray-700"
+            className={` ${
+              !isMonthly ? "text-white font-bold" : "text-gray-700"
             }`}
           >
             Anual

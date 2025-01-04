@@ -2,8 +2,8 @@ import { IAuthContextProvider, IUser } from "@/interfaces";
 import { supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import { Session } from "@supabase/supabase-js";
+import { useRouter, useSegments } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native-paper";
 import { toast } from "sonner-native";
 const AuthContext = createContext<IAuthContextProvider>({
   signOut: () => {},
@@ -23,10 +23,11 @@ export function AuthContextProvider({
   children: React.ReactNode;
 }) {
   const [loading, setLoading] = useState(false);
-  const [isReady, setIsReady] = useState(false);
   const [profile, setProfile] = useState<IUser | null>(null);
   const [users, setUsers] = useState<IUser[]>([]);
   const [session, setSession] = useState<Session | null>(null);
+  const segments = useSegments();
+  const router = useRouter();
   useEffect(() => {
     async function initializeAuth() {
       const {
@@ -36,7 +37,6 @@ export function AuthContextProvider({
       if (initialSession?.user) {
         await getProfile(initialSession.user.id);
       }
-      setIsReady(true);
     }
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, newSession) => {
@@ -55,6 +55,14 @@ export function AuthContextProvider({
     };
   }, []);
 
+  useEffect(() => {
+    if (!profile && segments[0] !== "(auth)") {
+      router.replace("/(auth)/sign-in");
+    } else if (profile && segments[0] !== "(tabs)") {
+      router.replace("/(tabs)");
+    }
+  }, [profile, segments]);
+
   const getProfile = async (id: string) => {
     setLoading(true);
     const { data, error, status } = await supabase
@@ -71,6 +79,8 @@ export function AuthContextProvider({
 
   function signOut() {
     supabase.auth.signOut();
+    setProfile(null);
+    setSession(null);
   }
 
   const deleteUser = async (id: string) => {
@@ -127,9 +137,6 @@ export function AuthContextProvider({
     return data;
   };
 
-  if (!isReady) {
-    return <ActivityIndicator color="tomato" style={{ marginTop: 100 }} />;
-  }
   return (
     <AuthContext.Provider
       value={{
