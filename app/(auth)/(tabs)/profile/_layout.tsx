@@ -94,16 +94,6 @@ export default function ProfileLayout() {
           options={{
             title: "Mi Perfil",
             headerShown: false,
-            //FIX: Uncomment this line to add a theme toggle button to the profile screen
-            // headerRight: () => (
-            //   <IconButton
-            //     onPress={toggleTheme}
-            //     icon={
-            //       isDarkMode ? "moon-waxing-crescent" : "white-balance-sunny"
-            //     }
-            //     size={20}
-            //   />
-            // ),
           }}
         />
         <Stack.Screen
@@ -141,13 +131,19 @@ export default function ProfileLayout() {
             headerBackVisible: true,
             headerShadowVisible: true,
             headerLargeTitleShadowVisible: false,
-            headerRight: () => (
-              <NativeButton
-                title="Cancelar"
-                color="#FF6247"
-                onPress={() => router.back()}
-              />
-            ),
+            headerRight: () => {
+              return Platform.OS === "ios" ? (
+                <NativeButton
+                  title="Cancelar"
+                  color="#FF6247"
+                  onPress={() => router.back()}
+                />
+              ) : (
+                <Button mode="text" onPress={() => router.back()}>
+                  Cancelar
+                </Button>
+              );
+            },
           }}
         />
         <Stack.Screen
@@ -166,7 +162,6 @@ export default function ProfileLayout() {
             title: "Categorías",
             headerLargeTitle: true,
             headerBackVisible: true,
-
             headerShadowVisible: true,
             headerLargeTitleShadowVisible: false,
 

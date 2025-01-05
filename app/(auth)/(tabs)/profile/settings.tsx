@@ -1,11 +1,24 @@
 import { useAuth } from "@/context";
-import React from "react";
-import { Image, ScrollView, useColorScheme, View } from "react-native";
+import React, { useState } from "react";
+import {
+  Appearance,
+  Image,
+  ScrollView,
+  useColorScheme,
+  View,
+} from "react-native";
 import { Button, RadioButton, Text } from "react-native-paper";
 
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
   const { signOut } = useAuth();
+  const [isDarkMode, setIsDarkMode] = useState(
+    Appearance.getColorScheme() === "dark"
+  );
+  const toggleTheme = () => {
+    Appearance.setColorScheme(colorScheme === "dark" ? "light" : "dark");
+    setIsDarkMode(!isDarkMode);
+  };
 
   return (
     <ScrollView
@@ -21,7 +34,7 @@ export default function SettingsScreen() {
           <RadioButton.Android
             value="light"
             status={colorScheme === "light" ? "checked" : "unchecked"}
-            onPress={() => colorScheme === "light"}
+            onPress={toggleTheme}
             color="#007AFF"
           />
           <Text className=" capitalize">Claro</Text>
@@ -34,7 +47,7 @@ export default function SettingsScreen() {
           <RadioButton.Android
             value="dark"
             status={colorScheme === "dark" ? "checked" : "unchecked"}
-            onPress={() => colorScheme === "dark"}
+            onPress={toggleTheme}
             color="#007AFF"
           />
           <Text className=" capitalize">Oscuro</Text>
