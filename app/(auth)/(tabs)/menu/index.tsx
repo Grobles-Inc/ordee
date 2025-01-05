@@ -22,7 +22,9 @@ export default function MenuScreen() {
   const [refreshing, setRefreshing] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
   React.useEffect(() => {
-    getCategories();
+    getDailyMeals();
+  }, []);
+  React.useEffect(() => {
     getDailyMeals();
     supabase
       .channel("db-changes")

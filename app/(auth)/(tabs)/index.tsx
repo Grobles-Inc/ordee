@@ -31,36 +31,14 @@ import {
   Text,
   Button,
 } from "react-native-paper";
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withTiming,
-} from "react-native-reanimated";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useOrderContext } from "@/context";
 import { toast } from "sonner-native";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
-function TableSvg({ table, index }: { table: ITable; index: number }) {
-  const rotation = useSharedValue(90);
-  useEffect(() => {
-    rotation.value = withDelay(
-      index * 50,
-      withTiming(0, {
-        duration: 200,
-        easing: Easing.out(Easing.cubic),
-      })
-    );
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ rotateY: `${rotation.value}deg` }],
-    };
-  });
+function TableSvg({ table }: { table: ITable }) {
   const deleteTable = async (id: string) => {
     await supabase.from("tables").delete().eq("id", id);
   };
@@ -112,38 +90,35 @@ function TableSvg({ table, index }: { table: ITable; index: number }) {
   }
 
   return (
-    <Animated.View style={animatedStyle}>
-      <TouchableOpacity onPress={onPress} onLongPress={onLongPress}>
-        <View className="flex flex-col items-center justify-center">
-          {table.status ? (
-            <Text className="text-2xl font-bold dark:text-white">
-              {table.number}
-            </Text>
-          ) : (
-            <Chip
-              mode="flat"
-              style={{ backgroundColor: "#ef4444" }}
-              selectedColor="#fecaca"
-            >
-              Ocupado
-            </Chip>
-          )}
-          <Image
-            source={{
-              uri: "https://cdn-icons-png.flaticon.com/128/12924/12924575.png",
-            }}
-            style={{ width: 100, height: 100 }}
-          />
-        </View>
-      </TouchableOpacity>
-    </Animated.View>
+    <TouchableOpacity onPress={onPress} onLongPress={onLongPress}>
+      <View className="flex flex-col items-center justify-center">
+        {table.status ? (
+          <Text className="text-2xl font-bold dark:text-white">
+            {table.number}
+          </Text>
+        ) : (
+          <Chip
+            mode="flat"
+            style={{ backgroundColor: "#ef4444" }}
+            selectedColor="#fecaca"
+          >
+            Ocupado
+          </Chip>
+        )}
+        <Image
+          source={{
+            uri: "https://cdn-icons-png.flaticon.com/128/12924/12924575.png",
+          }}
+          style={{ width: 100, height: 100 }}
+        />
+      </View>
+    </TouchableOpacity>
   );
 }
 
 export default function TablesScreen() {
   const [tables, setTables] = useState<ITable[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const channelRef = useRef<any>(null);
   const { addTable } = useOrderContext();
   const colorScheme = useColorScheme();
   const [refreshing, setRefreshing] = useState(false);
@@ -212,18 +187,6 @@ export default function TablesScreen() {
       )
       .subscribe();
   }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      getTables();
-      return () => {
-        if (channelRef.current) {
-          channelRef.current.unsubscribe();
-          channelRef.current = null;
-        }
-      };
-    }, [getTables])
-  );
 
   if (isLoading) {
     return (

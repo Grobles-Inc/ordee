@@ -5,29 +5,26 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
 import { Alert, ScrollView, View } from "react-native";
-import {
-  ActivityIndicator,
-  Card,
-  Divider,
-  IconButton,
-  Text,
-} from "react-native-paper";
+import { Card, Divider, IconButton, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 export default function CustomersScreen() {
   const { deleteCustomer, customers, getCustomers, loading } = useCustomer();
   React.useEffect(() => {
     getCustomers();
-    supabase.channel("db-changes").on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "customers",
-      },
-      (payload) => {
-        getCustomers();
-      }
-    );
+    supabase
+      .channel("db-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "customers",
+        },
+        (payload) => {
+          getCustomers();
+        }
+      )
+      .subscribe();
   }, []);
 
   const onDelete = (id: string) => {

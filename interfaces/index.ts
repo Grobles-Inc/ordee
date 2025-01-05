@@ -82,6 +82,7 @@ export interface IMeal {
 export interface IMealContextProvider {
   addMeal: (Meal: IMeal) => Promise<void>;
   getMealById: (id: string) => Promise<IMeal>;
+  getMealsByCategoryId: (id: string) => Promise<IMeal[]>;
   updateMeal: (meal: IMeal) => Promise<void>;
   loading: boolean;
   changeMealAvailability: (id: string, quantity: number) => Promise<void>;

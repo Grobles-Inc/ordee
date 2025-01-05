@@ -118,7 +118,7 @@ export default function AddMealScreen() {
       (category) => category.name === id_category
     );
 
-    if (!category && !id_category) {
+    if (!category && id_category === null) {
       toast.error("Selecciona una categoría para el item");
       return;
     }
@@ -230,7 +230,7 @@ export default function AddMealScreen() {
               rules={{
                 required: "Requerido",
                 pattern: {
-                  value: /^[0-9]+$/,
+                  value: /^[1-9]+$/,
                   message: "Ingrese un valor válido",
                 },
               }}
@@ -258,7 +258,7 @@ export default function AddMealScreen() {
               rules={{
                 required: "Requerido",
                 pattern: {
-                  value: /^[0-9]+$/,
+                  value: /^[1-9]+$/,
                   message: "Ingrese un valor válido",
                 },
               }}
