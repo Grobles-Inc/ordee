@@ -1,6 +1,10 @@
 import { ITable } from "@/interfaces";
 import { supabase } from "@/utils";
-import { useFocusEffect } from "@react-navigation/native";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetTextInput,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, {
@@ -18,25 +22,20 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetTextInput,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
 import {
   ActivityIndicator,
+  Button,
   Chip,
   Divider,
   IconButton,
   Text,
-  Button,
 } from "react-native-paper";
 
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useOrderContext } from "@/context";
-import { toast } from "sonner-native";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 function TableSvg({ table }: { table: ITable }) {
   const deleteTable = async (id: string) => {
