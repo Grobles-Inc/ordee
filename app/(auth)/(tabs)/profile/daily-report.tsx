@@ -184,19 +184,10 @@ export default function DailyReportScreen() {
 
   const loadPreviousOrders = async () => {
     try {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("date, total")
-        .order("date", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching previous orders:", error);
-        throw error;
-      }
-
+      const orders = await getDailyPaidOrders();
       const newDailyTotals: { [key: string]: number } = {};
 
-      data.forEach((order: { date: string; total: number }) => {
+      orders.forEach((order: IOrder) => {
         if (order.date) {
           const orderDate = toZonedTime(new Date(order.date), timeZone);
           const orderDateString = format(orderDate, "yyyy-MM-dd", { timeZone });
@@ -204,7 +195,7 @@ export default function DailyReportScreen() {
           if (!newDailyTotals[orderDateString]) {
             newDailyTotals[orderDateString] = 0;
           }
-          newDailyTotals[orderDateString] += order.total;
+          newDailyTotals[orderDateString] += order.total || calculateOrderTotal(order);
         }
       });
 
