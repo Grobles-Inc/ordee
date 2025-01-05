@@ -11,6 +11,7 @@ export const MealContext = createContext<IMealContextProvider>({
   getMealById: async (id: string): Promise<IMeal> => ({} as IMeal),
   updateMeal: async () => {},
   meals: [],
+  getMealsByCategoryId: async () => [] as IMeal[],
   loading: false,
   deleteMeal: async () => {},
   getDailyMeals: async () => [] as IMeal[],
@@ -62,6 +63,19 @@ export const MealContextProvider = ({
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
     setLoading(false);
+  };
+
+  const getMealsByCategoryId = async (id: string) => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("meals")
+      .select("*")
+      .eq("id_category", id)
+      .eq("stock", true)
+      .eq("id_tenant", profile.id_tenant);
+    if (error) throw error;
+    setLoading(false);
+    return data;
   };
   const getDailyMeals = async () => {
     setLoading(true);
@@ -133,7 +147,7 @@ export const MealContextProvider = ({
         meals,
         deleteMeal,
         loading,
-
+        getMealsByCategoryId,
         getMealById,
         changeMealAvailability,
         getDailyMeals,

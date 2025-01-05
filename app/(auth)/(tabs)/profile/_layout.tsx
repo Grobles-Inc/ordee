@@ -21,6 +21,7 @@ import {
   View,
 } from "react-native";
 import { Button, Text } from "react-native-paper";
+import { toast } from "sonner-native";
 
 export default function ProfileLayout() {
   const customerBottomSheetRef = useRef<BottomSheet>(null);
@@ -61,10 +62,16 @@ export default function ProfileLayout() {
       total_free_orders: Number(data.total_free_orders),
       total_orders: Number(data.total_orders),
     });
+    customerBottomSheetRef.current?.close();
     reset();
   };
 
   const onSubmitCategory = async (e: any) => {
+    if (name === "") {
+      toast.error("Ingrese un nombre para la categoría");
+      return;
+    }
+
     const data: ICategory = {
       name,
       description,
