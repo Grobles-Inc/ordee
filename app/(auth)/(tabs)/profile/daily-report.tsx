@@ -85,7 +85,7 @@ const calculateOrderTotal = (order: IOrder): number => {
 const timeZone = "America/Lima";
 
 export default function DailyReportScreen() {
-  const { getDailyPaidOrders } = useOrderContext();
+  const { getDailyPaidOrders, getPaidOrders } = useOrderContext();
   const colorScheme = useColorScheme();
   const [isDarkMode, setIsDarkMode] = useState(colorScheme === "dark");
 
@@ -184,7 +184,7 @@ export default function DailyReportScreen() {
 
   const loadPreviousOrders = async () => {
     try {
-      const orders = await getDailyPaidOrders();
+      const orders = await getPaidOrders();
       const newDailyTotals: { [key: string]: number } = {};
 
       orders.forEach((order: IOrder) => {
