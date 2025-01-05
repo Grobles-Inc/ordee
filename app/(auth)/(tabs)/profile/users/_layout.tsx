@@ -1,6 +1,5 @@
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
-import { Button } from "react-native";
 
 export default function UserLayout() {
   return (
@@ -19,13 +18,7 @@ export default function UserLayout() {
           return {
             title: "Agregar Usuario",
             presentation: "modal",
-            headerRight: () => (
-              <Button
-                title="Cancelar"
-                color="#FF6247"
-                onPress={() => router.back()}
-              />
-            ),
+            headerShown: false,
           };
         }}
       />

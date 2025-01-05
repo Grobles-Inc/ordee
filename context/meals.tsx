@@ -9,9 +9,8 @@ import { useAuth } from "./auth";
 export const MealContext = createContext<IMealContextProvider>({
   addMeal: async () => {},
   getMealById: async (id: string): Promise<IMeal> => ({} as IMeal),
+  updateMeal: async () => {},
   meals: [],
-  meal: {} as IMeal,
-  getMealsByCategoryId: async () => [] as IMeal[],
   loading: false,
   deleteMeal: async () => {},
   getDailyMeals: async () => [] as IMeal[],
@@ -26,7 +25,6 @@ export const MealContextProvider = ({
   const [meals, setDailyMeals] = React.useState<IMeal[]>([]);
   const [loading, setLoading] = React.useState(false);
   const { profile } = useAuth();
-  const [meal, setMeal] = React.useState<IMeal>({} as IMeal);
 
   const addMeal = async (meal: IMeal) => {
     setLoading(true);
@@ -47,16 +45,31 @@ export const MealContextProvider = ({
     setLoading(false);
   };
 
+  const updateMeal = async (meal: IMeal) => {
+    setLoading(true);
+    const { error } = await supabase
+      .from("meals")
+      .update(meal)
+      .eq("id", meal.id);
+    if (error) {
+      console.error("Error updating meal:", error);
+      toast.error("Error al actualizar item!", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
+      return;
+    }
+    toast.success("Item actualizado!", {
+      icon: <FontAwesome name="check-circle" size={20} color="green" />,
+    });
+    setLoading(false);
+  };
   const getDailyMeals = async () => {
     setLoading(true);
-    const today = new Date();
-    const formattedDate = today.toISOString().split("T")[0];
     const { data, error } = await supabase
       .from("meals")
       .select("*")
       .eq("id_tenant", profile.id_tenant)
       .eq("stock", true)
-      .eq("created_at", formattedDate)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -86,19 +99,6 @@ export const MealContextProvider = ({
     });
   };
 
-  const getMealsByCategoryId = async (id: string) => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("meals")
-      .select("*")
-      .eq("id_category", id)
-      .eq("stock", true)
-      .eq("id_tenant", profile.id_tenant);
-    if (error) throw error;
-    setLoading(false);
-    return data;
-  };
-
   const deleteMeal = async (id: string) => {
     setLoading(true);
     const { error } = await supabase.from("meals").delete().eq("id", id);
@@ -119,11 +119,10 @@ export const MealContextProvider = ({
     setLoading(true);
     const { data, error } = await supabase
       .from("meals")
-      .select("*, users:id_user(name)")
+      .select("*, categories:id_category(name)")
       .eq("id", id)
       .single();
-    if (error) throw error;
-    setMeal(data);
+    if (error) console.error("Error fetching meal:", error);
     setLoading(false);
     return data;
   }
@@ -134,12 +133,12 @@ export const MealContextProvider = ({
         meals,
         deleteMeal,
         loading,
-        getMealsByCategoryId,
+
         getMealById,
         changeMealAvailability,
         getDailyMeals,
+        updateMeal,
         addMeal,
-        meal,
       }}
     >
       {children}

@@ -1,6 +1,5 @@
 import { MealCard } from "@/components";
 import { useCategoryContext, useMealContext } from "@/context";
-import { IMeal } from "@/interfaces";
 import { supabase } from "@/utils";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
@@ -17,11 +16,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 const MORE_ICON = Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical";
 export default function MenuScreen() {
-  const { getMealsByCategoryId, loading, getDailyMeals, meals } =
-    useMealContext();
-  const [mealsByCategoryId, setMealsByCategoryId] = React.useState<
-    IMeal[] | undefined
-  >();
+  const { loading, getDailyMeals, meals } = useMealContext();
   const { categories, getCategories } = useCategoryContext();
   const [categoryId, setCategoryId] = React.useState<string>();
   const [refreshing, setRefreshing] = React.useState(false);
@@ -50,11 +45,12 @@ export default function MenuScreen() {
     setRefreshing(false);
   }
 
-  React.useEffect(() => {
-    getMealsByCategoryId(categoryId as string).then((meals) => {
-      setMealsByCategoryId(meals);
-    });
-  }, [categoryId]);
+  const filteredMeals = meals.filter((meal) => {
+    if (categoryId) {
+      return meal.id_category === categoryId;
+    }
+    return true;
+  });
 
   return (
     <>
@@ -67,7 +63,7 @@ export default function MenuScreen() {
           visible={visible}
           style={{
             paddingTop: 50,
-            paddingRight: 10,
+            paddingRight: 8,
             flexDirection: "row",
             justifyContent: "center",
           }}
@@ -84,22 +80,34 @@ export default function MenuScreen() {
               router.push("/menu/add-meal");
               setVisible(false);
             }}
-            leadingIcon="plus"
+            leadingIcon="note-plus-outline"
             title="Agregar nuevo item"
           />
           <Divider />
 
+          <Menu.Item
+            trailingIcon={categoryId === "" ? "check" : undefined}
+            onPress={() => {
+              setCategoryId("");
+              setVisible(false);
+            }}
+            leadingIcon="book-alphabet"
+            title="Ver Todos"
+          />
+          <Divider />
           <Text
+            variant="labelSmall"
             style={{
               color: "gray",
             }}
-            className="m-2"
+            className="ml-4"
           >
             Categorías
           </Text>
           <Divider />
           {categories.map((category) => (
             <Menu.Item
+              leadingIcon="book-outline"
               key={category.id}
               trailingIcon={category.id === categoryId ? "check" : undefined}
               onPress={() => {
@@ -123,7 +131,7 @@ export default function MenuScreen() {
         </Menu>
       </Appbar.Header>
       <View className="flex-1">
-        {loading && <ActivityIndicator className="mt-20" />}
+        {loading && <ActivityIndicator className="mt-20" color="red" />}
         <FlashList
           refreshing={refreshing}
           contentContainerStyle={{
@@ -131,7 +139,7 @@ export default function MenuScreen() {
           }}
           onRefresh={onRefresh}
           renderItem={({ item: meal }) => <MealCard meal={meal} />}
-          data={categoryId ? mealsByCategoryId : meals}
+          data={filteredMeals}
           estimatedItemSize={200}
           horizontal={false}
           ListEmptyComponent={

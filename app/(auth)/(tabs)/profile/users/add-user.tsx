@@ -130,36 +130,13 @@ export default function AddUserScreen() {
   return (
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       <ScrollView className="p-4" contentInsetAdjustmentBehavior="automatic">
-        <View className="flex flex-col gap-2 mb-8">
-          {image_url && !isLoading ? (
-            <View className="border border-dashed border-slate-500 rounded-xl p-4 mb-4 flex flex-row items-center justify-center">
-              <Image
-                source={{
-                  uri: image_url,
-                }}
-                style={{
-                  width: 150,
-                  height: 150,
-                  borderRadius: 8,
-                }}
-              />
-            </View>
-          ) : (
-            <View className="border border-dashed rounded-xl p-4 mb-4 border-slate-300 h-40" />
-          )}
-          {isLoading && (
-            <View className="flex flex-row gap-2 items-center justify-center mb-4">
-              <ActivityIndicator />
-              <Text className="text-sm text-[#FF6247] text-center">
-                Cargando ...
-              </Text>
-            </View>
-          )}
-
-          <Button onPress={pickImage} mode="contained-tonal" icon="camera">
-            <Text>Seleccionar imagen</Text>
-          </Button>
+        <View className="flex flex-col my-4">
+          <Text className="text-3xl font-bold">Agregar Usuario</Text>
+          <Text className="text-muted-foreground">
+            Rellena los datos para crear tus usuario
+          </Text>
         </View>
+
         <Controller
           control={control}
           name="name"
@@ -276,9 +253,15 @@ export default function AddUserScreen() {
           }}
           render={({ field: { onChange, value } }) => (
             <View className="mb-4">
-              <List.Section title="Rol del usuario">
+              <List.Section>
                 <List.Accordion
                   expanded={expanded}
+                  style={{
+                    paddingVertical: 0,
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    marginTop: 0,
+                  }}
                   title={value}
                   onPress={() => setExpanded(!expanded)}
                 >
@@ -314,15 +297,51 @@ export default function AddUserScreen() {
             </View>
           )}
         />
+        <View className="flex flex-col gap-2 ">
+          {image_url && !isLoading && (
+            <View className="border border-dashed border-slate-500 rounded-xl p-4  flex flex-row items-center justify-center">
+              <Image
+                source={{
+                  uri: image_url,
+                }}
+                style={{
+                  width: 150,
+                  height: 150,
+                  borderRadius: 8,
+                }}
+              />
+            </View>
+          )}
+          {isLoading && (
+            <View className="flex flex-row gap-2 items-center justify-center ">
+              <ActivityIndicator />
+              <Text className="text-sm text-[#FF6247] text-center">
+                Cargando ...
+              </Text>
+            </View>
+          )}
 
-        <Button
-          mode="contained"
-          style={{ marginTop: 50 }}
-          onPress={handleSubmit(onSubmit)}
-          loading={loading}
-        >
-          Registrar
-        </Button>
+          <Button
+            onPress={pickImage}
+            disabled={isLoading}
+            mode="contained-tonal"
+            icon="camera"
+          >
+            <Text>Seleccionar imagen</Text>
+          </Button>
+        </View>
+        <View className="flex flex-col  mt-10 gap-2">
+          <Button
+            mode="contained"
+            onPress={handleSubmit(onSubmit)}
+            loading={loading}
+          >
+            Registrar
+          </Button>
+          <Button mode="text" onPress={() => router.back()}>
+            Cancelar
+          </Button>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );

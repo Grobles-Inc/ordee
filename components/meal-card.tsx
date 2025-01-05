@@ -1,11 +1,12 @@
 import { useMealContext } from "@/context";
 import { IMeal } from "@/interfaces";
+import { router } from "expo-router";
 import React from "react";
-import { Alert } from "react-native";
+import { Alert, View } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
 
 export function MealCard({ meal }: { meal: IMeal }) {
-  const { deleteMeal } = useMealContext();
+  const { deleteMeal, getMealById } = useMealContext();
   const onDelete = (id: string) => {
     Alert.alert("Eliminar", "¿Estás seguro de eliminar este item?", [
       {
@@ -25,6 +26,15 @@ export function MealCard({ meal }: { meal: IMeal }) {
       },
     ]);
   };
+
+  const handlePress = () => {
+    router.push({
+      pathname: "/menu/add-meal",
+      params: {
+        id: meal.id,
+      },
+    });
+  };
   return (
     <Card style={{ marginVertical: 16 }}>
       <Card.Cover
@@ -39,12 +49,20 @@ export function MealCard({ meal }: { meal: IMeal }) {
       />
       <Card.Content className="flex flex-row justify-between items-center">
         <Text variant="titleLarge">{`S/. ${meal.price.toFixed(2)}`}</Text>
-        <IconButton
-          icon="delete-outline"
-          onPress={() => {
-            onDelete(meal.id);
-          }}
-        />
+        <View className="flex flex-row">
+          <IconButton
+            icon="pencil-outline"
+            mode="contained-tonal"
+            onPress={handlePress}
+          />
+          <IconButton
+            icon="delete-outline"
+            mode="contained-tonal"
+            onPress={() => {
+              onDelete(meal.id);
+            }}
+          />
+        </View>
       </Card.Content>
     </Card>
   );

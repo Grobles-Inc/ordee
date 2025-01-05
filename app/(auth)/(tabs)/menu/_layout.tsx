@@ -1,6 +1,7 @@
 import { router, Stack } from "expo-router";
 import React from "react";
-import { Button } from "react-native";
+import { Button as NativeButton, Platform } from "react-native";
+import { Button } from "react-native-paper";
 
 export default function MenuLayout() {
   return (
@@ -33,16 +34,8 @@ export default function MenuLayout() {
         name="add-meal"
         options={{
           title: "Agregar Item",
-          headerBackTitle: "Menú",
+          headerShown: false,
           presentation: "modal",
-          headerBackVisible: true,
-          headerRight: () => (
-            <Button
-              title="Cancelar"
-              color="#FF6247"
-              onPress={() => router.back()}
-            />
-          ),
         }}
       />
     </Stack>

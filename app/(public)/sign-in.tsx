@@ -2,6 +2,7 @@ import { supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -54,8 +55,8 @@ export default function SignInScreen() {
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       <ScrollView className="bg-white dark:bg-zinc-900">
         <SafeAreaView className="flex flex-col justify-center align-middle m-4 items-center ">
-          <View className="flex flex-col gap-10 w-full items-center">
-            <View className="flex flex-col items-center gap-8 mt-20">
+          <View className="flex flex-col gap-8 w-full items-center">
+            <View className="flex flex-col items-center  mt-20">
               <Image
                 style={{
                   width: 125,
@@ -69,7 +70,7 @@ export default function SignInScreen() {
                   Inicia Sesión
                 </Text>
                 <Text className="text-center dark:text-white">
-                  No tienes credenciales?
+                  Todavía no eres miembro?
                   <Text
                     className=" text-orange-500"
                     onPress={() => router.push("/(public)/sign-up")}
@@ -80,7 +81,7 @@ export default function SignInScreen() {
                 </Text>
               </View>
             </View>
-            <View className="flex flex-col gap-6 justify-center align-middle w-full">
+            <View className="flex flex-col gap-4 justify-center align-middle w-full">
               <Controller
                 control={control}
                 name="email"
@@ -150,12 +151,28 @@ export default function SignInScreen() {
                 Iniciar Sesión
               </Button>
             </View>
+            <View className=" flex flex-col gap-2">
+              <Text className="text-muted-foreground text-zinc-400   mx-auto text-center px-4">
+                Para sacar el máximo provecho y saber como usar la app visita la
+                <Text
+                  className=" text-orange-500"
+                  onPress={() =>
+                    openBrowserAsync("https://ordee.framer.website")
+                  }
+                >
+                  {" "}
+                  página web de Ordee
+                </Text>
+              </Text>
+            </View>
             <View className="mt-20 flex flex-col gap-2">
               <Text className="text-muted-foreground text-zinc-400   mx-auto">
                 Desarrollado por
                 <Text
                   className=" text-orange-500"
-                  onPress={() => Linking.openURL("https://grobles.netlify.app")}
+                  onPress={() =>
+                    openBrowserAsync("https://grobles.framer.website")
+                  }
                 >
                   {" "}
                   Grobles

@@ -14,7 +14,12 @@ import React, {
   useState,
 } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Button as NativeButton, useColorScheme, View } from "react-native";
+import {
+  Button as NativeButton,
+  Platform,
+  useColorScheme,
+  View,
+} from "react-native";
 import { Button, Text } from "react-native-paper";
 
 export default function ProfileLayout() {
@@ -102,13 +107,23 @@ export default function ProfileLayout() {
             headerBackVisible: true,
             headerShadowVisible: true,
             headerLargeTitleShadowVisible: false,
-            headerRight: () => (
-              <NativeButton
-                title="Agregar"
-                color="#FF6247"
-                onPress={() => router.push("/profile/users/add-user")}
-              />
-            ),
+
+            headerRight: () => {
+              return Platform.OS === "ios" ? (
+                <NativeButton
+                  title="Agregar"
+                  color="#FF6247"
+                  onPress={() => router.push("/profile/users/add-user")}
+                />
+              ) : (
+                <Button
+                  mode="contained-tonal"
+                  onPress={() => router.push("/profile/users/add-user")}
+                >
+                  Agregar
+                </Button>
+              );
+            },
           }}
         />
         <Stack.Screen
@@ -147,13 +162,23 @@ export default function ProfileLayout() {
 
             headerShadowVisible: true,
             headerLargeTitleShadowVisible: false,
-            headerRight: () => (
-              <NativeButton
-                title="Agregar"
-                color="#FF6247"
-                onPress={() => categoryBottomSheetRef.current?.expand()}
-              />
-            ),
+
+            headerRight: () => {
+              return Platform.OS === "ios" ? (
+                <NativeButton
+                  title="Agregar"
+                  color="#FF6247"
+                  onPress={() => categoryBottomSheetRef.current?.expand()}
+                />
+              ) : (
+                <Button
+                  mode="text"
+                  onPress={() => categoryBottomSheetRef.current?.expand()}
+                >
+                  Agregar
+                </Button>
+              );
+            },
           }}
         />
         <Stack.Screen
@@ -164,13 +189,23 @@ export default function ProfileLayout() {
             headerShadowVisible: true,
             headerLargeTitleShadowVisible: false,
             headerBackVisible: true,
-            headerRight: () => (
-              <NativeButton
-                title="Agregar"
-                color="#FF6247"
-                onPress={() => customerBottomSheetRef.current?.expand()}
-              />
-            ),
+
+            headerRight: () => {
+              return Platform.OS === "ios" ? (
+                <NativeButton
+                  title="Agregar"
+                  color="#FF6247"
+                  onPress={() => customerBottomSheetRef.current?.expand()}
+                />
+              ) : (
+                <Button
+                  mode="contained-tonal"
+                  onPress={() => customerBottomSheetRef.current?.expand()}
+                >
+                  Agregar
+                </Button>
+              );
+            },
           }}
         />
         <Stack.Screen
