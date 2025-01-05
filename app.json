@@ -2,7 +2,7 @@
   "expo": {
     "name": "Ordee",
     "slug": "pos-restaurant",
-    "version": "1.1.1",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "scheme": "pos-restaurant",
@@ -23,7 +23,8 @@
         "backgroundColor": "#ffffff"
       },
       "userInterfaceStyle": "automatic",
-      "package": "com.miguelparis.posrestaurant"
+      "package": "com.grobles.ordee",
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
@@ -49,6 +50,9 @@
       "eas": {
         "projectId": "10f3f517-c8ae-4620-addb-26374a9e2f83"
       }
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
     }
   }
 }

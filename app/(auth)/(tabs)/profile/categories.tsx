@@ -12,19 +12,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function CategoriesScreen() {
   const { deleteCategory, getCategories, categories, loading } =
     useCategoryContext();
+
   React.useEffect(() => {
     getCategories();
-    supabase.channel("db-changes").on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "categories",
-      },
-      (payload) => {
-        getCategories();
-      }
-    );
+    
+    const channel = supabase.channel("categories-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "categories",
+        },
+        (payload) => {
+          getCategories();
+        }
+      )
+      .subscribe();
+
+    // Función de limpieza
+    return () => {
+      channel.unsubscribe();
+    };
   }, []);
 
   const onDelete = (id: string) => {
@@ -52,14 +61,7 @@ export default function CategoriesScreen() {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         className=" bg-white dark:bg-zinc-900"
-      >
-        {loading && (
-          <View className="flex flex-col gap-2 p-4">
-            <CategorySkeleton />
-            <CategorySkeleton />
-            <CategorySkeleton />
-          </View>
-        )}
+      >      
         <FlashList
           renderItem={({ item: category }) => (
             <Card
@@ -104,6 +106,13 @@ export default function CategoriesScreen() {
           }
           horizontal={false}
         />
+        {loading && (
+          <View className="flex flex-col gap-2 p-4">
+            <CategorySkeleton />
+            <CategorySkeleton />
+            <CategorySkeleton />
+          </View>
+        )}
       </ScrollView>
     </>
   );
