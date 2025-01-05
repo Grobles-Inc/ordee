@@ -191,7 +191,7 @@ const PaywallScreen = () => {
           <Text
             className="underline"
             onPress={() =>
-              openBrowserAsync("https://ordee.framer.website/privacy-policy")
+              openBrowserAsync("https://ordee.framer.website/terms-and-conditions")
             }
           >
             Términos y Condiciones
@@ -201,7 +201,7 @@ const PaywallScreen = () => {
             className="underline"
             onPress={() =>
               openBrowserAsync(
-                "https://ordee.framer.website/terms-and-conditions"
+                "https://ordee.framer.website/privacy-policy"
               )
             }
           >

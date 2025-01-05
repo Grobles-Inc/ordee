@@ -134,7 +134,8 @@ export const OrderContextProvider = ({
         const { error: tableError } = await supabase
           .from("tables")
           .update({ status: false })
-          .eq("id", order.id_table);
+          //the tablee is filter for the id of the table and id_tenant
+          .eq("id_tenant", profile.id_tenant);
 
         if (tableError) {
           console.error("Error updating table status:", tableError);
