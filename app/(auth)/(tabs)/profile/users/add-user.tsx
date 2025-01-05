@@ -131,8 +131,8 @@ export default function AddUserScreen() {
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       <ScrollView className="p-4" contentInsetAdjustmentBehavior="automatic">
         <View className="flex flex-col my-4">
-          <Text className="text-3xl font-bold">Agregar Usuario</Text>
-          <Text className="text-muted-foreground">
+          <Text className="text-3xl font-bold dark:text-white">Agregar Usuario</Text>
+          <Text className="text-muted-foreground dark:text-white">
             Rellena los datos para crear tus usuario
           </Text>
         </View>
