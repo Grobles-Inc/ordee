@@ -1,7 +1,9 @@
 import { useOrderContext } from "@/context";
 import { router, Stack } from "expo-router";
 import React from "react";
-import { Button } from "react-native";
+import { Button as NativeButton } from "react-native";
+import { Platform } from "react-native";
+import { Button } from "react-native-paper";
 
 export default function UserLayout() {
   const { order } = useOrderContext();
@@ -22,8 +24,11 @@ export default function UserLayout() {
           headerLargeTitle: true,
           headerLargeTitleShadowVisible: false,
           headerRight: () => {
-            return order.paid ? null : (
-              <Button
+            if (order.paid) {
+              return null;
+            }
+            return Platform.OS === "ios" ? (
+              <NativeButton
                 title="Editar"
                 color="#FF6247"
                 onPress={() => {
@@ -33,6 +38,18 @@ export default function UserLayout() {
                   });
                 }}
               />
+            ) : (
+              <Button
+                mode="text"
+                onPress={() => {
+                  router.push({
+                    pathname: "/add-order",
+                    params: { number: order.id_table, id_order: order.id },
+                  });
+                }}
+              >
+                Editar
+              </Button>
             );
           },
         }}
