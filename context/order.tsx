@@ -223,7 +223,7 @@ export const OrderContextProvider = ({
     setLoading(true);
     const { data, error } = await supabase
       .from("orders")
-      .select("*")
+      .select("*, tables(id, number)")
       .eq("paid", true)
       .eq("id_tenant", profile?.id_tenant)
       .order("date", { ascending: false });
@@ -259,7 +259,7 @@ export const OrderContextProvider = ({
     const { data, error } = await supabase
       .from("orders")
       .select(
-        "*, users:id_user(name), customers:id_customer(full_name), tenants:id_tenant(name, logo)"
+        "*, users:id_user(name), customers:id_customer(full_name), tenants:id_tenant(name, logo), tables:id_table(number)"
       )
       .eq("id", id)
       .single();
@@ -305,7 +305,7 @@ export const OrderContextProvider = ({
     setLoading(true);
     const { data, error } = await supabase
       .from("orders")
-      .select("*")
+      .select("*, tables(id, number)")
       .eq("paid", false)
       .eq("id_tenant", profile?.id_tenant)
       .order("date", { ascending: false });

@@ -18,7 +18,7 @@ export default function UserLayout() {
       <Stack.Screen
         name="details/[id]"
         options={{
-          title: "Mesa " + order.id_table,
+          title: "Mesa " + order.tables?.number,
           headerLargeTitle: true,
           headerLargeTitleShadowVisible: false,
           headerRight: () => {

@@ -225,8 +225,8 @@ export default function TablesScreen() {
         }
       >
         <View className="flex-row flex-wrap justify-center items-center  gap-8">
-          {tables.map((table, index) => (
-            <TableSvg key={table.id} table={table} index={index} />
+          {tables.map((table) => (
+            <TableSvg key={table.number} table={table} />
           ))}
           {tables.length === 0 && (
             <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">

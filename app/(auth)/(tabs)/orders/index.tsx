@@ -40,7 +40,7 @@ export default function OrdersScreen() {
           title="Pedidos Recientes"
         />
       </Appbar.Header>
-      <View className="flex-1 ">
+      <View className="flex-1">
         {loading && (
           <View className="flex flex-col gap-2 p-4">
             <OrderCardSkeleton />

@@ -28,7 +28,7 @@ export function PaymentCard({ order }: { order: IOrder }) {
       }}
     >
       <Card.Title
-        title={"Mesa " + order.id_table}
+        title={"Mesa " + order.tables?.number}
         subtitleStyle={{
           fontSize: 12,
           color: "gray",

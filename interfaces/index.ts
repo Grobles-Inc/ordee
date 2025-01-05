@@ -106,6 +106,7 @@ export interface IOrder {
   customers?: ICustomer;
   tenants?: ITenant;
   id_tenant: string;
+  tables?: ITable;
   id_customer?: string | null;
   id_user: string;
   free?: boolean;

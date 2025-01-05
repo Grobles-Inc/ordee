@@ -1,9 +1,9 @@
 import { IOrder } from "@/interfaces";
-import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { View } from "react-native";
-import { Avatar, Card, Chip, IconButton, Text } from "react-native-paper";
+import { Avatar, Card, Chip, Text } from "react-native-paper";
 export function OrderCard({ order }: { order: IOrder }) {
   const formattedDate = new Date(order.date ?? new Date()).toLocaleString(
     "es-ES",
@@ -27,7 +27,7 @@ export function OrderCard({ order }: { order: IOrder }) {
       }}
     >
       <Card.Title
-        title={"Mesa " + order.id_table}
+        title={"Mesa " + order.tables?.number}
         subtitle={order.served ? null : "En espera"}
         subtitleStyle={{ color: "gray" }}
         left={(props) => (

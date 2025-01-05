@@ -35,7 +35,7 @@ export default function PaymentsLayout() {
         options={({ route }) => {
           const { id } = route.params as { id: string };
           return {
-            title: "Mesa " + order.id_table,
+            title: "Mesa " + order.tables?.number,
             headerBackTitle: "Pagos",
             headerLargeTitle: true,
             headerBackVisible: true,
