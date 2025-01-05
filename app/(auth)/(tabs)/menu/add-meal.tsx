@@ -140,19 +140,17 @@ export default function AddMealScreen() {
       ) : (
         <ScrollView contentInsetAdjustmentBehavior="automatic">
           <View className="flex flex-col justify-center align-middle w-full p-4 gap-4">
-            <View className="flex flex-col mb-4">
+            <View className="flex flex-col mb-4 justify-center items-center">
               <Text className="text-3xl font-bold dark:text-white">
                 {id ? "Editar Item" : "Agregar Item"}
               </Text>
-              <Text className="text-muted-foreground dark:text-white">
-                {id
-                  ? "Modifica los datos del item seleccionado"
-                  : "Rellena los datos para crear tu item"}
-              </Text>
-              <Text className="text-red-500 font-bold mt-5">
-                No olvides seleccionar una categoría, y rellenar todos los campos.
+
+              <Text className="text-red-500  mt-5 text-center mx-14">
+                No olvides seleccionar una categoría, y rellenar todos los
+                campos requeridos.
               </Text>
             </View>
+            <Divider />
             <Controller
               control={control}
               name="id_category"
