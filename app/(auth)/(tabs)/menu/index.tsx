@@ -16,7 +16,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 const MORE_ICON = Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical";
 export default function MenuScreen() {
-  const { loading, getDailyMeals, meals } = useMealContext();
+  const { getDailyMeals, meals } = useMealContext();
+  const [loading, setLoading] = React.useState(true);
   const { categories, getCategories } = useCategoryContext();
   const [categoryId, setCategoryId] = React.useState<string>();
   const [refreshing, setRefreshing] = React.useState(false);
@@ -25,7 +26,11 @@ export default function MenuScreen() {
     getCategories();
   }, []);
   React.useEffect(() => {
+    setLoading(true);
     getDailyMeals();
+    setLoading(false);
+  }, []);
+  React.useEffect(() => {
     supabase
       .channel("db-changes")
       .on(

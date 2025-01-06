@@ -71,12 +71,12 @@ export interface ICategoryContextProvider {
 export interface IMeal {
   id: string;
   name: string;
-  price: number;
+  price: number | string;
   categories?: ICategory;
   created_at?: Date;
   image_url: string;
   id_category: string;
-  quantity: number;
+  quantity: number | string;
 }
 
 export interface IMealContextProvider {

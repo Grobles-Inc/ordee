@@ -303,7 +303,6 @@ export const OrderContextProvider = ({
   }
 
   async function getUnpaidOrders() {
-    setLoading(true);
     const { data, error } = await supabase
       .from("orders")
       .select("*, tables(id, number)")
@@ -312,7 +311,6 @@ export const OrderContextProvider = ({
       .order("date", { ascending: false });
     if (error) throw error;
     setUnpaidOrders(data);
-    setLoading(false);
     return data;
   }
 

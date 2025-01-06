@@ -9,12 +9,17 @@ import { Appbar, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OrdersScreen() {
-  const { getUnpaidOrders, loading, unpaidOrders } = useOrderContext();
+  const { getUnpaidOrders, unpaidOrders } = useOrderContext();
+  const [loading, setLoading] = React.useState(true);
   async function onRefresh() {
     getUnpaidOrders();
   }
   React.useEffect(() => {
+    setLoading(true);
     getUnpaidOrders();
+    setLoading(false);
+  }, []);
+  React.useEffect(() => {
     const subscription = supabase
       .channel("orders")
       .on(

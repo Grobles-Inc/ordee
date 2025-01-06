@@ -32,9 +32,9 @@ export default function AddMealScreen() {
   } = useForm<IMeal>({
     defaultValues: {
       name: "",
-      price: 0,
+      price: "",
       id_category: "Seleccionar Categoría",
-      quantity: 0,
+      quantity: "",
       image_url: "",
     },
   });
@@ -97,7 +97,16 @@ export default function AddMealScreen() {
     const category = categories.find(
       (category) => category.name === id_category
     );
-    if (!category && !id_category) {
+    if (Number(data.price) || Number(data.quantity) <= 0) {
+      toast.error("Cantidad no válida");
+      return;
+    }
+
+    if (Number(data.price) <= 0) {
+      toast.error("Precio no válido");
+      return;
+    }
+    if (!category?.id && !meal.id_category) {
       toast.error("Selecciona una categoría para el item");
       return;
     }
@@ -118,15 +127,22 @@ export default function AddMealScreen() {
       (category) => category.name === id_category
     );
 
-    if (!category && id_category === null) {
+    if (Number(data.quantity) <= 0) {
+      toast.error("Cantidad no válida");
+      return;
+    }
+    if (Number(data.price) <= 0) {
+      toast.error("Precio no válido");
+      return;
+    }
+    if (!category?.id) {
       toast.error("Selecciona una categoría para el item");
       return;
     }
-
     if (category) {
       addMeal({
         ...data,
-        id_category: category?.id ?? "1",
+        id_category: category.id,
         image_url: image_url as string,
       });
       reset();
@@ -139,7 +155,7 @@ export default function AddMealScreen() {
         <ActivityIndicator className="mt-20" />
       ) : (
         <ScrollView contentInsetAdjustmentBehavior="automatic">
-          <View className="flex flex-col justify-center align-middle w-full p-4 gap-4">
+          <View className="flex flex-col justify-center align-middle w-full p-4">
             <View className="flex flex-col mb-4 justify-center items-center">
               <Text className="text-3xl font-bold dark:text-white">
                 {id ? "Editar Item" : "Agregar Item"}
@@ -150,7 +166,6 @@ export default function AddMealScreen() {
                 campos requeridos.
               </Text>
             </View>
-            <Divider />
             <Controller
               control={control}
               name="id_category"
@@ -158,7 +173,7 @@ export default function AddMealScreen() {
                 required: "Requerido",
               }}
               render={({ field: { onChange, value } }) => (
-                <View>
+                <View className="mt-4">
                   <List.Section>
                     <List.Accordion
                       expanded={expanded}
@@ -230,10 +245,6 @@ export default function AddMealScreen() {
               name="price"
               rules={{
                 required: "Requerido",
-                pattern: {
-                  value: /^[1-9]+$/,
-                  message: "Ingrese un valor válido",
-                },
               }}
               render={({ field: { onChange, value } }) => (
                 <View className="mb-4">
@@ -258,10 +269,6 @@ export default function AddMealScreen() {
               name="quantity"
               rules={{
                 required: "Requerido",
-                pattern: {
-                  value: /^[1-9]+$/,
-                  message: "Ingrese un valor válido",
-                },
               }}
               render={({ field: { onChange, value } }) => (
                 <View className="mb-4">

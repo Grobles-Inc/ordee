@@ -9,9 +9,14 @@ import { Card, IconButton, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function UsersScreen() {
-  const { deleteUser, users, getUsers, loading } = useAuth();
+  const { deleteUser, users, getUsers } = useAuth();
+  const [loading, setLoading] = React.useState(true);
   useEffect(() => {
+    setLoading(true);
     getUsers();
+    setLoading(false);
+  }, []);
+  useEffect(() => {
     const channel = supabase
       .channel("accounts-changes")
       .on(
