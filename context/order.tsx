@@ -110,7 +110,7 @@ export const OrderContextProvider = ({
             alert("Error fetching meal quantity");
             return null;
           }
-          const newQuantity = currentMeal.quantity - meal.quantity;
+          const newQuantity = currentMeal.quantity - Number(meal.quantity);
           return {
             id: meal.id,
             quantity: newQuantity,
