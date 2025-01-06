@@ -179,7 +179,7 @@ export default function SignInScreen() {
                 </Text>
               </Text>
               <Text className="text-muted-foreground text-zinc-400   mx-auto text-sm">
-                Versión 2.0.1
+                Versión 1.0.1
               </Text>
             </View>
           </View>

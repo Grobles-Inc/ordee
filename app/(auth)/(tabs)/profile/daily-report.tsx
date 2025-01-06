@@ -77,7 +77,7 @@ LocaleConfig.locales["es"] = {
 LocaleConfig.defaultLocale = "es";
 const calculateOrderTotal = (order: IOrder): number => {
   return order.items.reduce(
-    (sum, meal) => sum + (meal.price || 0) * (meal.quantity || 1),
+    (sum, meal) => sum + (Number(meal.price) || 0) * (Number(meal.quantity) || 1),
     0
   );
 };
