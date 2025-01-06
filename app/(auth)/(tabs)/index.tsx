@@ -182,21 +182,18 @@ export default function TablesScreen() {
   };
 
   useEffect(() => {
-    getTables();
-    supabase
-      .channel("db-changes")
+    const channel = supabase
+      .channel("tables-changes")
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "tables",
-        },
-        () => {
-          getTables();
-        }
+        { event: "*", schema: "public", table: "tables" },
+        () => getTables()
       )
       .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
   }, []);
 
   if (isLoading) {
