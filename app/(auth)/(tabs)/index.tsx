@@ -39,7 +39,20 @@ import { toast } from "sonner-native";
 
 function TableSvg({ table }: { table: ITable }) {
   const deleteTable = async (id: string) => {
-    await supabase.from("tables").delete().eq("id", id);
+    const { error } = await supabase
+      .from("tables")
+      .update({ disabled: true })
+      .eq("id", id);
+    if (error) {
+      console.error("Error deleting table:", error);
+      toast.error("Error al eliminar mesa!", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
+    } else {
+      toast.success("Mesa borrada!", {
+        icon: <FontAwesome name="check-circle" size={20} color="green" />,
+      });
+    }
   };
 
   function onLongPress() {
@@ -55,9 +68,6 @@ function TableSvg({ table }: { table: ITable }) {
         onPress: async () => {
           try {
             await deleteTable(table.id as string);
-            toast.success("Mesa borrada!", {
-              icon: <FontAwesome name="check-circle" size={20} color="green" />,
-            });
           } catch (error: any) {
             alert("Error al eliminar: " + error.message);
           }
@@ -150,12 +160,13 @@ export default function TablesScreen() {
     tableBottomSheetRef.current?.close();
     setNumber(0);
   };
-  const getTables = useCallback(async () => {
+  const getTables = async () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("tables")
         .select("*")
+        .eq("disabled", false)
         .order("id", { ascending: true });
 
       if (error) {
@@ -167,7 +178,7 @@ export default function TablesScreen() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     getTables();
@@ -180,7 +191,7 @@ export default function TablesScreen() {
           schema: "public",
           table: "tables",
         },
-        (payload) => {
+        () => {
           getTables();
         }
       )
