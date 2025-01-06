@@ -24,7 +24,11 @@
       },
       "userInterfaceStyle": "automatic",
       "package": "com.grobles.ordee",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -48,11 +52,15 @@
         "origin": false
       },
       "eas": {
-        "projectId": "10f3f517-c8ae-4620-addb-26374a9e2f83"
+        "projectId": "744ee148-bce4-4e92-a33c-a171b2e1896a"
       }
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/744ee148-bce4-4e92-a33c-a171b2e1896a"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
