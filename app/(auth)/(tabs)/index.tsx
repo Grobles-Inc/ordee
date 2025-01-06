@@ -37,7 +37,7 @@ import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
-function TableSvg({ table, tables }: { table: ITable; tables: ITable[] }) {
+function TableSvg({ table }: { table: ITable }) {
   const deleteTable = async (id: string) => {
     const { error } = await supabase
       .from("tables")
@@ -52,7 +52,6 @@ function TableSvg({ table, tables }: { table: ITable; tables: ITable[] }) {
       toast.success("Mesa borrada!", {
         icon: <FontAwesome name="check-circle" size={20} color="green" />,
       });
-      tables.filter((table) => table.id !== id);
     }
   };
 
@@ -182,6 +181,7 @@ export default function TablesScreen() {
   };
 
   useEffect(() => {
+    getTables();
     const channel = supabase
       .channel("tables-changes")
       .on(
@@ -234,7 +234,7 @@ export default function TablesScreen() {
       >
         <View className="flex-row flex-wrap justify-center items-center  gap-8">
           {tables.map((table) => (
-            <TableSvg key={table.number} table={table} tables={tables} />
+            <TableSvg key={table.number} table={table} />
           ))}
           {tables.length === 0 && (
             <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">
