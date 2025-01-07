@@ -106,7 +106,7 @@ export function AuthContextProvider({
 
   const updateProfile = async (user: IUser) => {
     setLoading(true);
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("accounts")
       .update(user)
       .eq("id", user.id);
@@ -120,7 +120,10 @@ export function AuthContextProvider({
     toast.success("Perfil actualizado!", {
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
+    //refrsh profile data
+    await getProfile(user.id);
     setLoading(false);
+    return data;
   };
   const getUsers = async () => {
     setLoading(true);
