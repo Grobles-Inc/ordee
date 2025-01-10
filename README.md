@@ -1,7 +1,9 @@
 # Ordee
 
 A mobile app for restaurants, covering processes for orders, menu, meals, receipts and much more. 
-*https://github.com/kralion/ordee/assets/66649036/086d0707-254e-45be-ba42-c4f5661349fd*
+| ![dashboard](https://i.ibb.co/mNVx83R/Whats-App-Image-2024-12-19-at-8-17-41-AM-3.jpg) | ![login](https://i.ibb.co/GdxLSdZ/Whats-App-Image-2024-12-19-at-8-17-41-AM-2.jpg) | ![login](https://i.ibb.co/L9cYtNx/Whats-App-Image-2024-12-19-at-8-17-41-AM-1.jpg) |
+|:---:|:---:|:---:|
+| ![login](https://i.ibb.co/8chGts8/Whats-App-Image-2024-12-19-at-8-17-41-AM.jpg) |  |  |
  
 ## Stack
 
@@ -12,9 +14,4 @@ A mobile app for restaurants, covering processes for orders, menu, meals, receip
 - [react-native-paper](https://reactnativepaper.com): High-quality, standard-compliant Material Design library that has you covered in all major use-cases.
 - [nativewind](https://www.nativewind.dev/): A utility-first CSS framework for rapidly building custom user interfaces.
 
-## Some Screens
-
-| ![dashboard](https://i.ibb.co/mNVx83R/Whats-App-Image-2024-12-19-at-8-17-41-AM-3.jpg) | ![login](https://i.ibb.co/GdxLSdZ/Whats-App-Image-2024-12-19-at-8-17-41-AM-2.jpg) | ![login](https://i.ibb.co/L9cYtNx/Whats-App-Image-2024-12-19-at-8-17-41-AM-1.jpg) |
-|:---:|:---:|:---:|
-| ![login](https://i.ibb.co/8chGts8/Whats-App-Image-2024-12-19-at-8-17-41-AM.jpg) |  |  |
 
