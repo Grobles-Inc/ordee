@@ -6,12 +6,12 @@ import { useRouter, useSegments } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner-native";
 const AuthContext = createContext<IAuthContextProvider>({
-  signOut: () => {},
-  updateProfile: () => {},
+  signOut: () => { },
+  updateProfile: () => { },
   session: null,
-  getProfile: async () => {},
-  deleteUser: async () => {},
-  getUsers: async () => {},
+  getProfile: async () => { },
+  deleteUser: async () => { },
+  getUsers: async () => { },
   users: [],
   profile: {} as IUser,
   loading: false,
@@ -52,35 +52,65 @@ export function AuthContextProvider({
     initializeAuth();
     return () => {
       authListener.subscription.unsubscribe();
+      setProfile(null);
+      setSession(null);
+      setUsers([]);
     };
   }, []);
 
   useEffect(() => {
-    if (!profile && segments[0] !== "(public)") {
-      router.replace("/(public)/sign-in");
-    } else if (profile && segments[0] !== "(auth)") {
-      router.replace("/(auth)/(tabs)");
-    }
+    const handleNavigation = async () => {
+      if (!profile && segments[0] !== "(public)") {
+        await router.replace("/(public)/sign-in");
+      } else if (profile && segments[0] !== "(auth)") {
+        await router.replace("/(auth)/(tabs)");
+      }
+    };
+
+    handleNavigation();
   }, [profile, segments]);
 
-  const getProfile = async (id: string) => {
+  const getProfile = async (id: string, retryCount = 3) => {
     setLoading(true);
-    const { data, error, status } = await supabase
-      .from("accounts")
-      .select("*, tenants:id_tenant(*,*,plans(*))")
-      .eq("id", id)
-      .single();
-    if (error && status !== 406) {
-      console.log("PROFILE ERROR", error);
+    try {
+      const { data, error, status } = await supabase
+        .from("accounts")
+        .select("*, tenants:id_tenant(*,*,plans(*))")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        if (status !== 406 && retryCount > 0) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return getProfile(id, retryCount - 1);
+        }
+        throw error;
+      }
+
+      setProfile(data);
+    } catch (error) {
+      console.error('Profile fetch error:', error);
+      toast.error("Error al obtener el perfil!");
+    } finally {
+      setLoading(false);
     }
-    setProfile(data);
-    setLoading(false);
   };
 
-  function signOut() {
-    supabase.auth.signOut();
-    setProfile(null);
-    setSession(null);
+  async function signOut() {
+    try {
+      setLoading(true);
+      await supabase.auth.signOut();
+      // Limpiar el estado de forma más controlada
+      setProfile(null);
+      setSession(null);
+      // Navegar explícitamente
+      router.replace('/(public)/sign-in');
+    } catch (error) {
+      console.error('Error during sign out:', error);
+      toast.error("Error al cerrar sesión!");
+    } finally {
+      setLoading(false);
+    }
   }
 
   const deleteUser = async (id: string) => {
@@ -120,7 +150,6 @@ export function AuthContextProvider({
     toast.success("Perfil actualizado!", {
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
-    //refrsh profile data
     await getProfile(user.id);
     setLoading(false);
     return data;
