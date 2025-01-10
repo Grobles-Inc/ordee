@@ -4,7 +4,14 @@ import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Keyboard, ScrollView, Text, Touchable, View } from "react-native";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  ScrollView,
+  Text,
+  Touchable,
+  View,
+} from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import {
   ActivityIndicator,
@@ -29,7 +36,6 @@ export default function EditProfileScreen() {
   } = useForm<IUser>({
     defaultValues: {
       name: profile?.name,
-      email: session?.user.email,
       last_name: profile?.last_name,
     },
   });
@@ -79,12 +85,9 @@ export default function EditProfileScreen() {
     router.back();
   };
   return (
-    <SafeAreaView
-      className="flex-1 justify-between p-4 h-screen-safe"
-      style={{ paddingTop: headerHeight }}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View>
+    <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
+      <ScrollView contentInsetAdjustmentBehavior="automatic" className="p-4">
+        <View className="flex flex-col gap-4">
           <View className="flex flex-col gap-2 mb-8 justify-center items-center">
             {image_url && !isLoading && (
               <Avatar.Image
@@ -164,42 +167,27 @@ export default function EditProfileScreen() {
               </View>
             )}
           />
-          <Controller
-            control={control}
-            name="email"
-            rules={{
-              required: "Requerido",
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "Ingrese un correo válido",
-              },
-            }}
-            render={({ field: { onChange, value } }) => (
-              <View className="mb-4">
-                <TextInput
-                  label="Email"
-                  value={value}
-                  onChangeText={onChange}
-                  mode="outlined"
-                  error={!!errors.email}
-                />
-                {errors.email && (
-                  <Text className="text-red-500 ml-4">
-                    {errors.email.message}
-                  </Text>
-                )}
-              </View>
-            )}
-          />
+
+          <View className="mb-4">
+            <TextInput
+              label="Email"
+              disabled
+              value={session?.user.email}
+              mode="outlined"
+              error={!!errors.email}
+            />
+          </View>
         </View>
-        <Button
-          mode="contained"
-          onPress={handleSubmit(onSubmit)}
-          loading={loading}
-        >
-          Actualizar Perfil
-        </Button>
-      </TouchableWithoutFeedback>
-    </SafeAreaView>
+        <View className="mt-16">
+          <Button
+            mode="contained"
+            onPress={handleSubmit(onSubmit)}
+            loading={loading}
+          >
+            Actualizar Perfil
+          </Button>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
