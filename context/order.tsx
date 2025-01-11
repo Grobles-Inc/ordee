@@ -12,7 +12,6 @@ export const OrderContext = createContext<IOrderContextProvider>({
   getUnservedOrders: async () => [],
   getOrdersCountByDay: async () => 0,
   addTable: async () => {},
-  getOrderForUpdate: async () => ({} as IOrder),
   updatingOrder: null,
   setUpdatingOrder: () => {},
   getOrderById: async (id: string): Promise<IOrder> => ({} as IOrder),
@@ -195,19 +194,6 @@ export const OrderContextProvider = ({
     });
   };
 
-  const getOrderForUpdate = async (id: string) => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("id", id)
-      .single();
-    if (error) throw error;
-    setLoading(false);
-    setUpdatingOrder(data);
-    return data;
-  };
-
   async function getUnservedOrders() {
     setLoading(true);
     const { data, error } = await supabase
@@ -246,13 +232,24 @@ export const OrderContextProvider = ({
     setLoading(false);
   };
 
-  const deleteOrder = async (id: string) => {
+  const deleteOrder = async (id: string, id_table: number) => {
     setLoading(true);
     await supabase.from("orders").delete().eq("id", id);
+    const { error: tableError } = await supabase
+      .from("tables")
+      .update({ status: true })
+      .eq("id", id_table);
+    if (tableError) {
+      console.error("Error updating table status:", tableError);
+      setLoading(false);
+      return;
+    }
+
     setLoading(false);
     toast.success("Pedido eliminado!", {
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
+    setUpdatingOrder(null);
   };
 
   async function getOrderById(id: string) {
@@ -332,7 +329,6 @@ export const OrderContextProvider = ({
         updateOrderServedStatus,
         order,
         getOrdersCountByDay,
-        getOrderForUpdate,
         getDailyPaidOrders,
         getOrdersCountByMonth,
         updatePaidStatus,

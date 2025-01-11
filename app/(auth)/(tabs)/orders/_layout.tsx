@@ -6,7 +6,7 @@ import { Platform } from "react-native";
 import { Button } from "react-native-paper";
 
 export default function UserLayout() {
-  const { order } = useOrderContext();
+  const { order, setUpdatingOrder } = useOrderContext();
   return (
     <Stack>
       <Stack.Screen
@@ -34,8 +34,12 @@ export default function UserLayout() {
                 onPress={() => {
                   router.push({
                     pathname: "/add-order",
-                    params: { number: order.id_table, id_order: order.id },
+                    params: {
+                      number: order.tables?.number,
+                      id_order: order.id,
+                    },
                   });
+                  setUpdatingOrder(order);
                 }}
               />
             ) : (
@@ -44,8 +48,12 @@ export default function UserLayout() {
                 onPress={() => {
                   router.push({
                     pathname: "/add-order",
-                    params: { number: order.id_table, id_order: order.id },
+                    params: {
+                      number: order.tables?.number,
+                      id_order: order.id,
+                    },
                   });
+                  setUpdatingOrder(order);
                 }}
               >
                 Editar

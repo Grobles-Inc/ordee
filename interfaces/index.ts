@@ -129,7 +129,6 @@ export interface IOrderContextProvider {
   updateOrderServedStatus: (id: string) => Promise<void>;
   unpaidOrders: IOrder[];
   getOrdersCountByDay: () => Promise<number | null>;
-  getOrderForUpdate: (id: string) => Promise<IOrder>;
   getUnservedOrders: () => Promise<IOrder[]>;
   setUpdatingOrder: (order: IOrder | null) => void;
   updatingOrder: IOrder | null;
@@ -142,7 +141,7 @@ export interface IOrderContextProvider {
   getOrderById: (id: string) => Promise<IOrder>;
   order: IOrder;
   paidOrders: IOrder[];
-  deleteOrder: (id: string) => Promise<void>;
+  deleteOrder: (id: string, id_table: number) => Promise<void>;
 
   getDailyPaidOrders: () => Promise<IOrder[]>;
   getUnpaidOrders: () => Promise<IOrder[]>;

@@ -1,7 +1,6 @@
-import { CustomerFinder, OrderItemsAccordion } from "@/components";
-import { useAuth, useCustomer, useOrderContext } from "@/context";
+import { OrderItemsAccordion } from "@/components";
+import { useAuth, useOrderContext } from "@/context";
 import { IMeal, IOrder } from "@/interfaces";
-import { supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -19,31 +18,25 @@ export default function AddOrderScreen() {
   const [itemsSelected, setItemsSelected] = useState<IMeal[]>([]);
   const {
     addOrder,
-    updateOrder,
     loading: orderLoading,
     deleteOrder,
+    updateOrder,
     getOrdersCountByMonth,
-    getOrderForUpdate,
     updatingOrder,
+    setUpdatingOrder,
   } = useOrderContext();
   const { profile } = useAuth();
-  const { getCustomers, customers } = useCustomer();
-  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  // const { getCustomers, customers } = useCustomer();
+  // const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [count, setCount] = useState<number | null>(0);
   const [isRegisterDisabled, setIsRegisterDisabled] = useState(false);
 
   if (!profile) return null;
 
   useEffect(() => {
-    getCustomers();
+    // getCustomers();
     getOrdersCountByMonth().then((count) => setCount(count));
   }, []);
-
-  useEffect(() => {
-    if (id_order) {
-      getOrderForUpdate(id_order);
-    }
-  }, [id_order]);
 
   function onDelete() {
     Alert.alert(
@@ -58,7 +51,10 @@ export default function AddOrderScreen() {
           text: "Aceptar",
           onPress: async () => {
             try {
-              await deleteOrder(updatingOrder?.id as string);
+              await deleteOrder(
+                updatingOrder?.id as string,
+                Number(updatingOrder?.id_table)
+              );
               router.replace("/orders");
             } catch (err) {
               console.error("An error occurred:", err);
@@ -97,17 +93,28 @@ export default function AddOrderScreen() {
       { cancelable: false }
     );
   }
-  const { control, handleSubmit, reset, setValue, watch } = useForm<IOrder>({
+  const { control, handleSubmit, reset, setValue } = useForm<IOrder>({
     defaultValues: {
-      id_table: updatingOrder?.id_table,
-      id_customer: updatingOrder?.id_customer ? updatingOrder?.id_customer : "",
-      items: updatingOrder?.items || ([] as IMeal[]),
-      paid: updatingOrder?.paid,
-      to_go: updatingOrder?.to_go,
-      served: updatingOrder?.served,
-      total: updatingOrder?.total,
+      id_table: "",
+      items: [] as IMeal[],
+      paid: false,
+      to_go: false,
+      served: false,
+      total: 0,
     },
   });
+
+  useEffect(() => {
+    if (updatingOrder) {
+      setValue("id_table", updatingOrder.id_table);
+      setValue("id_user", updatingOrder.id_user);
+      setValue("paid", updatingOrder.paid);
+      setValue("served", updatingOrder.served);
+      setValue("to_go", updatingOrder.to_go);
+      setValue("total", updatingOrder.total);
+      setItemsSelected(updatingOrder?.items || []);
+    }
+  }, [id_order]);
 
   const onUpdate = async (data: IOrder) => {
     if (itemsSelected.length === 0) {
@@ -126,31 +133,32 @@ export default function AddOrderScreen() {
         id: updatingOrder?.id || data.id,
         id_user: updatingOrder?.id_user || data.id_user,
         paid: updatingOrder?.paid || data.paid,
-        id_customer: updatingOrder?.id_customer || data.id_customer || null,
+        // id_customer: updatingOrder?.id_customer || data.id_customer || null,
         id_table: id_table,
         items: itemsSelected,
         total: itemsSelected.reduce(
-          (acc, item) => acc + (Number(item.quantity) * Number(item.price)),
+          (acc, item) => acc + Number(item.quantity) * Number(item.price),
           0
         ),
       };
 
       await updateOrder(orderData);
       reset();
+      setUpdatingOrder(null);
 
-      if (data.free) {
-        const selectedCustomer = customers.find(
-          (c) => c.id === data.id_customer
-        );
-        if (selectedCustomer) {
-          await supabase
-            .from("customers")
-            .update({
-              total_free_orders: selectedCustomer.total_free_orders - 1,
-            })
-            .eq("id", selectedCustomer.id);
-        }
-      }
+      // if (data.free) {
+      //   const selectedCustomer = customers.find(
+      //     (c) => c.id === data.id_customer
+      //   );
+      //   if (selectedCustomer) {
+      //     await supabase
+      //       .from("customers")
+      //       .update({
+      //         total_free_orders: selectedCustomer.total_free_orders - 1,
+      //       })
+      //       .eq("id", selectedCustomer.id);
+      //   }
+      // }
     } catch (err) {
       console.error("An error occurred:", err);
       alert("Algo sucedió mal, vuelve a intentarlo.");
@@ -177,27 +185,27 @@ export default function AddOrderScreen() {
         paid: false,
         id_table: id_table,
         items: itemsSelected,
-        id_customer: data.id_customer || null,
+        // id_customer: data.id_customer || null,
         total: itemsSelected.reduce(
-          (acc, item) => acc + (Number(item.quantity) * Number(item.price)),
+          (acc, item) => acc + Number(item.quantity) * Number(item.price),
           0
         ),
       };
       addOrder(orderData);
-      if (data.free) {
-        const selectedCustomer = customers.find(
-          (c) => c.id === data.id_customer
-        );
-        console.log("selectedCustomer", selectedCustomer);
-        if (selectedCustomer) {
-          await supabase
-            .from("customers")
-            .update({
-              total_free_orders: selectedCustomer.total_free_orders - 1,
-            })
-            .eq("id", selectedCustomer.id);
-        }
-      }
+      // if (data.free) {
+      //   const selectedCustomer = customers.find(
+      //     (c) => c.id === data.id_customer
+      //   );
+      //   console.log("selectedCustomer", selectedCustomer);
+      //   if (selectedCustomer) {
+      //     await supabase
+      //       .from("customers")
+      //       .update({
+      //         total_free_orders: selectedCustomer.total_free_orders - 1,
+      //       })
+      //       .eq("id", selectedCustomer.id);
+      //   }
+      // }
       reset();
       setItemsSelected([]);
     } catch (err) {
@@ -216,6 +224,7 @@ export default function AddOrderScreen() {
         <Appbar.BackAction
           onPress={() => {
             router.back();
+            setUpdatingOrder(null);
           }}
           color="white"
         />
@@ -235,7 +244,8 @@ export default function AddOrderScreen() {
       >
         <View className="flex flex-col w-full items-center  ">
           <View className="w-full  overflow-hidden flex flex-col bg-white dark:bg-zinc-900">
-            <Controller
+            {/* FEATURE: Fixed Customers */}
+            {/* <Controller
               control={control}
               name="id_customer"
               render={({ field: { value } }) => (
@@ -295,7 +305,7 @@ export default function AddOrderScreen() {
                   <Divider />
                 </>
               ) : null;
-            })()}
+            })()} */}
 
             <Controller
               control={control}
@@ -315,13 +325,13 @@ export default function AddOrderScreen() {
           </View>
         </View>
 
-        <CustomerFinder
+        {/* <CustomerFinder
           watch={watch}
           setValue={setValue}
           setIsRegisterDisabled={setIsRegisterDisabled}
           showCustomerModal={showCustomerModal}
           setShowCustomerModal={setShowCustomerModal}
-        />
+        /> */}
       </ScrollView>
       <Button
         mode="contained"

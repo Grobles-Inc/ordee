@@ -55,7 +55,6 @@ export default function OrderDetailsScreen() {
   useFocusEffect(
     useCallback(() => {
       getOrderById(params.id).then((order) => {
-        console.log(order)
         setOrder(order);
       });
     }, [])
@@ -201,9 +200,17 @@ export default function OrderDetailsScreen() {
                 <tr>
                     <td class="item-name">${item.name}</td>
                     <td class="quantity-col">${item.quantity}</td>
-                    <td class="price-col">${(typeof item.price === 'number' ? item.price : parseFloat(item.price)).toFixed(2)}</td>
+                    <td class="price-col">${(typeof item.price === "number"
+                      ? item.price
+                      : parseFloat(item.price)
+                    ).toFixed(2)}</td>
                     <td class="price-col">${(
-                      (typeof item.price === 'number' ? item.price : parseFloat(item.price)) * (typeof item.quantity === 'number' ? item.quantity : parseInt(item.quantity))
+                      (typeof item.price === "number"
+                        ? item.price
+                        : parseFloat(item.price)) *
+                      (typeof item.quantity === "number"
+                        ? item.quantity
+                        : parseInt(item.quantity))
                     ).toFixed(2)}</td>
                 </tr>
             `

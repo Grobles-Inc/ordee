@@ -168,13 +168,13 @@ export default function ProfileScreen() {
         >
           Categorías
         </Button>
-        <Button
+        {/* <Button
           icon="account-heart-outline"
           onPress={() => router.push("/(auth)/(tabs)/profile/customers")}
           mode="text"
         >
           Clientes Fijos
-        </Button>
+        </Button> */}
         <Button
           onPress={() => router.push("/(auth)/(tabs)/profile/daily-report")}
           mode="text"

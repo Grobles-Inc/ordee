@@ -114,7 +114,7 @@ export default function ProfileLayout() {
                 />
               ) : (
                 <Button
-                  mode="contained-tonal"
+                  mode="text"
                   onPress={() => router.push("/profile/users/add-user")}
                 >
                   Agregar
