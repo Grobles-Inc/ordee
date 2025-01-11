@@ -153,6 +153,10 @@ export default function TablesScreen() {
   );
 
   const onSubmitTable = async (e: any) => {
+    if (number <= 0) {
+      toast.error("Número inválido. El número de mesa debe ser mayor a 0.");
+      return;
+    }
     addTable({
       number,
       status: true,
@@ -160,6 +164,7 @@ export default function TablesScreen() {
     tableBottomSheetRef.current?.close();
     setNumber(0);
   };
+
   const getTables = async () => {
     setIsLoading(true);
     try {
@@ -269,7 +274,14 @@ export default function TablesScreen() {
               className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
               keyboardType="numeric"
               value={String(number)}
-              onChangeText={(text) => setNumber(Number(text))}
+              onChangeText={(text) => {
+                const parsedNumber = Number(text);
+                if (!isNaN(parsedNumber) && parsedNumber >= 0) {
+                  setNumber(parsedNumber);
+                } else {
+                  toast.error("Número no válido.");
+                }
+              }} 
             />
           </View>
 
