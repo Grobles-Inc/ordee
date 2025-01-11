@@ -6,12 +6,12 @@ import { useRouter, useSegments } from "expo-router";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner-native";
 const AuthContext = createContext<IAuthContextProvider>({
-  signOut: () => { },
-  updateProfile: () => { },
+  signOut: () => {},
+  updateProfile: () => {},
   session: null,
-  getProfile: async () => { },
-  deleteUser: async () => { },
-  getUsers: async () => { },
+  getProfile: async () => {},
+  deleteUser: async () => {},
+  getUsers: async () => {},
   users: [],
   profile: {} as IUser,
   loading: false,
@@ -81,7 +81,7 @@ export function AuthContextProvider({
 
       if (error) {
         if (status !== 406 && retryCount > 0) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
           return getProfile(id, retryCount - 1);
         }
         throw error;
@@ -89,7 +89,7 @@ export function AuthContextProvider({
 
       setProfile(data);
     } catch (error) {
-      console.error('Profile fetch error:', error);
+      console.error("Profile fetch error:", error);
       toast.error("Error al obtener el perfil!");
     } finally {
       setLoading(false);
@@ -149,7 +149,7 @@ export function AuthContextProvider({
       .eq("id_tenant", profile?.id_tenant)
       .neq("id", profile?.id)
       .eq("disabled", false)
-      .order("name");
+      .order("name", { ascending: false });
     if (error) throw error;
     setUsers(data);
     setLoading(false);

@@ -189,9 +189,6 @@ export const OrderContextProvider = ({
       });
       return;
     }
-    toast.success("Estado de la mesa actualizado!", {
-      icon: <FontAwesome name="check-circle" size={20} color="green" />,
-    });
   };
 
   async function getUnservedOrders() {
