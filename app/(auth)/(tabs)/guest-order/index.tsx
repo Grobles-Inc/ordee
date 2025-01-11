@@ -14,17 +14,18 @@ export default function HomeScreen() {
   const { getUnservedOrders, loading } = useOrderContext();
   React.useEffect(() => {
     getUnservedOrders().then((orders) => setOrders(orders));
-    supabase.channel("db-changes").on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "orders",
-      },
-      (payload) => {
-        getUnservedOrders().then((orders) => setOrders(orders));
-      }
-    );
+    const channel = supabase
+      .channel("orders-changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "orders" },
+        () => getUnservedOrders().then((orders) => setOrders(orders))
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
   }, []);
 
   return (
