@@ -97,20 +97,7 @@ export function AuthContextProvider({
   };
 
   async function signOut() {
-    try {
-      setLoading(true);
-      await supabase.auth.signOut();
-      // Limpiar el estado de forma más controlada
-      setProfile(null);
-      setSession(null);
-      // Navegar explícitamente
-      router.replace('/(public)/sign-in');
-    } catch (error) {
-      console.error('Error during sign out:', error);
-      toast.error("Error al cerrar sesión!");
-    } finally {
-      setLoading(false);
-    }
+    await supabase.auth.signOut();
   }
 
   const deleteUser = async (id: string) => {

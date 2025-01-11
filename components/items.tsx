@@ -99,9 +99,9 @@ export function OrderItemsAccordion({
                 <ItemAccordion
                   item={item}
                   index={index}
-                  mealQuantity={item.quantity}
+                  mealQuantity={Number(item.quantity)}
                   currentQuantity={
-                    items.find((i) => i.id === item.id)?.quantity || 0
+                    Number(items.find((i) => i.id === item.id)?.quantity) || 0
                   }
                   onQuantityChange={handleQuantityChange}
                 />
@@ -178,10 +178,10 @@ const ItemAccordion = ({
         description={
           <View className="flex-row items-center gap-2">
             <Text variant="labelSmall" style={{ color: "gray" }}>
-              S/. {item.price.toFixed(2)}
+              S/. {Number(item.price).toFixed(2)}
             </Text>
             <Text variant="labelSmall" style={{ color: "gray" }}>
-              - {item.quantity} porciones
+              - {Number(item.quantity)} porciones
             </Text>
           </View>
         }

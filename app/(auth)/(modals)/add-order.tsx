@@ -130,7 +130,7 @@ export default function AddOrderScreen() {
         id_table: id_table,
         items: itemsSelected,
         total: itemsSelected.reduce(
-          (acc, item) => acc + item.quantity * item.price,
+          (acc, item) => acc + (Number(item.quantity) * Number(item.price)),
           0
         ),
       };
@@ -179,7 +179,7 @@ export default function AddOrderScreen() {
         items: itemsSelected,
         id_customer: data.id_customer || null,
         total: itemsSelected.reduce(
-          (acc, item) => acc + item.quantity * item.price,
+          (acc, item) => acc + (Number(item.quantity) * Number(item.price)),
           0
         ),
       };
