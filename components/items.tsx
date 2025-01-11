@@ -35,24 +35,28 @@ export function OrderItemsAccordion({
   );
 
   useEffect(() => {
-    setItems(updatingOrder?.items || []);
+    if (updatingOrder?.items) {
+      setItems(updatingOrder.items);
+    }
   }, [updatingOrder]);
 
   const handleQuantityChange = (item: IMeal, quantity: number) => {
-    const newItemsSelected = [...items];
-    const index = newItemsSelected.findIndex((i) => i.id === item.id);
-    if (quantity > 0) {
-      if (index === -1) {
-        newItemsSelected.push({ ...item, quantity });
+    setItems((prevItems) => {
+      const newItemsSelected = [...prevItems];
+      const index = newItemsSelected.findIndex((i) => i.id === item.id);
+      if (quantity > 0) {
+        if (index === -1) {
+          newItemsSelected.push({ ...item, quantity });
+        } else {
+          newItemsSelected[index] = { ...newItemsSelected[index], quantity };
+        }
       } else {
-        newItemsSelected[index] = { ...newItemsSelected[index], quantity };
+        if (index !== -1) {
+          newItemsSelected.splice(index, 1);
+        }
       }
-    } else {
-      if (index !== -1) {
-        newItemsSelected.splice(index, 1);
-      }
-    }
-    setItems(newItemsSelected);
+      return newItemsSelected;
+    });
   };
 
   const mealsByCategoryHandler = async (categoryId: string) => {
