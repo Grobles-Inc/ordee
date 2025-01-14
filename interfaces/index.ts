@@ -71,7 +71,7 @@ export interface ICategoryContextProvider {
 export interface IMeal {
   id: string;
   name: string;
-  price: number | string;
+  price: number;
   categories?: ICategory;
   created_at?: Date;
   image_url: string;
@@ -87,7 +87,7 @@ export interface IMealContextProvider {
   loading: boolean;
   changeMealAvailability: (id: string, quantity: number) => Promise<void>;
   meals: IMeal[];
-  deleteMeal: (id: string) => Promise<void>;
+  deleteMeal: (id: string, cloudinaryPublicId: string) => Promise<void>;
   getDailyMeals: () => Promise<null | IMeal[]>;
 }
 

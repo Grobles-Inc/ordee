@@ -6,13 +6,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
-import {
-  ActivityIndicator,
-  Button,
-  Divider,
-  List,
-  TextInput,
-} from "react-native-paper";
+import { ActivityIndicator, Button, List, TextInput } from "react-native-paper";
 import { toast } from "sonner-native";
 
 export default function AddMealScreen() {
@@ -32,7 +26,7 @@ export default function AddMealScreen() {
   } = useForm<IMeal>({
     defaultValues: {
       name: "",
-      price: "",
+      price: Number(""),
       id_category: "Seleccionar Categoría",
       quantity: "",
       image_url: "",

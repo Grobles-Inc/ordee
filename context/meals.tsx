@@ -5,6 +5,7 @@ import * as React from "react";
 import { createContext, useContext } from "react";
 import { toast } from "sonner-native";
 import { useAuth } from "./auth";
+import { generateDestroySignature } from "@/utils/cloudinary";
 
 export const MealContext = createContext<IMealContextProvider>({
   addMeal: async () => {},
@@ -113,19 +114,57 @@ export const MealContextProvider = ({
     });
   };
 
-  const deleteMeal = async (id: string) => {
+  const deleteMeal = async (id: string, cloudinaryPublicId: string) => {
     setLoading(true);
+
     const { error } = await supabase.from("meals").delete().eq("id", id);
+
     if (error) {
       console.error("Error deleting meal:", error);
       toast.error("Error al eliminar item!", {
         icon: <FontAwesome name="times-circle" size={20} color="red" />,
       });
+      setLoading(false);
       return;
     }
+
+    if (cloudinaryPublicId) {
+      try {
+        const { signature, timestamp, apiKey } = await generateDestroySignature(
+          cloudinaryPublicId
+        );
+
+        const formData = new FormData();
+        formData.append("public_id", cloudinaryPublicId);
+        formData.append("signature", signature);
+        formData.append("timestamp", timestamp.toString());
+        formData.append("api_key", apiKey);
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/diqe1byxy/image/destroy",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+        console.log(data);
+        if (data.result !== "ok") {
+          throw new Error("Failed to delete image from Cloudinary");
+        }
+      } catch (error) {
+        console.error("Error deleting image:", error);
+        setLoading(false);
+        return;
+      } finally {
+        console.log(cloudinaryPublicId);
+      }
+    }
+
     toast.success("Item eliminado!", {
       icon: <FontAwesome name="check-circle" size={20} color="green" />,
     });
+
     setLoading(false);
   };
 

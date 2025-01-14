@@ -1,12 +1,14 @@
 import { useMealContext } from "@/context";
 import { IMeal } from "@/interfaces";
+import { getPublicIdFromUrl } from "@/utils/cloudinary";
 import { router } from "expo-router";
 import React from "react";
 import { Alert, View } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
 
 export function MealCard({ meal }: { meal: IMeal }) {
-  const { deleteMeal, getMealById } = useMealContext();
+  const { deleteMeal } = useMealContext();
+  const url = getPublicIdFromUrl(meal.image_url);
   const onDelete = (id: string) => {
     Alert.alert("Eliminar", "¿Estás seguro de eliminar este item?", [
       {
@@ -14,7 +16,7 @@ export function MealCard({ meal }: { meal: IMeal }) {
         style: "destructive",
         onPress: async () => {
           try {
-            await deleteMeal(id);
+            await deleteMeal(id, url);
           } catch (error: any) {
             alert("Error al eliminar: " + error.message);
           }
