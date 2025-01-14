@@ -195,7 +195,7 @@ export const OrderContextProvider = ({
     setLoading(true);
     const { data, error } = await supabase
       .from("orders")
-      .select("*")
+      .select("*, tables(id, number)")
       .eq("id_tenant", profile?.id_tenant)
       .eq("served", false);
     if (error) throw error;
