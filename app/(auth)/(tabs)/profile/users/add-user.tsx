@@ -58,6 +58,7 @@ export default function AddUserScreen() {
         const formData = new FormData();
         formData.append("file", `data:image/jpeg;base64,${base64Img}`);
         formData.append("upload_preset", "ml_default");
+        formData.append("folder", "ordee/profiles");
 
         const response = await fetch(
           "https://api.cloudinary.com/v1_1/diqe1byxy/image/upload",
@@ -131,7 +132,9 @@ export default function AddUserScreen() {
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       <ScrollView className="p-4" contentInsetAdjustmentBehavior="automatic">
         <View className="flex flex-col my-4">
-          <Text className="text-3xl font-bold dark:text-white">Agregar Usuario</Text>
+          <Text className="text-3xl font-bold dark:text-white">
+            Agregar Usuario
+          </Text>
           <Text className="text-muted-foreground dark:text-white">
             Rellena los datos para crear tus usuario
           </Text>

@@ -73,6 +73,7 @@ export default function AddMealScreen() {
         const formData = new FormData();
         formData.append("file", `data:image/jpeg;base64,${base64Img}`);
         formData.append("upload_preset", "ml_default");
+        formData.append("folder", "ordee/meals");
 
         const response = await fetch(
           "https://api.cloudinary.com/v1_1/diqe1byxy/image/upload",
