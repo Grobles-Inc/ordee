@@ -52,14 +52,10 @@ export function MealCard({ meal }: { meal: IMeal }) {
       <Card.Content className="flex flex-row justify-between items-center">
         <Text variant="titleLarge">{`S/. ${meal.price.toFixed(2)}`}</Text>
         <View className="flex flex-row">
-          <IconButton
-            icon="pencil-outline"
-            mode="contained-tonal"
-            onPress={handlePress}
-          />
+          <IconButton icon="pencil-outline" size={20} onPress={handlePress} />
           <IconButton
             icon="delete-outline"
-            mode="contained-tonal"
+            size={20}
             onPress={() => {
               onDelete(meal.id);
             }}

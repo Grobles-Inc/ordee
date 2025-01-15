@@ -79,10 +79,11 @@ export default function AddMealScreen() {
 
         const data = await response.json();
         setImage_url(data.secure_url);
-        setIsLoading(false);
         return data.secure_url;
       } catch (err) {
         console.error("Upload error:", err);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -156,9 +157,8 @@ export default function AddMealScreen() {
                 {id ? "Editar Item" : "Agregar Item"}
               </Text>
 
-              <Text className="text-red-500  mt-5 text-center mx-14">
-                No olvides seleccionar una categoría, y rellenar todos los
-                campos requeridos.
+              <Text className="text-red-500  mt-2 text-center mx-14">
+                No olvides seleccionar la categoría.
               </Text>
             </View>
             <Controller
@@ -284,32 +284,27 @@ export default function AddMealScreen() {
               )}
             />
 
-            <View className="flex flex-col gap-2 ">
+            <View className="flex flex-col gap-4 items-center">
               {image_url && !isLoading && (
-                <View className="border border-dashed border-slate-500 rounded-xl p-4 mb-4 flex flex-row items-center justify-center">
-                  <Image
-                    source={{
-                      uri: image_url,
-                    }}
-                    style={{
-                      width: 150,
-                      height: 150,
-                      borderRadius: 8,
-                    }}
-                  />
-                </View>
+                <Image
+                  source={{
+                    uri: image_url,
+                  }}
+                  style={{
+                    width: 150,
+                    height: 150,
+                    borderRadius: 8,
+                  }}
+                />
               )}
-              {isLoading && (
-                <View className="flex flex-row gap-2 items-center justify-center mb-4">
-                  <ActivityIndicator />
-                  <Text className="text-sm text-[#FF6247] text-center">
-                    Cargando ...
-                  </Text>
-                </View>
-              )}
-
-              <Button onPress={pickImage} mode="outlined" icon="camera">
-                <Text>Seleccionar imagen</Text>
+              {isLoading && <ActivityIndicator />}
+              <Button
+                onPress={pickImage}
+                mode="contained-tonal"
+                icon="camera"
+                disabled={isLoading}
+              >
+                <Text>Subir imagen</Text>
               </Button>
             </View>
             <View className="flex flex-col gap-2 mt-4">

@@ -1,8 +1,10 @@
 import * as Crypto from "expo-crypto";
 export const getPublicIdFromUrl = (url: string) => {
   const splitUrl = url.split("/");
-  const filename = splitUrl[splitUrl.length - 1];
-  return filename.split(".")[0];
+  const publicIdWithExtension = splitUrl.slice(7).join("/");
+  const publicId = publicIdWithExtension.split(".")[0];
+
+  return publicId;
 };
 
 const CLOUDINARY_API_KEY = "119339364971233";
