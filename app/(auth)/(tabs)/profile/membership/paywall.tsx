@@ -137,7 +137,7 @@ const PaywallScreen = () => {
       </View>
 
       {/* Planes  TRUE */}
-      <View className="grid grid-cols-2 grid-rows-1 gap-4 mb-8">
+      <View className="flex flex-col gap-4 mb-8">
         {plans
           .filter((plan) => plan.billing === (isMonthly ? "monthly" : "annual"))
           .map((plan) => (
@@ -191,7 +191,9 @@ const PaywallScreen = () => {
           <Text
             className="underline"
             onPress={() =>
-              openBrowserAsync("https://ordee.framer.website/terms-and-conditions")
+              openBrowserAsync(
+                "https://ordee.framer.website/terms-and-conditions"
+              )
             }
           >
             Términos y Condiciones
@@ -200,9 +202,7 @@ const PaywallScreen = () => {
           <Text
             className="underline"
             onPress={() =>
-              openBrowserAsync(
-                "https://ordee.framer.website/privacy-policy"
-              )
+              openBrowserAsync("https://ordee.framer.website/privacy-policy")
             }
           >
             Política de Privacidad

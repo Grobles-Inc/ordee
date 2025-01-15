@@ -1,12 +1,7 @@
 import { useAuth } from "@/context";
+import { Image } from "expo-image";
 import React, { useState } from "react";
-import {
-  Appearance,
-  Image,
-  ScrollView,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Appearance, ScrollView, useColorScheme, View } from "react-native";
 import { Button, RadioButton, Text } from "react-native-paper";
 
 export default function SettingsScreen() {
@@ -29,7 +24,7 @@ export default function SettingsScreen() {
         <View className="items-center">
           <Image
             source={require("../../../../assets/images/light.png")}
-            className="w-48 h-72 rounded-lg mb-2"
+            className="w-48 h-72 rounded-lg mb-2 "
           />
           <RadioButton.Android
             value="light"
@@ -42,7 +37,7 @@ export default function SettingsScreen() {
         <View className="items-center">
           <Image
             source={require("../../../../assets/images/dark.png")}
-            className="w-48 h-72 rounded-lg mb-2"
+            className="w-48 h-72 rounded-lg mb-2 "
           />
           <RadioButton.Android
             value="dark"

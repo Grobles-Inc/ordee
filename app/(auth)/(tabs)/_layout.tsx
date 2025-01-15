@@ -4,6 +4,7 @@ import { useColorScheme } from "@/utils/expo/useColorScheme";
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
 import React from "react";
+import { Text, View } from "react-native";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -178,6 +179,16 @@ export default function TabLayout() {
             tabBarIcon: createTabIcon(
               `https://api.iconify.design/${tab.icon[0]}`,
               `https://api.iconify.design/${tab.icon[1]}`
+            ),
+            tabBarLabel: ({ focused }) => (
+              <Text
+                style={{
+                  color: focused ? "#FF6247" : "#666",
+                }}
+                className="web:hidden"
+              >
+                {tab.title}
+              </Text>
             ),
           }}
         />

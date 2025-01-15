@@ -13,10 +13,11 @@ import {
   TouchableOpacity,
   useColorScheme,
   View,
+  Platform,
 } from "react-native";
 import { Button, Divider, ProgressBar, Text } from "react-native-paper";
 export default function ProfileScreen() {
-  const { profile, session } = useAuth();
+  const { profile, session, signOut } = useAuth();
   const [count, setCount] = React.useState(0);
   const [refreshing, setRefreshing] = React.useState(false);
   const [expoPushToken, setExpoPushToken] = React.useState("");
@@ -66,7 +67,7 @@ export default function ProfileScreen() {
       style={{ marginTop: headerHeight }}
       contentInsetAdjustmentBehavior="automatic"
     >
-      <View className="flex flex-col gap-4 items-center justify-center">
+      <View className="flex flex-col gap-4 items-center justify-center web:py-4">
         <Image
           accessibilityLabel="profile_logo"
           style={{
@@ -182,13 +183,20 @@ export default function ProfileScreen() {
         >
           Reporte Diario
         </Button>
-        <Button
-          onPress={() => router.push("/(auth)/(tabs)/profile/settings")}
-          mode="text"
-          icon="nut"
-        >
-          Configuración
-        </Button>
+        {Platform.OS === "web" && (
+          <Button icon="logout" onPress={signOut}>
+            Cerrar Sesión
+          </Button>
+        )}
+        {Platform.OS !== "web" && (
+          <Button
+            onPress={() => router.push("/(auth)/(tabs)/profile/settings")}
+            mode="text"
+            icon="nut"
+          >
+            Configuración
+          </Button>
+        )}
       </View>
 
       <Text className="text-muted-foreground opacity-40  mt-36 mx-auto ">

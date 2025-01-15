@@ -70,7 +70,7 @@ export default function SignInScreen() {
                   Inicia Sesión
                 </Text>
                 <Text className="text-center dark:text-white">
-                  Todavía no eres miembro?
+                  Eres nuevo en Ordee?
                   <Text
                     className=" text-orange-500"
                     onPress={() => router.push("/(public)/sign-up")}

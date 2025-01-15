@@ -61,7 +61,7 @@ export default function MenuScreen() {
 
   return (
     <>
-      <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
+      <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800 ">
         <Appbar.Content title="Menú" titleStyle={{ fontWeight: "bold" }} />
         <Menu
           visible={visible}
@@ -138,6 +138,7 @@ export default function MenuScreen() {
           )}
         </Menu>
       </Appbar.Header>
+      <Divider className="hidden web:block" />
       <View className="flex-1">
         {loading && <ActivityIndicator className="mt-20" color="red" />}
         <FlashList
