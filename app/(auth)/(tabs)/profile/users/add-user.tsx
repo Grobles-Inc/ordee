@@ -70,10 +70,11 @@ export default function AddUserScreen() {
 
         const data = await response.json();
         setImage_url(data.secure_url);
-        setIsLoading(false);
         return data.secure_url;
       } catch (err) {
         console.error("Upload error:", err);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -300,29 +301,20 @@ export default function AddUserScreen() {
             </View>
           )}
         />
-        <View className="flex flex-col gap-2 ">
+        <View className="flex flex-col items-center gap-4">
           {image_url && !isLoading && (
-            <View className="border border-dashed border-slate-500 rounded-xl p-4  flex flex-row items-center justify-center">
-              <Image
-                source={{
-                  uri: image_url,
-                }}
-                style={{
-                  width: 150,
-                  height: 150,
-                  borderRadius: 8,
-                }}
-              />
-            </View>
+            <Image
+              source={{
+                uri: image_url,
+              }}
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: 8,
+              }}
+            />
           )}
-          {isLoading && (
-            <View className="flex flex-row gap-2 items-center justify-center ">
-              <ActivityIndicator />
-              <Text className="text-sm text-[#FF6247] text-center">
-                Cargando ...
-              </Text>
-            </View>
-          )}
+          {isLoading && <ActivityIndicator />}
 
           <Button
             onPress={pickImage}
@@ -330,7 +322,7 @@ export default function AddUserScreen() {
             mode="contained-tonal"
             icon="camera"
           >
-            <Text>Seleccionar imagen</Text>
+            <Text>Subir imagen</Text>
           </Button>
         </View>
         <View className="flex flex-col  mt-10 gap-2">

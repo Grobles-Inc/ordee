@@ -41,11 +41,7 @@ export default function RootLayout() {
     return null;
   }
 
-  return (
-    <AuthContextProvider>
-      <RootLayoutNav />
-    </AuthContextProvider>
-  );
+  return <RootLayoutNav />;
 }
 
 function RootLayoutNav() {
@@ -54,23 +50,25 @@ function RootLayoutNav() {
   const paperTheme = isDarkMode ? customDarkTheme : customLightTheme;
 
   return (
-    <GestureHandlerRootView>
-      <ThemeProvider
-        value={{
-          ...DefaultTheme,
-          colors: {
-            ...DefaultTheme.colors,
-            ...NAV_THEME,
-            ...(isDarkMode ? DARK_NAV_THEME : {}),
-          },
-          dark: isDarkMode,
-        }}
-      >
-        <PaperProvider theme={paperTheme}>
-          <Slot />
-        </PaperProvider>
-        <Toaster />
-      </ThemeProvider>
-    </GestureHandlerRootView>
+    <AuthContextProvider>
+      <GestureHandlerRootView>
+        <ThemeProvider
+          value={{
+            ...DefaultTheme,
+            colors: {
+              ...DefaultTheme.colors,
+              ...NAV_THEME,
+              ...(isDarkMode ? DARK_NAV_THEME : {}),
+            },
+            dark: isDarkMode,
+          }}
+        >
+          <PaperProvider theme={paperTheme}>
+            <Slot />
+          </PaperProvider>
+          <Toaster />
+        </ThemeProvider>
+      </GestureHandlerRootView>
+    </AuthContextProvider>
   );
 }

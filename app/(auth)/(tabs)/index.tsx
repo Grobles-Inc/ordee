@@ -31,7 +31,7 @@ import {
   Text,
 } from "react-native-paper";
 
-import { useOrderContext } from "@/context";
+import { useAuth, useOrderContext } from "@/context";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -129,6 +129,7 @@ export default function TablesScreen() {
   const [tables, setTables] = useState<ITable[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { addTable } = useOrderContext();
+  const { profile } = useAuth();
   const colorScheme = useColorScheme();
   const [refreshing, setRefreshing] = useState(false);
   const tableBottomSheetRef = useRef<BottomSheet>(null);
@@ -223,11 +224,13 @@ export default function TablesScreen() {
             Listado de mesas del local
           </Text>
         </View>
-        <IconButton
-          mode="contained"
-          icon="plus"
-          onPress={() => tableBottomSheetRef.current?.expand()}
-        />
+        {profile.role === "admin" && (
+          <IconButton
+            mode="contained"
+            icon="plus"
+            onPress={() => tableBottomSheetRef.current?.expand()}
+          />
+        )}
       </View>
       <Divider style={{ marginTop: 16 }} />
 

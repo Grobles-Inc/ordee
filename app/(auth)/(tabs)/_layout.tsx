@@ -4,7 +4,7 @@ import { useColorScheme } from "@/utils/expo/useColorScheme";
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -182,10 +182,11 @@ export default function TabLayout() {
             ),
             tabBarLabel: ({ focused }) => (
               <Text
-                style={{
-                  color: focused ? "#FF6247" : "#666",
-                }}
-                className="web:hidden"
+                className={`web:hidden text-xs web:text-md  ${
+                  focused
+                    ? "text-[#FF6247]"
+                    : "text-zinc-500 dark:text-zinc-400"
+                }`}
               >
                 {tab.title}
               </Text>

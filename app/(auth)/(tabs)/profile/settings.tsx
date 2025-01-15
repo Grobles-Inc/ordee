@@ -1,7 +1,12 @@
 import { useAuth } from "@/context";
-import { Image } from "expo-image";
 import React, { useState } from "react";
-import { Appearance, ScrollView, useColorScheme, View } from "react-native";
+import {
+  Appearance,
+  ScrollView,
+  useColorScheme,
+  View,
+  Image,
+} from "react-native";
 import { Button, RadioButton, Text } from "react-native-paper";
 
 export default function SettingsScreen() {

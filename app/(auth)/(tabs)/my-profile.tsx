@@ -65,11 +65,11 @@ export default function ProfileScreen() {
         Versión 1.0.1
       </Text>
 
-      <View className="absolute bottom-[350px] right-[-150px] w-[200px] h-[300px] rounded-xl rotate-[-45deg] bg-yellow-400 shadow-lg" />
+      <View className="absolute bottom-[350px] right-[-150px] w-[200px] h-[300px] rounded-xl rotate-[-45deg] bg-orange-300 shadow-lg" />
 
-      <View className="absolute bottom-[275px] right-[-150px] w-[200px] h-[300px] rounded-xl rotate-[-50deg] bg-white shadow-lg" />
+      <View className="absolute bottom-[275px] right-[-150px] w-[200px] h-[300px] rounded-xl rotate-[-50deg] bg-orange-400 shadow-lg" />
 
-      <View className="absolute bottom-[200px] right-[-150px] w-[200px] h-[300px] rounded-xl rotate-[-60deg] bg-orange-600 shadow-lg" />
+      <View className="absolute bottom-[200px] right-[-150px] w-[200px] h-[300px] rounded-xl rotate-[-60deg] bg-orange-500 shadow-lg" />
     </View>
   );
 }
