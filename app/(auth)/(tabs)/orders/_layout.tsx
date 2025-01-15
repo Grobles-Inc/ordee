@@ -24,6 +24,7 @@ export default function UserLayout() {
           headerLargeTitle: true,
           headerLargeTitleShadowVisible: false,
           headerRight: () => {
+            //FEATURE: For convention now this is a global free feature
             if (order.paid) {
               return null;
             }
