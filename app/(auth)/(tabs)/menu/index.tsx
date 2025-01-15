@@ -62,10 +62,7 @@ export default function MenuScreen() {
   return (
     <>
       <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
-        <Appbar.Content
-          title="Menú del Día"
-          titleStyle={{ fontWeight: "bold" }}
-        />
+        <Appbar.Content title="Menú" titleStyle={{ fontWeight: "bold" }} />
         <Menu
           visible={visible}
           style={{
@@ -79,7 +76,11 @@ export default function MenuScreen() {
           }}
           onDismiss={() => setVisible(false)}
           anchor={
-            <Appbar.Action icon={MORE_ICON} onPress={() => setVisible(true)} />
+            <Appbar.Action
+              mode="contained-tonal"
+              icon={MORE_ICON}
+              onPress={() => setVisible(true)}
+            />
           }
         >
           <Menu.Item
