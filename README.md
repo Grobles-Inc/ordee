@@ -1,10 +1,10 @@
 # Ordee
 
 A mobile app for restaurants, covering processes for orders, menu, meals, receipts and much more. 
-| ![dashboard](https://i.ibb.co/mNVx83R/Whats-App-Image-2024-12-19-at-8-17-41-AM-3.jpg) | ![login](https://i.ibb.co/GdxLSdZ/Whats-App-Image-2024-12-19-at-8-17-41-AM-2.jpg) | ![login](https://i.ibb.co/L9cYtNx/Whats-App-Image-2024-12-19-at-8-17-41-AM-1.jpg) |
+| ![Img 1](https://i.postimg.cc/0QSkLnqp/telefono1.png) | ![Img 2](https://i.postimg.cc/jjmqg9Bx/telefono2.png) | ![Img 3](https://i.postimg.cc/htCtxhr7/telefono3.png) |
 |:---:|:---:|:---:|
-| ![login](https://i.ibb.co/8chGts8/Whats-App-Image-2024-12-19-at-8-17-41-AM.jpg) |  |  |
- 
+| ![Img 4](https://i.postimg.cc/DyPZvx46/telefono4.png) | ![Img 5](https://i.postimg.cc/Jz7hGjbL/telefono5.png) | ![Img 6](https://i.postimg.cc/02sj1Tjr/telefono6.png) |
+
 ## Stack
 
 - [Expo](https://expo.dev/): Set of tools, libraries and services which allow you to develop native iOS and Android apps written in JavaScript.
