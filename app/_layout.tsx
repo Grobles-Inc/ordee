@@ -4,7 +4,7 @@ import { DARK_NAV_THEME, NAV_THEME } from "@/utils";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Slot } from "expo-router";
+import { router, Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
@@ -63,7 +63,7 @@ export default function RootLayout() {
   if (isLoading) {
     return <ActivityIndicator />;
   }
-  if (!isOnboardingCompleted) {
+  if (isOnboardingCompleted) {
     return (
       <OnboardingScreen onComplete={() => setIsOnboardingCompleted(true)} />
     );

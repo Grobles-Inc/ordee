@@ -1,15 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { Alert, Image } from "react-native";
+import Onboarding from "react-native-onboarding-swiper";
+import { IconButton, Button } from "react-native-paper";
 
-export default function OnboardingScreen({
-  onComplete,
-}: {
-  onComplete: () => void;
-}) {
+const OnboardingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const handleDone = async () => {
     try {
       await AsyncStorage.setItem("onboardingCompleted", "true");
-
       onComplete();
     } catch (error) {
       console.error("Error setting AsyncStorage:", error);
@@ -19,68 +17,77 @@ export default function OnboardingScreen({
       );
     }
   };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome to My App</Text>
-      <Text style={styles.subtitle}>
-        Let’s get started! Here’s how to use the app:
-      </Text>
-
-      {/* Example onboarding content */}
-      <View style={styles.step}>
-        <Text style={styles.stepTitle}>Step 1: Explore Features</Text>
-        <Text style={styles.stepDescription}>
-          Discover all the amazing features our app has to offer.
-        </Text>
-      </View>
-
-      <View style={styles.step}>
-        <Text style={styles.stepTitle}>Step 2: Customize Your Profile</Text>
-        <Text style={styles.stepDescription}>
-          Personalize your profile to make the app truly yours.
-        </Text>
-      </View>
-
-      <View style={styles.step}>
-        <Text style={styles.stepTitle}>Step 3: Start Using the App</Text>
-        <Text style={styles.stepDescription}>
-          You’re all set! Start using the app to achieve your goals.
-        </Text>
-      </View>
-
-      <Button title="Get Started" onPress={handleDone} />
-    </View>
+    <Onboarding
+      pages={[
+        {
+          backgroundColor: "#fff", // White background
+          image: <Image source={require("../assets/images/onboarding.png")} />, // Image for the first screen
+          title: "Bienvenido a Ordee",
+          subtitle:
+            "La mejor manera de gestionar tu restaurante y mejorar la experiencia de tus clientes.",
+        },
+        {
+          backgroundColor: "#f2f2f2", // Light gray background
+          image: <Image source={require("../assets/images/onboarding.png")} />, // Image for the second screen
+          title: "Gestión de Menú",
+          subtitle:
+            "Actualiza tu menú en tiempo real y mantén a tus clientes informados.",
+        },
+        {
+          backgroundColor: "#fff", // White background
+          image: <Image source={require("../assets/images/onboarding.png")} />, // Image for the third screen
+          title: "Pedidos en Línea",
+          subtitle: "Acepta pedidos en línea de manera rápida y eficiente.",
+        },
+        {
+          backgroundColor: "#f2f2f2", // Light gray background
+          image: <Image source={require("../assets/images/onboarding.png")} />, // Image for the fourth screen
+          title: "Análisis y Reportes",
+          subtitle:
+            "Obtén insights detallados sobre tus ventas y el comportamiento de tus clientes.",
+        },
+      ]}
+      containerStyles={{
+        backgroundColor: "#E5E5E5",
+        padding: 16,
+      }}
+      bottomBarColor="#E5E5E5"
+      DoneButtonComponent={(props) => (
+        <Button
+          mode="contained"
+          buttonColor="tomato"
+          style={{ marginHorizontal: 16 }}
+          {...props}
+        >
+          Empezar
+        </Button>
+      )}
+      NextButtonComponent={(props) => (
+        <IconButton
+          mode="contained"
+          containerColor="tomato"
+          iconColor="white"
+          style={{ marginHorizontal: 16 }}
+          {...props}
+          icon="chevron-right"
+        />
+      )}
+      SkipButtonComponent={(props) => (
+        <Button
+          mode="text"
+          textColor="tomato"
+          style={{ marginHorizontal: 16 }}
+          {...props}
+        >
+          Omitir
+        </Button>
+      )}
+      onDone={handleDone}
+      onSkip={handleDone}
+    />
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  step: {
-    marginBottom: 20,
-  },
-  stepTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 5,
-  },
-  stepDescription: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
-  },
-});
+export default OnboardingScreen;
