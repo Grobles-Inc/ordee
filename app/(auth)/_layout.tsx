@@ -11,7 +11,11 @@ export default function Layout() {
       <CategoryContextProvider>
         <MealContextProvider>
           <CustomerContextProvider>
-            <Stack>
+            <Stack
+              screenOptions={{
+                gestureEnabled: false,
+              }}
+            >
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen
                 name="(modals)/add-order"

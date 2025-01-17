@@ -55,7 +55,7 @@ export default function AddOrderScreen() {
                 updatingOrder?.id as string,
                 Number(updatingOrder?.id_table)
               );
-              router.replace("/orders");
+              router.replace("/(auth)/(tabs)/orders");
             } catch (err) {
               console.error("An error occurred:", err);
               alert("Algo sucedió mal, vuelve a intentarlo.");

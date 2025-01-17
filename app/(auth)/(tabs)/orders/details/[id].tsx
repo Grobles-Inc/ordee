@@ -299,18 +299,22 @@ export default function OrderDetailsScreen() {
                     Items de la Orden
                   </Text>
                   <Text variant="titleSmall">Precio/u</Text>
-                  <Text variant="titleSmall">Cantidad</Text>
+                  <Text variant="titleSmall">Und.</Text>
                 </View>
                 <Divider />
                 {order?.items?.map((item, index) => (
                   <View key={index} className="flex flex-row justify-between">
                     <View className="flex flex-row items-center gap-2">
-                      <AntDesign name="check" size={20} color="green" />
-                      <Text className="w-44">
+                      <AntDesign
+                        name="checkcircleo"
+                        size={20}
+                        color="#10B981"
+                      />
+                      <Text className="w-44 text-lg">
                         {item?.name.toLocaleLowerCase()}
                       </Text>
                     </View>
-                    <Text>S/. {item.price}</Text>
+                    <Text>S/.{item.price.toFixed(2)}</Text>
                     <Text>{item.quantity}</Text>
                   </View>
                 ))}
@@ -323,7 +327,7 @@ export default function OrderDetailsScreen() {
             <View className="flex flex-row justify-between">
               <Text variant="titleMedium">Importe Total</Text>
               <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-                S/. {order?.total?.toFixed(2)}
+                S/.{order?.total?.toFixed(2)}
               </Text>
             </View>
           </View>
