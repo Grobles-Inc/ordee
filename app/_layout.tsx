@@ -6,13 +6,20 @@ import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
+import {
+  ActivityIndicator,
+  MD3DarkTheme,
+  MD3LightTheme,
+  PaperProvider,
+} from "react-native-paper";
 import "react-native-reanimated";
 import { Toaster } from "sonner-native";
 import "../styles/global.css";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import OnboardingScreen from "@/components/onboarding";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -22,11 +29,24 @@ const customDarkTheme = { ...MD3DarkTheme, colors: ORDEE_THEME.dark };
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [isOnboardingCompleted, setIsOnboardingCompleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
 
+  useEffect(() => {
+    const checkOnboardingAndAuth = async () => {
+      const onboardingCompleted = await AsyncStorage.getItem(
+        "onboardingCompleted"
+      );
+      setIsOnboardingCompleted(onboardingCompleted === "true");
+      setIsLoading(false);
+    };
+
+    checkOnboardingAndAuth();
+  }, []);
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -39,6 +59,14 @@ export default function RootLayout() {
 
   if (!loaded) {
     return null;
+  }
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+  if (!isOnboardingCompleted) {
+    return (
+      <OnboardingScreen onComplete={() => setIsOnboardingCompleted(true)} />
+    );
   }
 
   return <RootLayoutNav />;
