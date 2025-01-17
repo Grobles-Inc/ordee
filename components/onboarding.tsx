@@ -1,10 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
-import { Alert, Image } from "react-native";
+import { Alert, Image, useColorScheme } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
 import { IconButton, Button } from "react-native-paper";
 
 const OnboardingScreen = ({ onComplete }: { onComplete: () => void }) => {
+  const colorScheme = useColorScheme();
   const handleDone = async () => {
     try {
       await AsyncStorage.setItem("onboardingCompleted", "true");
@@ -22,38 +23,83 @@ const OnboardingScreen = ({ onComplete }: { onComplete: () => void }) => {
     <Onboarding
       pages={[
         {
-          backgroundColor: "#fff", // White background
-          image: <Image source={require("../assets/images/onboarding.png")} />, // Image for the first screen
+          backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
+          image: (
+            <Image
+              style={{ width: 400, height: 400 }}
+              source={require("../assets/images/onboarding.webp")}
+            />
+          ), // Image for the first screen
           title: "Bienvenido a Ordee",
           subtitle:
             "La mejor manera de gestionar tu restaurante y mejorar la experiencia de tus clientes.",
         },
         {
-          backgroundColor: "#f2f2f2", // Light gray background
-          image: <Image source={require("../assets/images/onboarding.png")} />, // Image for the second screen
+          backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
+          image: (
+            <Image
+              style={{ width: 400, height: 400 }}
+              source={require("../assets/images/onboarding6.webp")}
+            />
+          ), // Image for the second screen
+          title: "Registra tus pedidos",
+          subtitle:
+            "Toma nota de tus pedidos y gestiona tus clientes de manera eficiente.",
+        },
+        {
+          backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
+          image: (
+            <Image
+              style={{ width: 400, height: 400 }}
+              source={require("../assets/images/onboarding2.webp")}
+            />
+          ), // Image for the second screen
+          title: "Gestión de Usuarios",
+          subtitle:
+            "Gestion de usuarios, roles y permisos para una gestión eficiente para tus empleados.",
+        },
+        {
+          backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
+          image: (
+            <Image
+              style={{ width: 400, height: 400 }}
+              source={require("../assets/images/onboarding7.webp")}
+            />
+          ), // Image for the second screen
           title: "Gestión de Menú",
           subtitle:
             "Actualiza tu menú en tiempo real y mantén a tus clientes informados.",
         },
         {
-          backgroundColor: "#fff", // White background
-          image: <Image source={require("../assets/images/onboarding.png")} />, // Image for the third screen
-          title: "Pedidos en Línea",
-          subtitle: "Acepta pedidos en línea de manera rápida y eficiente.",
+          backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
+          image: (
+            <Image
+              style={{ width: 400, height: 400 }}
+              source={require("../assets/images/onboarding5.webp")}
+            />
+          ), // Image for the fourth screen
+          title: "Generador de Comprobantes",
+          subtitle:
+            "Imprime tus facturas y recibos de tus servicios con solo un clic.",
         },
         {
-          backgroundColor: "#f2f2f2", // Light gray background
-          image: <Image source={require("../assets/images/onboarding.png")} />, // Image for the fourth screen
+          backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
+          image: (
+            <Image
+              style={{ width: 400, height: 400 }}
+              source={require("../assets/images/onboarding4.webp")}
+            />
+          ), // Image for the fourth screen
           title: "Análisis y Reportes",
           subtitle:
-            "Obtén insights detallados sobre tus ventas y el comportamiento de tus clientes.",
+            "Obtén insights detallados sobre tus ventas y más funcionalidades para hacer tu management simple.",
         },
       ]}
       containerStyles={{
-        backgroundColor: "#E5E5E5",
+        backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
         padding: 16,
       }}
-      bottomBarColor="#E5E5E5"
+      bottomBarColor={colorScheme === "dark" ? "#000" : "#fff"}
       DoneButtonComponent={(props) => (
         <Button
           mode="contained"

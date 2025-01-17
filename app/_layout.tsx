@@ -63,7 +63,7 @@ export default function RootLayout() {
   if (isLoading) {
     return <ActivityIndicator />;
   }
-  if (isOnboardingCompleted) {
+  if (!isOnboardingCompleted) {
     return (
       <OnboardingScreen onComplete={() => setIsOnboardingCompleted(true)} />
     );
