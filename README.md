@@ -1,7 +1,7 @@
 # Ordee
 
 A mobile app for restaurants, covering processes for orders, menu, meals, receipts and much more. 
-| ![Img 1](https://i.postimg.cc/0QSkLnqp/telefono1.png) | ![Img 2](https://i.postimg.cc/jjmqg9Bx/telefono2.png) | ![Img 3](https://i.postimg.cc/htCtxhr7/telefono3.png) |
+| ![Img 1](https://i.postimg.cc/xjsxw2t3/phone1.png) | ![Img 2](https://i.postimg.cc/jjmqg9Bx/telefono2.png) | ![Img 3](https://i.postimg.cc/htCtxhr7/telefono3.png) |
 |:---:|:---:|:---:|
 | ![Img 4](https://i.postimg.cc/DyPZvx46/telefono4.png) | ![Img 5](https://i.postimg.cc/Jz7hGjbL/telefono5.png) | ![Img 6](https://i.postimg.cc/02sj1Tjr/telefono6.png) |
 
