@@ -5,11 +5,14 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
 import { View } from "react-native";
-import { Appbar, Text } from "react-native-paper";
+import { Appbar, Searchbar, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Animated, { FadeInUp } from "react-native-reanimated";
 
 export default function PaidOrdersScreen() {
   const { paidOrders, getPaidOrders, loading } = useOrderContext();
+  const [search, setSearch] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
   async function onRefresh() {
     await getPaidOrders();
   }
@@ -27,7 +30,13 @@ export default function PaidOrdersScreen() {
       }
     );
   }, []);
-
+  const filteredOrders = paidOrders.filter((order) => {
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      return order.tables?.number.toString().toLowerCase().includes(query);
+    }
+    return true;
+  });
   return (
     <>
       <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
@@ -35,7 +44,22 @@ export default function PaidOrdersScreen() {
           titleStyle={{ fontWeight: "bold" }}
           title="Pedidos Pagados"
         />
+        <Appbar.Action
+          icon="magnify"
+          selected={search}
+          onPress={() => setSearch((prev) => !prev)}
+        />
       </Appbar.Header>
+      {search && (
+        <Animated.View className="m-4" entering={FadeInUp.duration(200)}>
+          <Searchbar
+            placeholder="Buscar mesa..."
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+            mode="bar"
+          />
+        </Animated.View>
+      )}
       <View className="flex-1 ">
         {loading && (
           <View className="flex flex-col gap-2 p-4">
@@ -51,7 +75,7 @@ export default function PaidOrdersScreen() {
           }}
           onRefresh={onRefresh}
           renderItem={({ item: order }) => <PaymentCard order={order} />}
-          data={paidOrders}
+          data={filteredOrders}
           estimatedItemSize={200}
           horizontal={false}
           ListEmptyComponent={

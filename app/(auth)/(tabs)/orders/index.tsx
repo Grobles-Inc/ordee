@@ -5,11 +5,14 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
 import { View } from "react-native";
-import { Appbar, Text } from "react-native-paper";
+import { Appbar, Searchbar, Text } from "react-native-paper";
+import Animated, { FadeInUp } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OrdersScreen() {
   const { getUnpaidOrders, unpaidOrders } = useOrderContext();
+  const [search, setSearch] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [loading, setLoading] = React.useState(true);
   async function onRefresh() {
     getUnpaidOrders();
@@ -35,6 +38,14 @@ export default function OrdersScreen() {
     };
   }, []);
 
+  const filteredOrders = unpaidOrders.filter((order) => {
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      return order.tables?.number.toString().toLowerCase().includes(query);
+    }
+    return true;
+  });
+
   return (
     <>
       <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
@@ -44,7 +55,22 @@ export default function OrdersScreen() {
           }}
           title="Pedidos Recientes"
         />
+        <Appbar.Action
+          icon="magnify"
+          selected={search}
+          onPress={() => setSearch((prev) => !prev)}
+        />
       </Appbar.Header>
+      {search && (
+        <Animated.View className="m-4" entering={FadeInUp.duration(200)}>
+          <Searchbar
+            placeholder="Buscar mesa..."
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+            mode="bar"
+          />
+        </Animated.View>
+      )}
       <View className="flex-1">
         {loading && (
           <View className="flex flex-col gap-2 p-4">
@@ -58,7 +84,7 @@ export default function OrdersScreen() {
             padding: 16,
           }}
           renderItem={({ item: order }) => <OrderCard order={order} />}
-          data={unpaidOrders}
+          data={filteredOrders}
           refreshing={loading}
           onRefresh={onRefresh}
           estimatedItemSize={200}

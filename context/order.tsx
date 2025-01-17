@@ -128,12 +128,11 @@ export const OrderContextProvider = ({
         setLoading(false);
         return;
       }
-
+      //FIX: This is updating to all the tables, not just the one that is being taked in the order
       if (!order.to_go) {
         const { error: tableError } = await supabase
           .from("tables")
           .update({ status: false })
-          //the tablee is filter for the id of the table and id_tenant
           .eq("id_tenant", profile.id_tenant);
 
         if (tableError) {
