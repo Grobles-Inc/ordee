@@ -1,8 +1,10 @@
 import { ICategory, ICategoryContextProvider } from "@/interfaces";
 import { supabase } from "@/utils";
+import { getPlanLimits, isCategoryLimitReached } from "@/utils/limiter";
 import { FontAwesome } from "@expo/vector-icons";
 import * as React from "react";
 import { createContext, useContext } from "react";
+import { Alert } from "react-native";
 import { toast } from "sonner-native";
 import { useAuth } from "./auth";
 export const CategoryContext = createContext<ICategoryContextProvider>({
@@ -26,6 +28,15 @@ export const CategoryContextProvider = ({
   const [loading, setLoading] = React.useState(false);
 
   const addCategory = async (category: ICategory) => {
+    const { limits } = await getPlanLimits(profile.id_tenant as string);
+
+    if (await isCategoryLimitReached(profile.id_tenant as string)) {
+      Alert.alert(
+        "Límite de Plan Excedido",
+        `Su plan actual permite un máximo de ${limits.categories} categorías. Por favor, actualice su plan para agregar más categorías.`
+      );
+      return;
+    }
     const { error } = await supabase.from("categories").insert({
       ...category,
       id_tenant: profile.id_tenant,

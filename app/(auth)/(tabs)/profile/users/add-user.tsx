@@ -4,11 +4,22 @@ import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { ActivityIndicator, Button, List, TextInput } from "react-native-paper";
 import { toast } from "sonner-native";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
+import {
+  getPlanLimits,
+  isUserLimitReached,
+  PLAN_LIMITS,
+} from "@/utils/limiter";
 
 interface IUser {
   name: string;
@@ -82,6 +93,14 @@ export default function AddUserScreen() {
   const onSubmit = async (data: IUser) => {
     setLoading(true);
     try {
+      const { limits } = await getPlanLimits(profile.id_tenant as string);
+      if (await isUserLimitReached(profile.id_tenant as string)) {
+        Alert.alert(
+          "Límite de Plan Excedido",
+          `Su plan actual permite un máximo de ${limits.categories} usuarios. Por favor, actualice su plan para agregar más usuarios.`
+        );
+        return;
+      }
       const { data: authData, error: authError } =
         await supabaseAdmin.auth.admin.createUser({
           email: data.email,
