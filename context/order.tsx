@@ -254,7 +254,7 @@ export const OrderContextProvider = ({
     const { data, error } = await supabase
       .from("orders")
       .select(
-        "*, users:id_user(name), customers:id_customer(full_name), tenants:id_tenant(name, logo), tables:id_table(number)"
+        "*,    users:id_user(*), customers:id_customer(full_name), tenants:id_tenant(name, logo), tables:id_table(number)"
       )
       .eq("id", id)
       .single();

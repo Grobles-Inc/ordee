@@ -1,18 +1,11 @@
 import { useOrderContext } from "@/context";
 import { IOrder } from "@/interfaces";
-import { AntDesign } from "@expo/vector-icons";
+import { FontAwesome6 as Icon } from "@expo/vector-icons";
 import * as Print from "expo-print";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, View } from "react-native";
-import {
-  ActivityIndicator,
-  Avatar,
-  Button,
-  Chip,
-  Divider,
-  Text,
-} from "react-native-paper";
+import { Image, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Button, Divider, Title } from "react-native-paper";
 
 export default function ReceiptDetailsScreen() {
   const params = useLocalSearchParams<{ id: string }>();
@@ -151,7 +144,7 @@ export default function ReceiptDetailsScreen() {
                     <td class="quantity-col">${item.quantity}</td>
                     <td class="price-col">${item.price.toFixed(2)}</td>
                     <td class="price-col">${(
-                      item.price * item.quantity
+                      item.price * Number(item.quantity)
                     ).toFixed(2)}</td>
                 </tr>
             `
@@ -189,86 +182,129 @@ export default function ReceiptDetailsScreen() {
   };
   const orderDate = new Date(order.date ? order.date : Date.now());
   const dateStr = orderDate.toLocaleDateString("es-ES", {
-    month: "2-digit",
+    month: "short",
     day: "numeric",
-    year: "2-digit",
+    year: "numeric",
   });
 
   return (
-    <>
-      <ScrollView
-        className="p-4 bg-white dark:bg-zinc-900"
-        contentInsetAdjustmentBehavior="automatic"
-      >
-        {loading && (
-          <View className="h-screen-safe flex-1 items-center justify-center">
-            <ActivityIndicator size="large" />
-          </View>
-        )}
+    <ScrollView
+      className=" bg-zinc-100 dark:bg-zinc-900"
+      contentInsetAdjustmentBehavior="automatic"
+    >
+      {loading && (
+        <View className="h-screen-safe flex-1 items-center justify-center">
+          <ActivityIndicator size="large" />
+        </View>
+      )}
 
-        <View className="flex flex-col justify-between min-h-[450px]">
-          <View className="flex flex-col gap-10">
-            <View className="flex flex-col gap-4">
-              <View className="flex flex-row gap-2">
-                <Chip icon="account">{order.tenants?.name}</Chip>
-                {order.free && <Chip>Gratis</Chip>}
-                <Chip icon="calendar-check">{dateStr}</Chip>
-              </View>
-              {order.id_customer && (
-                <View className="flex flex-col gap-1 items-start">
-                  <Text style={{ color: "gray" }}>Cliente:</Text>
-                  <Text style={{ fontWeight: "bold" }}>
-                    {order.customers?.full_name}
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            <View className="flex flex-col gap-4">
-              <View className="flex flex-col gap-4">
-                <View className="flex flex-row justify-between">
-                  <Text variant="titleSmall" className="w-60">
-                    Items de la Orden
-                  </Text>
-                  <Text variant="titleSmall">Precio/u</Text>
-                  <Text variant="titleSmall">Cantidad</Text>
-                </View>
-                <Divider />
-                {order?.items?.map((item, index) => (
-                  <View key={index} className="flex flex-row justify-between">
-                    <View className="flex flex-row items-center gap-2">
-                      <AntDesign name="check" size={20} color="green" />
-                      <Text className="w-44">
-                        {item?.name.toLocaleLowerCase()}
-                      </Text>
-                    </View>
-                    <Text>S/. {item.price}</Text>
-                    <Text>{item.quantity}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-          </View>
-          <View className="flex flex-col gap-4">
-            <Divider />
-
-            <View className="flex flex-row justify-between">
-              <Text variant="titleMedium">Importe Total</Text>
-              <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-                S/. {order?.total?.toFixed(2)}
-              </Text>
-            </View>
+      <View className="bg-white p-6">
+        <View className="flex-row items-center justify-between">
+          <Title className=" font-semibold">
+            Orden Mesa #{order.tables?.number}
+          </Title>
+          <View className="bg-green-100 flex flex-row items-center justify-between  p-1.5 rounded-lg">
+            <Icon name="check-circle" size={16} color="#10B981" />
+            <Text className="text-green-600 px-2">Pagado</Text>
           </View>
         </View>
-      </ScrollView>
+
+        <Text className="text-zinc-400">
+          {dateStr} • S/.{order.total?.toFixed(2)}
+        </Text>
+      </View>
+
+      <Text className="text-xs px-6 py-2 text-zinc-400">
+        RESUMEN DEL PEDIDO
+      </Text>
+
+      <View className="bg-white p-6">
+        <View className="flex-row items-center mb-4">
+          <Image
+            source={{
+              uri: "https://img.icons8.com/?size=200&id=CIZkVfGggoVX&format=png&color=000000",
+            }}
+            className="w-14 h-14 p-2 mr-4 bg-zinc-100 rounded-lg"
+          />
+          <View>
+            <Text className="text-lg font-bold">Orden de Alimentos</Text>
+            <Text className="text-zinc-400 uppercase">
+              {order.to_go ? "Para llevar" : "Para mesa"}
+            </Text>
+          </View>
+        </View>
+        <Divider className="mb-4" />
+        <View className="flex flex-col gap-2">
+          <View className="flex-row justify-between mb-2">
+            <Text className="text-zinc-400 text-lg">Subtotal</Text>
+            <Text className="text-lg">S/.{order.total?.toFixed(2)}</Text>
+          </View>
+          <View className="flex-row justify-between mb-2">
+            <Text className="text-zinc-400 text-lg">IGV (18.00%)</Text>
+            <Text className="text-lg">S/.0.00</Text>
+          </View>
+          <View className="flex-row justify-between">
+            <Text className="font-semibold text-zinc-400 text-lg">Total</Text>
+            <Text className="font-bold text-lg">
+              S/.{order.total?.toFixed(2)}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      <Text className="text-xs px-6 py-2 text-zinc-400">CAMARERO</Text>
+      <View className="bg-white p-4 ">
+        <View className="flex-row items-center mb-4">
+          <Image
+            source={{ uri: order.users?.image_url }}
+            className="w-12 h-12 mr-4 rounded-full"
+          />
+
+          <View className="flex flex-col  gap-1">
+            <Text className="text-lg font-semibold">
+              {order.users?.name} {order.users?.last_name}
+            </Text>
+            <Text className="text-zinc-400">
+              UUID: {order.users?.id.slice(0, 25)}...
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      <Text className="text-xs px-6 py-2 text-zinc-400">ITEMS</Text>
+      <View className="bg-white p-6">
+        {order.items?.map((item, index) => (
+          <View
+            className="flex-row items-start mb-2 justify-between"
+            key={index}
+          >
+            <View className="flex-row items-start mb-4 ">
+              <Icon
+                name="check-circle"
+                size={20}
+                color="#10B981"
+                className="mr-4 mt-2"
+              />
+              <View className="flex flex-col ">
+                <Text className="font-semibold text-lg">{item.name}</Text>
+                <Text className="text-sm text-zinc-400">
+                  Cantidad: {item.quantity} porciones
+                </Text>
+              </View>
+            </View>
+            <Text className="text-gray-500 ">S/. {item.price.toFixed(2)}</Text>
+          </View>
+        ))}
+      </View>
+
       <Button
         mode="contained"
-        style={{ marginHorizontal: 16, marginVertical: 8 }}
+        style={{ margin: 20 }}
         icon="printer-outline"
         onPress={printOrder}
       >
         Imprimir Comprobante
       </Button>
-    </>
+    </ScrollView>
   );
 }

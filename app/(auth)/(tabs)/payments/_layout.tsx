@@ -32,16 +32,10 @@ export default function PaymentsLayout() {
       />
       <Stack.Screen
         name="receipt/[id]"
-        options={({ route }) => {
-          const { id } = route.params as { id: string };
-          return {
-            title: "Mesa " + order.tables?.number,
-            headerBackTitle: "Pagos",
-            headerLargeTitle: true,
-            headerBackVisible: true,
-            headerShadowVisible: false,
-            headerLargeTitleShadowVisible: false,
-          };
+        options={{
+          title: "Detalles del Pedido",
+          presentation: "modal",
+          headerShown: false,
         }}
       />
     </Stack>
