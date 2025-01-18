@@ -39,6 +39,7 @@ export default function AddOrderScreen() {
   }, []);
 
   function onDelete() {
+    console.log("data", updatingOrder);
     Alert.alert(
       "Eliminar orden",
       "Esta acción eliminara la orden, ¿estás seguro?",
@@ -53,7 +54,8 @@ export default function AddOrderScreen() {
             try {
               await deleteOrder(
                 updatingOrder?.id as string,
-                Number(updatingOrder?.id_table)
+                Number(updatingOrder?.id_table),
+                updatingOrder
               );
               router.replace("/(auth)/(tabs)/orders");
             } catch (err) {
@@ -166,6 +168,7 @@ export default function AddOrderScreen() {
   };
 
   const onAdd = async (data: IOrder) => {
+    
     if (!profile.id) return;
     if (itemsSelected.length === 0) {
       toast.error("Orden sin productos", {
@@ -206,6 +209,7 @@ export default function AddOrderScreen() {
       //       .eq("id", selectedCustomer.id);
       //   }
       // }
+      
       reset();
       setItemsSelected([]);
     } catch (err) {

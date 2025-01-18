@@ -8,22 +8,22 @@ import { startOfToday, endOfToday, addHours } from "date-fns";
 import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "./auth";
 export const OrderContext = createContext<IOrderContextProvider>({
-  addOrder: async () => {},
+  addOrder: async () => { },
   getUnservedOrders: async () => [],
   getOrdersCountByDay: async () => 0,
-  addTable: async () => {},
+  addTable: async () => { },
   updatingOrder: null,
-  setUpdatingOrder: () => {},
+  setUpdatingOrder: () => { },
   getOrderById: async (id: string): Promise<IOrder> => ({} as IOrder),
   getOrdersCountByMonth: async () => 0,
   order: {} as IOrder,
   loading: false,
   getPaidOrders: async () => [],
-  updateOrder: async () => {},
-  deleteOrder: async () => {},
-  updateOrderServedStatus: async () => {},
+  updateOrder: async () => { },
+  deleteOrder: async () => { },
+  updateOrderServedStatus: async () => { },
   paidOrders: [],
-  updatePaidStatus: async () => {},
+  updatePaidStatus: async () => { },
   unpaidOrders: [],
   getDailyPaidOrders: async () => [],
   getUnpaidOrders: async () => [],
@@ -228,18 +228,50 @@ export const OrderContextProvider = ({
     setLoading(false);
   };
 
-  const deleteOrder = async (id: string, id_table: number) => {
+  const deleteOrder = async (id: string, id_table: number, order: any) => {
+
     setLoading(true);
     await supabase.from("orders").delete().eq("id", id);
+
+    // Actualizar el estado de la mesa a "libre" (status = true)
     const { error: tableError } = await supabase
       .from("tables")
       .update({ status: true })
       .eq("id", id_table);
+
     if (tableError) {
       console.error("Error updating table status:", tableError);
       setLoading(false);
       return;
     }
+
+    // Restaurar las cantidades de platos en la tabla "meals"
+    const items = order.items; // Asegúrate de que `order` contiene los `items`
+    for (const item of items) {
+      const { id: mealId, quantity } = item;
+
+      // Incrementar la cantidad en la tabla "meals"
+      const { data: currentMeal, error: fetchError } = await supabase
+        .from("meals")
+        .select("quantity")
+        .eq("id", mealId)
+        .single();
+      if (fetchError) {
+        console.error(`Error fetching quantity for meal ${mealId}:`, fetchError);
+        continue;
+      }
+
+      const { error: mealError } = await supabase
+        .from("meals")
+        .update({ quantity: currentMeal.quantity + quantity }) // Sumar la cantidad usada
+        .eq("id", mealId);
+
+      if (mealError) {
+        console.error(`Error updating quantity for meal ${mealId}:`, mealError);
+      }
+    }
+
+    setLoading(false);
 
     setLoading(false);
     toast.success("Pedido eliminado!", {
