@@ -98,6 +98,9 @@ export function AuthContextProvider({
 
   async function signOut() {
     await supabase.auth.signOut();
+    setUsers([]);
+    setSession(null);
+    setProfile(null);
   }
 
   const deleteUser = async (id: string) => {
