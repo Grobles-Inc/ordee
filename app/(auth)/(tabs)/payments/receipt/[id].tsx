@@ -2,7 +2,7 @@ import { useOrderContext } from "@/context";
 import { IOrder } from "@/interfaces";
 import { FontAwesome6 as Icon } from "@expo/vector-icons";
 import * as Print from "expo-print";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { ActivityIndicator, Button, Divider, Title } from "react-native-paper";
@@ -189,7 +189,7 @@ export default function ReceiptDetailsScreen() {
 
   return (
     <ScrollView
-      className=" bg-zinc-100 dark:bg-zinc-900"
+      className=" bg-zinc-100 dark:bg-zinc-800"
       contentInsetAdjustmentBehavior="automatic"
     >
       {loading && (
@@ -198,12 +198,12 @@ export default function ReceiptDetailsScreen() {
         </View>
       )}
 
-      <View className="bg-white p-6">
+      <View className="bg-white p-6 dark:bg-zinc-900">
         <View className="flex-row items-center justify-between">
-          <Title className=" font-semibold">
+          <Text className="text-2xl font-semibold dark:text-white">
             Orden Mesa #{order.tables?.number}
-          </Title>
-          <View className="bg-green-100 flex flex-row items-center justify-between  p-1.5 rounded-lg">
+          </Text>
+          <View className="bg-green-100 dark:bg-green-300 flex flex-row items-center justify-between  p-1.5 rounded-lg">
             <Icon name="check-circle" size={16} color="#10B981" />
             <Text className="text-green-600 px-2">Pagado</Text>
           </View>
@@ -218,7 +218,7 @@ export default function ReceiptDetailsScreen() {
         RESUMEN DEL PEDIDO
       </Text>
 
-      <View className="bg-white p-6">
+      <View className="bg-white p-6 dark:bg-zinc-900">
         <View className="flex-row items-center mb-4">
           <Image
             source={{
@@ -227,7 +227,9 @@ export default function ReceiptDetailsScreen() {
             className="w-14 h-14 p-2 mr-4 bg-zinc-100 rounded-lg"
           />
           <View>
-            <Text className="text-lg font-bold">Orden de Alimentos</Text>
+            <Text className="text-lg font-bold dark:text-white">
+              Orden de Alimentos
+            </Text>
             <Text className="text-zinc-400 uppercase">
               {order.to_go ? "Para llevar" : "Para mesa"}
             </Text>
@@ -237,15 +239,17 @@ export default function ReceiptDetailsScreen() {
         <View className="flex flex-col gap-2">
           <View className="flex-row justify-between mb-2">
             <Text className="text-zinc-400 text-lg">Subtotal</Text>
-            <Text className="text-lg">S/.{order.total?.toFixed(2)}</Text>
+            <Text className="text-lg dark:text-white">
+              S/.{order.total?.toFixed(2)}
+            </Text>
           </View>
           <View className="flex-row justify-between mb-2">
             <Text className="text-zinc-400 text-lg">IGV (18.00%)</Text>
-            <Text className="text-lg">S/.0.00</Text>
+            <Text className="text-lg dark:text-white">S/.0.00</Text>
           </View>
           <View className="flex-row justify-between">
             <Text className="font-semibold text-zinc-400 text-lg">Total</Text>
-            <Text className="font-bold text-lg">
+            <Text className="font-bold text-lg dark:text-white">
               S/.{order.total?.toFixed(2)}
             </Text>
           </View>
@@ -253,7 +257,7 @@ export default function ReceiptDetailsScreen() {
       </View>
 
       <Text className="text-xs px-6 py-2 text-zinc-400">CAMARERO</Text>
-      <View className="bg-white p-4 ">
+      <View className="bg-white p-4  dark:bg-zinc-900">
         <View className="flex-row items-center mb-4">
           <Image
             source={{ uri: order.users?.image_url }}
@@ -261,7 +265,7 @@ export default function ReceiptDetailsScreen() {
           />
 
           <View className="flex flex-col  gap-1">
-            <Text className="text-lg font-semibold">
+            <Text className="text-lg font-semibold dark:text-white">
               {order.users?.name} {order.users?.last_name}
             </Text>
             <Text className="text-zinc-400">
@@ -272,7 +276,7 @@ export default function ReceiptDetailsScreen() {
       </View>
 
       <Text className="text-xs px-6 py-2 text-zinc-400">ITEMS</Text>
-      <View className="bg-white p-6">
+      <View className="bg-white p-6 dark:bg-zinc-900">
         {order.items?.map((item, index) => (
           <View
             className="flex-row items-start mb-2 justify-between"
@@ -286,7 +290,9 @@ export default function ReceiptDetailsScreen() {
                 className="mr-4 mt-2"
               />
               <View className="flex flex-col ">
-                <Text className="font-semibold text-lg">{item.name}</Text>
+                <Text className="font-semibold text-lg dark:text-white">
+                  {item.name}
+                </Text>
                 <Text className="text-sm text-zinc-400">
                   Cantidad: {item.quantity} porciones
                 </Text>
@@ -299,11 +305,18 @@ export default function ReceiptDetailsScreen() {
 
       <Button
         mode="contained"
-        style={{ margin: 20 }}
+        style={{ marginHorizontal: 20, marginTop: 40 }}
         icon="printer-outline"
         onPress={printOrder}
       >
         Imprimir Comprobante
+      </Button>
+      <Button
+        mode="contained-tonal"
+        style={{ margin: 20 }}
+        onPress={() => router.back()}
+      >
+        Cerrar
       </Button>
     </ScrollView>
   );
