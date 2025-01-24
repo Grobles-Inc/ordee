@@ -43,6 +43,7 @@ export function AuthContextProvider({
         if (_event === "SIGNED_OUT") {
           setSession(null);
           setProfile(null);
+          router.replace("/(public)/sign-in");
         } else if (newSession?.user) {
           setSession(newSession);
           await getProfile(newSession.user.id);
@@ -60,15 +61,15 @@ export function AuthContextProvider({
 
   useEffect(() => {
     const handleNavigation = async () => {
-      if (!profile && segments[0] !== "(public)") {
+      if (!session && segments[0] !== "(public)") {
         await router.replace("/(public)/sign-in");
-      } else if (profile && segments[0] !== "(auth)") {
+      } else if (session && segments[0] !== "(auth)") {
         await router.replace("/(auth)/(tabs)");
       }
     };
 
     handleNavigation();
-  }, [profile, segments]);
+  }, [session, segments]);
 
   const getProfile = async (id: string, retryCount = 3) => {
     setLoading(true);
@@ -91,6 +92,8 @@ export function AuthContextProvider({
     } catch (error) {
       console.error("Profile fetch error:", error);
       toast.error("Error al obtener el perfil!");
+      setProfile(null);
+      router.replace("/(public)/sign-in");
     } finally {
       setLoading(false);
     }
@@ -98,9 +101,6 @@ export function AuthContextProvider({
 
   async function signOut() {
     await supabase.auth.signOut();
-    setUsers([]);
-    setSession(null);
-    setProfile(null);
   }
 
   const deleteUser = async (id: string) => {
