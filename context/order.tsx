@@ -133,6 +133,7 @@ export const OrderContextProvider = ({
         const { error: tableError } = await supabase
           .from("tables")
           .update({ status: false })
+          .eq("id", order.id_table)
           .eq("id_tenant", profile.id_tenant);
 
         if (tableError) {
