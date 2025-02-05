@@ -4,7 +4,7 @@ import { FontAwesome6 as Icon } from "@expo/vector-icons";
 import * as Print from "expo-print";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, Platform, ScrollView, Text, View } from "react-native";
 import { ActivityIndicator, Button, Divider, Title } from "react-native-paper";
 
 export default function ReceiptDetailsScreen() {
@@ -174,11 +174,15 @@ export default function ReceiptDetailsScreen() {
 </html>
     `;
   };
+  // Feature: Printing in web platform
   const printOrder = async () => {
     const html = generateHTML();
-    await Print.printAsync({
-      html,
-    });
+    if (Platform.OS === "web") {
+      const pdf = await Print.printToFileAsync({ html });
+      window.open(pdf.uri, "_blank"); // Abre el PDF en nueva pestaña
+    } else {
+      await Print.printAsync({ html });
+    }
   };
   const orderDate = new Date(order.date ? order.date : Date.now());
   const dateStr = orderDate.toLocaleDateString("es-ES", {
