@@ -177,9 +177,14 @@ export default function ReceiptDetailsScreen() {
   // Feature: Printing in web platform
   const printOrder = async () => {
     const html = generateHTML();
+    
     if (Platform.OS === "web") {
-      const pdf = await Print.printToFileAsync({ html });
-      window.open(pdf.uri, "_blank"); // Abre el PDF en nueva pestaña
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.srcdoc = html;
+      document.body.appendChild(iframe);
+      iframe.contentWindow?.print();
+      setTimeout(() => document.body.removeChild(iframe), 1000);
     } else {
       await Print.printAsync({ html });
     }
