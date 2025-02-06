@@ -375,7 +375,7 @@ export default function OrderDetailsScreen() {
               </View>
             </View>
 
-            <View className="flex flex-row justify-between gap-4  mt-7">
+            <View className="flex flex-col justify-between gap-4  mt-7">
               <Button mode="contained" onPress={confirmUpdate}>
                 Aceptar
               </Button>
