@@ -354,24 +354,28 @@ export default function OrderDetailsScreen() {
               elevation: 5,
             }}
           >
-            <Image
-              style={{
-                width: 50,
-                height: 50,
-              }}
-              source={{
-                uri: "https://img.icons8.com/?size=100&id=VQOfeAx5KWTK&format=png&color=000000",
-              }}
-            />
-
-            <View className="flex flex-col gap-1">
-              <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-                Imprimir Comprobante
-              </Text>
-              <Text>La orden ahora se registrará como pagada.</Text>
+            <View>
+              <View className="flex flex-row items-center gap-2">
+                <Image
+                  style={{
+                    width: 30,
+                    height: 30,
+                  }}
+                  source={{
+                    uri: "https://img.icons8.com/?size=96&id=67F23l3ehnE5&format=png",
+                  }}
+                />
+                <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
+                  Imprimir Comprobante
+                </Text>
+                
+              </View>
+              <View className="flex flex-col mt-3">
+                <Text>La orden ahora se registrará como pagada.</Text>
+              </View>
             </View>
 
-            <View className="flex flex-col gap-4  mt-10">
+            <View className="flex flex-row justify-between gap-4  mt-7">
               <Button mode="contained" onPress={confirmUpdate}>
                 Aceptar
               </Button>
