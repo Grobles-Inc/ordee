@@ -59,7 +59,11 @@ export default function SettingsScreen() {
         si deseas accede a la configuración desde la barra de menú en la esquina
         superior derecha.
       </Text>
-      <Button mode="contained" onPress={signOut} style={{ marginTop: 40 }}>
+      <Button
+        mode="contained-tonal"
+        onPress={signOut}
+        style={{ marginTop: 40 }}
+      >
         Cerrar Sesión
       </Button>
     </ScrollView>

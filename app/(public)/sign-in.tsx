@@ -139,6 +139,7 @@ export default function SignInScreen() {
               />
               <Button
                 mode="contained"
+                style={{ marginTop: 20 }}
                 onPress={handleSubmit(onSubmit)}
                 loading={loading}
               >

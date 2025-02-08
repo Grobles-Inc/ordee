@@ -15,7 +15,7 @@ import {
   View,
   Platform,
 } from "react-native";
-import { Button, Divider, ProgressBar, Text } from "react-native-paper";
+import { Badge, Button, Divider, ProgressBar, Text } from "react-native-paper";
 export default function ProfileScreen() {
   const { profile, session, signOut } = useAuth();
   const [count, setCount] = React.useState(0);
@@ -95,12 +95,12 @@ export default function ProfileScreen() {
           </Button>
         </View>
       </View>
-      <View className="flex flex-col gap-4 mt-10 items-start ">
+      <View className="flex flex-col gap-2 mt-10 items-start ">
         {profile.tenants?.plans?.name === "free" && (
           <>
             <View className="bg-zinc-100 p-4 rounded-xl dark:bg-zinc-800 w-full flex flex-col gap-4">
               <Text variant="titleSmall" style={{ color: "gray" }}>
-                Ordenes Diarias
+                Total Ordenes Diarias
               </Text>
 
               <View>
@@ -147,56 +147,65 @@ export default function ProfileScreen() {
             </LinearGradient>
           </>
         )}
-        <Divider className="my-4" />
-        <Button
-          icon="account-group-outline"
-          onPress={() => router.push("/(auth)/(tabs)/profile/users")}
-          mode="text"
-        >
-          Usuarios
-        </Button>
-        <Button
-          icon="badge-account-outline"
-          onPress={() => router.push("/(auth)/(tabs)/profile/membership")}
-          mode="text"
-        >
-          Membresía
-        </Button>
-        <Button
-          icon="book-open-page-variant-outline"
-          onPress={() => router.push("/(auth)/(tabs)/profile/categories")}
-          mode="text"
-        >
-          Categorías
-        </Button>
-        {/* <Button
+        <View className="my-4" />
+        <Text style={{ color: "gray" }} className="px-6 py-2 uppercase">
+          MENU DE Navegación
+        </Text>
+        <View className="flex flex-col gap-1 w-full items-start bg-zinc-100 dark:bg-zinc-800 rounded-xl p-4">
+          <Button
+            icon="account-group-outline"
+            onPress={() => router.push("/(auth)/(tabs)/profile/users")}
+            mode="text"
+          >
+            Usuarios
+          </Button>
+          <Divider />
+          <Button
+            icon="badge-account-outline"
+            onPress={() => router.push("/(auth)/(tabs)/profile/membership")}
+            mode="text"
+          >
+            Membresía
+          </Button>
+          <Divider />
+          <Button
+            icon="book-open-page-variant-outline"
+            onPress={() => router.push("/(auth)/(tabs)/profile/categories")}
+            mode="text"
+          >
+            Categorías
+          </Button>
+          <Divider />
+          {/* <Button
           icon="account-heart-outline"
           onPress={() => router.push("/(auth)/(tabs)/profile/customers")}
           mode="text"
         >
           Clientes Fijos
         </Button> */}
-        <Button
-          onPress={() => router.push("/(auth)/(tabs)/profile/daily-report")}
-          mode="text"
-          icon="chart-line"
-        >
-          Reporte Diario
-        </Button>
-        {Platform.OS === "web" && (
-          <Button icon="logout" onPress={signOut}>
-            Cerrar Sesión
-          </Button>
-        )}
-        {Platform.OS !== "web" && (
           <Button
-            onPress={() => router.push("/(auth)/(tabs)/profile/settings")}
+            onPress={() => router.push("/(auth)/(tabs)/profile/daily-report")}
             mode="text"
-            icon="nut"
+            icon="chart-line"
           >
-            Configuración
+            Reporte Diario
           </Button>
-        )}
+          <Divider />
+          {Platform.OS === "web" && (
+            <Button icon="logout" onPress={signOut}>
+              Cerrar Sesión
+            </Button>
+          )}
+          {Platform.OS !== "web" && (
+            <Button
+              onPress={() => router.push("/(auth)/(tabs)/profile/settings")}
+              mode="text"
+              icon="nut"
+            >
+              Configuración
+            </Button>
+          )}
+        </View>
       </View>
 
       <Text className="text-muted-foreground opacity-40  mt-36 mx-auto ">
