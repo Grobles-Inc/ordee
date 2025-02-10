@@ -49,7 +49,7 @@ export default function SignInScreen() {
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       <ScrollView className="bg-white dark:bg-zinc-900">
         <SafeAreaView className="flex flex-col justify-center align-middle m-4 items-center ">
-          <View className="flex flex-col gap-8 w-full items-center">
+          <View className="flex flex-col gap-8 w-full items-center web:md:w-1/2 web:md:mx-auto web:md:justify-center">
             <View className="flex flex-col items-center  mt-20">
               <Image
                 style={{
