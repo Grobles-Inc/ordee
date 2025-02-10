@@ -84,7 +84,7 @@ export default function WebLayout() {
   const segments = useSegments();
   const { profile } = useAuth();
   const [isActive, setIsActive] = React.useState(false);
-
+  const iconColor = isActive ? "#FF6247" : "#8E8E8F";
   const borderColor = colorScheme === "dark" ? "#2f3336" : "#eee";
   const isCompact = width < 1024;
   const isMobile = width < 768;
@@ -92,6 +92,22 @@ export default function WebLayout() {
   const filteredTabs = OrdeeTabs.filter((tab) =>
     tab.roles.includes(profile?.role as string)
   );
+
+  const tabIcon = (
+    focusedIcon: string,
+    unfocusedIcon: string,
+    focused: boolean
+  ) => {
+    return (
+      <Image
+        style={{ width: 28, height: 28, tintColor: iconColor }}
+        source={{
+          uri: focused ? focusedIcon : unfocusedIcon,
+        }}
+        alt="icon"
+      />
+    );
+  };
 
   return (
     <View className="flex-row left-0 right-0 bg-white justify-center relative">
@@ -171,7 +187,11 @@ export default function WebLayout() {
               }}
               className="flex-1 items-center justify-center gap-1"
             >
-              {isActive ? tab.icon[0] : tab.icon[1]}
+              {tabIcon(
+                `https://api.iconify.design/${tab.icon[0]}`,
+                `https://api.iconify.design/${tab.icon[1]}`,
+                isActive
+              )}
               <Text
                 className="text-xs font-medium"
                 style={{
