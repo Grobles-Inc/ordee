@@ -3,7 +3,7 @@ import { useAuth } from "@/context";
 import { useColorScheme } from "@/utils/expo/useColorScheme.web";
 import { Image } from "expo-image";
 import { router, Stack, useSegments } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Platform,
   Pressable,
@@ -132,18 +132,17 @@ export default function WebLayout() {
           >
             <View
               className={`sticky ${
-                isCompact ? "w-[72px] p-2" : "w-[275px] p-2"
+                isCompact ? "w-[82px] p-2" : "w-[275px] p-2"
               } h-full`}
             >
-              <View className="mb-8  pt-3 flex flex-row items-center gap-2 ">
+              <View className="mb-8 web:md:pl-2 pt-3 flex flex-row items-center gap-2 ">
                 <Image
-                  style={{
-                    width: 100,
-                    height: 100,
-                  }}
+                  className="w-12 h-12"
                   source={require("../../../assets/images/logo.png")}
                 />
-                <Text className="text-4xl text-[#FF6247] font-bold">Ordee</Text>
+                <Text className="text-2xl web:md:hidden text-[#FF6247] font-bold">
+                  Ordee
+                </Text>
               </View>
 
               <View className="flex flex-col gap-4">

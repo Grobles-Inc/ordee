@@ -1,10 +1,11 @@
 import { IOrder } from "@/interfaces";
+import { useColorScheme } from "@/utils/expo/useColorScheme.web";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { View } from "react-native";
-import { Chip, List, Text } from "react-native-paper";
-export function OrderCard({ order, index }: { order: IOrder; index: number }) {
+import { List, Text } from "react-native-paper";
+export function OrderCard({ order }: { order: IOrder }) {
   const formattedDate = new Date(order.date ?? new Date()).toLocaleString(
     "es-ES",
     {
@@ -13,9 +14,9 @@ export function OrderCard({ order, index }: { order: IOrder; index: number }) {
       hour12: true,
     }
   );
+
   return (
     <List.Item
-      style={{ backgroundColor: index % 2 === 0 ? "#f5f5f5" : "white" }}
       onPress={() => {
         router.push({
           pathname: "/(auth)/(tabs)/orders/details/[id]",

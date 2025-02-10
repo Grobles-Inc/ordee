@@ -241,7 +241,8 @@ export default function AddMealScreen() {
                 <View className="mb-4">
                   <TextInput
                     label="Precio Unitario"
-                    value={String(value)}
+                    placeholder="0.00"
+                    value={value === 0 ? "" : value.toString()}
                     onChangeText={onChange}
                     mode="outlined"
                     keyboardType="numeric"
@@ -265,7 +266,8 @@ export default function AddMealScreen() {
                 <View className="mb-4">
                   <TextInput
                     label="Cantidad"
-                    value={String(value)}
+                    placeholder="0"
+                    value={value === 0 ? "" : value.toString()}
                     onChangeText={onChange}
                     mode="outlined"
                     keyboardType="numeric"

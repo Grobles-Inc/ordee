@@ -218,7 +218,7 @@ export default function AddOrderScreen() {
   };
 
   return (
-    <View className="web:md:w-1/3 web:md:mx-auto web:md:justify-center web:md:flex web:md:flex-col flex-1">
+    <View className="web:md:w-1/2 web:md:mx-auto web:md:justify-center web:md:flex web:md:flex-col flex-1">
       <Appbar.Header
         style={{
           backgroundColor: "#FF6247",
@@ -337,6 +337,7 @@ export default function AddOrderScreen() {
         <Button
           style={{
             margin: 16,
+            marginBottom: 24,
           }}
           mode="contained"
           onPress={updatingOrder ? handleSubmit(onUpdate) : handleSubmit(onAdd)}

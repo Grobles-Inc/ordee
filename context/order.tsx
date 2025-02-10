@@ -183,7 +183,7 @@ export const OrderContextProvider = ({
       .update({ status: true })
       .eq("id", order.id_table)
       .select();
-    if (error) {
+      if (error) {
       toast.error("Error al actualizar estado de la mesa!", {
         icon: <FontAwesome name="times-circle" size={20} color="red" />,
       });

@@ -171,8 +171,8 @@ export default function SignInScreen() {
                 </Text>
               </Text>
             </View>
-            <View className="mt-20 flex flex-col gap-2">
-              <Text className="text-muted-foreground text-zinc-400   mx-auto">
+            <View className="mt-6 flex flex-col ">
+              <Text className="text-muted-foreground text-zinc-400   mx-auto text-sm">
                 Desarrollado por
                 <Text
                   className=" text-orange-500"

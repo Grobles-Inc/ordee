@@ -1,7 +1,7 @@
 import { useOrderContext } from "@/context";
 import { IOrder } from "@/interfaces";
 import { supabase } from "@/utils";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
 import * as Print from "expo-print";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -188,35 +188,36 @@ export default function OrderDetailsScreen() {
                       <th align="right">Total</th>
                   </tr>
                   ${order?.items
-        .map(
-          (item) => `
+                    .map(
+                      (item) => `
                       <tr>
                           <td class="item-name">${item.name}</td>
                           <td class="quantity-col">${item.quantity}</td>
-                          <td class="price-col">${(typeof item.price === "number"
-              ? item.price
-              : parseFloat(item.price)
-            ).toFixed(2)}</td>
+                          <td class="price-col">${(typeof item.price ===
+                          "number"
+                            ? item.price
+                            : parseFloat(item.price)
+                          ).toFixed(2)}</td>
                           <td class="price-col">${(
-              (typeof item.price === "number"
-                ? item.price
-                : parseFloat(item.price)) *
-              (typeof item.quantity === "number"
-                ? item.quantity
-                : parseInt(item.quantity))
-            ).toFixed(2)}</td>
+                            (typeof item.price === "number"
+                              ? item.price
+                              : parseFloat(item.price)) *
+                            (typeof item.quantity === "number"
+                              ? item.quantity
+                              : parseInt(item.quantity))
+                          ).toFixed(2)}</td>
                       </tr>
                   `
-        )
-        .join("")}
+                    )
+                    .join("")}
               </table>
               <div class="total-section">
                   <table width="100%">
                       <tr>
                           <td><strong>Total:</strong></td>
                           <td align="right"><strong>S/. ${order.total.toFixed(
-          2
-        )}</strong></td>
+                            2
+                          )}</strong></td>
                       </tr>
                   </table>
               </div>
@@ -237,23 +238,23 @@ export default function OrderDetailsScreen() {
   const printOrder = async () => {
     const html = generateHTML();
 
-    if (Platform.OS === 'web') {
-      const printFrame = document.createElement('iframe');
-      printFrame.style.display = 'none';
+    if (Platform.OS === "web") {
+      const printFrame = document.createElement("iframe");
+      printFrame.style.display = "none";
       document.body.appendChild(printFrame);
 
       const contentDocument = printFrame.contentDocument;
       const contentWindow = printFrame.contentWindow;
 
       if (!contentDocument || !contentWindow) {
-        console.error('No se pudo acceder al documento o ventana del iframe');
+        console.error("No se pudo acceder al documento o ventana del iframe");
         return;
       }
 
       contentDocument.write(html);
       contentDocument.close();
 
-      const images = contentDocument.getElementsByTagName('img');
+      const images = contentDocument.getElementsByTagName("img");
       if (images.length > 0) {
         await Promise.all(
           Array.from(images).map(
@@ -288,8 +289,11 @@ export default function OrderDetailsScreen() {
     if (order?.id) {
       await updatePaidStatus(order.id, true);
     }
-    await printOrder();
     setModalVisible(false);
+    await printOrder();
+    if (Platform.OS !== "web") {
+      router.reload();
+    }
     router.push("/(auth)/(tabs)/orders");
   };
 
@@ -327,6 +331,16 @@ export default function OrderDetailsScreen() {
                 <Chip icon={order.served ? "check-circle" : "clock"}>
                   {order.served ? "Servido" : "En espera"}
                 </Chip>
+                {order.paid && (
+                  <View className="bg-green-100 dark:bg-green-300 flex flex-row items-center justify-between  p-1.5 rounded-lg">
+                    <FontAwesome6
+                      name="check-circle"
+                      size={16}
+                      color="#10B981"
+                    />
+                    <Text className="text-green-600 px-2">Pagado</Text>
+                  </View>
+                )}
                 {order.free && (
                   <Chip
                     style={{
@@ -446,16 +460,18 @@ export default function OrderDetailsScreen() {
           </Portal>
         </View>
       </ScrollView>
-      <Button
-        mode="contained"
-        style={{ bottom: 60, margin: 16 }}
-        icon="printer-outline"
-        onPress={() => {
-          setModalVisible(true);
-        }}
-      >
-        Imprimir Comprobante
-      </Button>
+      <View className=" bg-transparent dark:bg-zinc-800 bottom-14 p-4 flex flex-col gap-2">
+        <Button
+          mode="contained"
+          style={{ marginBottom: 96, margin: 16 }}
+          icon="printer-outline"
+          onPress={() => {
+            setModalVisible(true);
+          }}
+        >
+          Imprimir Comprobante
+        </Button>
+      </View>
     </View>
   );
 }

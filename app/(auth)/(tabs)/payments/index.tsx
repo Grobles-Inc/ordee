@@ -5,7 +5,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
 import { View } from "react-native";
-import { Appbar, Searchbar, Text } from "react-native-paper";
+import { Appbar, Divider, Searchbar, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInUp } from "react-native-reanimated";
 
@@ -74,10 +74,9 @@ export default function PaidOrdersScreen() {
             paddingBottom: 100,
           }}
           onRefresh={onRefresh}
-          renderItem={({ item: order, index }) => (
-            <PaymentCard order={order} index={index} />
-          )}
+          renderItem={({ item: order }) => <PaymentCard order={order} />}
           data={filteredOrders}
+          ItemSeparatorComponent={() => <Divider className="my-2" />}
           estimatedItemSize={200}
           horizontal={false}
           ListEmptyComponent={

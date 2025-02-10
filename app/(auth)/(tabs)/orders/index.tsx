@@ -5,7 +5,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
 import { View } from "react-native";
-import { Appbar, Searchbar, Text } from "react-native-paper";
+import { Appbar, Divider, Searchbar, Text } from "react-native-paper";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -83,10 +83,9 @@ export default function OrdersScreen() {
           contentContainerStyle={{
             paddingBottom: 100,
           }}
-          renderItem={({ item: order, index }) => (
-            <OrderCard order={order} index={index} />
-          )}
+          renderItem={({ item: order }) => <OrderCard order={order} />}
           data={filteredOrders}
+          ItemSeparatorComponent={() => <Divider className="my-2" />}
           refreshing={loading}
           onRefresh={onRefresh}
           estimatedItemSize={200}
