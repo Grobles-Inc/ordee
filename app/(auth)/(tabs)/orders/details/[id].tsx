@@ -7,6 +7,7 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Image,
+  Platform,
   RefreshControl,
   ScrollView,
   useColorScheme,
@@ -31,11 +32,13 @@ export default function OrderDetailsScreen() {
   const [refreshing, setRefreshing] = React.useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const { getOrderById, loading, updatePaidStatus } = useOrderContext();
+
   React.useEffect(() => {
     getOrderById(params.id).then((order) => {
       setOrder(order);
     });
   }, [params.id]);
+
   useEffect(() => {
     supabase
       .channel("db-changes")
@@ -54,6 +57,7 @@ export default function OrderDetailsScreen() {
       )
       .subscribe();
   }, []);
+
   useFocusEffect(
     useCallback(() => {
       getOrderById(params.id).then((order) => {
@@ -62,21 +66,6 @@ export default function OrderDetailsScreen() {
     }, [])
   );
 
-  const confirmUpdate = () => {
-    if (order?.id) {
-      updatePaidStatus(order.id, true);
-    }
-    printOrder();
-    setModalVisible(false);
-    router.push("/(auth)/(tabs)/orders");
-  };
-  async function onRefresh() {
-    setRefreshing(true);
-    await getOrderById(params.id).then((order) => {
-      setOrder(order);
-    });
-    setRefreshing(false);
-  }
   const generateHTML = () => {
     const now = new Date();
     const dateStr = now.toLocaleDateString();
@@ -86,172 +75,236 @@ export default function OrderDetailsScreen() {
     });
 
     return `
-       <!DOCTYPE html>
-<html>
-<head>
-    <style>
-        @page {
-            size: 80mm auto;
-            margin: 0;
-        }
-        @media print {
-            body {
-                width: 80mm !important;
-            }
-            .page-break {
-                page-break-after: always;
-            }
-        }
-        body {
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            padding: 8px;
-            font-size: 12px;
-        }
-        .header-info {
-            text-align: center;
-            margin-bottom: 8px;
-        }
-
-        .logo img {
-            max-width: 60px;
-            height: auto;
-            margin-bottom: 4px;
-            isplay: flex;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .logo h1 {
-            margin: 0;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-        .items {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 8px 0;
-            text-align: left;
-        }
-        .items th {
-            font-size: 11px;
-            padding: 2px;
-            border-bottom: 1px solid #000;
-            white-space: nowrap;
-        }
-        .items td {
-            padding: 2px;
-            font-size: 11px;
-            border-bottom: 1px dotted #ccc;
-        }
-        .item-name {
-            max-width: 100x;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-        }
-        .quantity-col {
-            width: 30px;
-            text-align: center;
-        }
-        .price-col {
-            width: 40px;
-            text-align: right;
-            white-space: nowrap;
-        }
-        .total-section {
-            margin: 8px 0;
-            padding: 4px 0;
-            text-align: left;
-            border-bottom: 1px solid #000;
-            font-size: 12px;
-        }
-        .datetime {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            margin: 4px 0;
-            opacity: 0.7;
-        }
-        .datetime div {
-            margin-right: 8px;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 8px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <div class="header-info">
-        <div class="logo">
-               <img src="${order.tenants?.logo}" alt="logo">
-
-        <h1>${order.tenants?.name}</h1>
-        </div>
-        <table class="items">
-            <tr>
-                <th align="left">Ítem</th>
-                <th align="center">Uds.</th>
-                <th align="right">Precio</th>
-                <th align="right">Total</th>
-            </tr>
-            ${order?.items
-              .map(
-                (item) => `
-                <tr>
-                    <td class="item-name">${item.name}</td>
-                    <td class="quantity-col">${item.quantity}</td>
-                    <td class="price-col">${(typeof item.price === "number"
-                      ? item.price
-                      : parseFloat(item.price)
-                    ).toFixed(2)}</td>
-                    <td class="price-col">${(
-                      (typeof item.price === "number"
-                        ? item.price
-                        : parseFloat(item.price)) *
-                      (typeof item.quantity === "number"
-                        ? item.quantity
-                        : parseInt(item.quantity))
-                    ).toFixed(2)}</td>
-                </tr>
-            `
-              )
-              .join("")}
-        </table>
-        <div class="total-section">
-            <table width="100%">
-                <tr>
-                    <td><strong>Total:</strong></td>
-                    <td align="right"><strong>S/. ${order.total.toFixed(
-                      2
-                    )}</strong></td>
-                </tr>
-            </table>
-        </div>
-        <div class="datetime">
-            <div>Mesa: ${order.id_table}</div>
-            <div>Fecha: ${dateStr}</div>
-            <div>Hora: ${timeStr}</div>
-        </div>
-        <div class="footer">
-            GRACIAS POR SU VISITA!
-        </div>
-    </div>
-</body>
-</html>
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+              @page {
+                  size: 80mm auto;
+                  margin: 0;
+              }
+              @media print {
+                  body {
+                      width: 80mm !important;
+                      margin: 0 !important;
+                  }
+                  .page-break {
+                      page-break-after: always;
+                  }
+              }
+              body {
+                  font-family: 'Courier New', monospace;
+                  margin: 0;
+                  padding: 8px;
+                  font-size: 12px;
+                  width: 80mm;
+              }
+              .header-info {
+                  text-align: center;
+                  margin-bottom: 8px;
+              }
+              .logo img {
+                  max-width: 60px;
+                  height: auto;
+                  margin-bottom: 4px;
+                  display: flex;
+                  justify-content: center;
+                  flex-direction: column;
+              }
+              .logo h1 {
+                  margin: 0;
+                  font-size: 14px;
+                  margin-bottom: 10px;
+              }
+              .items {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin: 8px 0;
+                  text-align: left;
+              }
+              .items th {
+                  font-size: 11px;
+                  padding: 2px;
+                  border-bottom: 1px solid #000;
+                  white-space: nowrap;
+              }
+              .items td {
+                  padding: 2px;
+                  font-size: 11px;
+                  border-bottom: 1px dotted #ccc;
+              }
+              .item-name {
+                  max-width: 100px;
+                  word-wrap: break-word;
+                  white-space: pre-wrap;
+              }
+              .quantity-col {
+                  width: 30px;
+                  text-align: center;
+              }
+              .price-col {
+                  width: 40px;
+                  text-align: right;
+                  white-space: nowrap;
+              }
+              .total-section {
+                  margin: 8px 0;
+                  padding: 4px 0;
+                  text-align: left;
+                  border-bottom: 1px solid #000;
+                  font-size: 12px;
+              }
+              .datetime {
+                  display: flex;
+                  justify-content: space-between;
+                  font-size: 10px;
+                  margin: 4px 0;
+                  opacity: 0.7;
+              }
+              .datetime div {
+                  margin-right: 8px;
+              }
+              .footer {
+                  text-align: center;
+                  margin-top: 8px;
+                  font-size: 11px;
+                  font-weight: bold;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="header-info">
+              <div class="logo">
+                  <img src="${order.tenants?.logo}" alt="logo">
+                  <h1>${order.tenants?.name}</h1>
+              </div>
+              <table class="items">
+                  <tr>
+                      <th align="left">Ítem</th>
+                      <th align="center">Uds.</th>
+                      <th align="right">Precio</th>
+                      <th align="right">Total</th>
+                  </tr>
+                  ${order?.items
+        .map(
+          (item) => `
+                      <tr>
+                          <td class="item-name">${item.name}</td>
+                          <td class="quantity-col">${item.quantity}</td>
+                          <td class="price-col">${(typeof item.price === "number"
+              ? item.price
+              : parseFloat(item.price)
+            ).toFixed(2)}</td>
+                          <td class="price-col">${(
+              (typeof item.price === "number"
+                ? item.price
+                : parseFloat(item.price)) *
+              (typeof item.quantity === "number"
+                ? item.quantity
+                : parseInt(item.quantity))
+            ).toFixed(2)}</td>
+                      </tr>
+                  `
+        )
+        .join("")}
+              </table>
+              <div class="total-section">
+                  <table width="100%">
+                      <tr>
+                          <td><strong>Total:</strong></td>
+                          <td align="right"><strong>S/. ${order.total.toFixed(
+          2
+        )}</strong></td>
+                      </tr>
+                  </table>
+              </div>
+              <div class="datetime">
+                  <div>Mesa: ${order.id_table}</div>
+                  <div>Fecha: ${dateStr}</div>
+                  <div>Hora: ${timeStr}</div>
+              </div>
+              <div class="footer">
+                  GRACIAS POR SU VISITA!
+              </div>
+          </div>
+      </body>
+      </html>
     `;
   };
+
   const printOrder = async () => {
     const html = generateHTML();
-    await Print.printAsync({
-      html,
-    });
+
+    if (Platform.OS === 'web') {
+      const printFrame = document.createElement('iframe');
+      printFrame.style.display = 'none';
+      document.body.appendChild(printFrame);
+
+      const contentDocument = printFrame.contentDocument;
+      const contentWindow = printFrame.contentWindow;
+
+      if (!contentDocument || !contentWindow) {
+        console.error('No se pudo acceder al documento o ventana del iframe');
+        return;
+      }
+
+      contentDocument.write(html);
+      contentDocument.close();
+
+      const images = contentDocument.getElementsByTagName('img');
+      if (images.length > 0) {
+        await Promise.all(
+          Array.from(images).map(
+            (img) =>
+              new Promise<void>((resolve) => {
+                if (img.complete) {
+                  resolve();
+                } else {
+                  img.onload = () => resolve();
+                  img.onerror = () => resolve();
+                }
+              })
+          )
+        );
+      }
+
+      try {
+        contentWindow.print();
+      } finally {
+        setTimeout(() => {
+          document.body.removeChild(printFrame);
+        }, 1000);
+      }
+    } else {
+      await Print.printAsync({
+        html,
+      });
+    }
   };
+
+  const confirmUpdate = async () => {
+    if (order?.id) {
+      await updatePaidStatus(order.id, true);
+    }
+    await printOrder();
+    setModalVisible(false);
+    router.push("/(auth)/(tabs)/orders");
+  };
+
+  async function onRefresh() {
+    setRefreshing(true);
+    await getOrderById(params.id).then((order) => {
+      setOrder(order);
+    });
+    setRefreshing(false);
+  }
+
   return (
     <View className="flex-1">
       <ScrollView
-        className=" bg-white dark:bg-zinc-900"
+        className="bg-white dark:bg-zinc-900"
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={{ paddingVertical: 16 }}
         refreshControl={
@@ -264,7 +317,7 @@ export default function OrderDetailsScreen() {
           </View>
         )}
 
-        <View className="flex flex-col justify-between min-h-[450px] ">
+        <View className="flex flex-col justify-between min-h-[450px]">
           <View className="flex flex-col gap-10">
             <View className="flex flex-col gap-4 px-4">
               <View className="flex flex-row gap-2">
@@ -274,7 +327,6 @@ export default function OrderDetailsScreen() {
                 <Chip icon={order.served ? "check-circle" : "clock"}>
                   {order.served ? "Servido" : "En espera"}
                 </Chip>
-
                 {order.free && (
                   <Chip
                     style={{
@@ -329,7 +381,6 @@ export default function OrderDetailsScreen() {
           </View>
           <View className="flex flex-col gap-4">
             <Divider />
-
             <View className="flex flex-row justify-between px-4">
               <Text variant="titleMedium">Importe Total</Text>
               <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
@@ -383,7 +434,7 @@ export default function OrderDetailsScreen() {
                 </View>
               </View>
 
-              <View className="flex flex-col justify-between gap-4  mt-7">
+              <View className="flex flex-col justify-between gap-4 mt-7">
                 <Button mode="contained" onPress={confirmUpdate}>
                   Imprimir
                 </Button>
