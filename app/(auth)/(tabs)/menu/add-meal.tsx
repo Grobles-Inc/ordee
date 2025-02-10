@@ -93,12 +93,12 @@ export default function AddMealScreen() {
     const category = categories.find(
       (category) => category.name === id_category
     );
-    if (Number(data.price) || Number(data.quantity) <= 0) {
+    if (Number(data.quantity) < 0 || Number(data.quantity) === 0) {
       toast.error("Cantidad no válida");
       return;
     }
 
-    if (Number(data.price) <= 0) {
+    if (Number(data.price) < 0 || Number(data.price) === 0) {
       toast.error("Precio no válido");
       return;
     }
