@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
+import { Platform } from "react-native";
 import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -49,7 +50,7 @@ export default function SignInScreen() {
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       <ScrollView className="bg-white dark:bg-zinc-900">
         <SafeAreaView className="flex flex-col justify-center align-middle m-4 items-center ">
-          <View className="flex flex-col gap-8 w-full items-center web:md:w-1/2 web:md:mx-auto web:md:justify-center">
+          <View className="flex flex-col gap-8 w-full items-center web:md:w-1/3 web:md:mx-auto web:md:justify-center">
             <View className="flex flex-col items-center  mt-20">
               <Image
                 style={{
@@ -140,7 +141,17 @@ export default function SignInScreen() {
               <Button
                 mode="contained"
                 style={{ marginTop: 20 }}
-                onPress={handleSubmit(onSubmit)}
+                onPress={() => {
+                  if (Platform.OS === "web") {
+                    const input = event?.target as HTMLInputElement;
+                    input.addEventListener("keydown", (e) => {
+                      if (e.key === "Enter") {
+                        handleSubmit(onSubmit)();
+                      }
+                    });
+                  }
+                  handleSubmit(onSubmit)();
+                }}
                 loading={loading}
               >
                 Iniciar Sesión

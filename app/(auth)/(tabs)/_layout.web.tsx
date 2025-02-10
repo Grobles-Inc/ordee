@@ -138,6 +138,14 @@ export default function WebLayout() {
           </View>
         </View>
       )}
+
+      <View className="flex-1 w-full max-w-[611px] bg-transparent">
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        />
+      </View>
       {isMobile && (
         <View
           className={`fixed bottom-0 left-0 right-0 h-16 flex-row border-t ${
@@ -181,14 +189,6 @@ export default function WebLayout() {
           ))}
         </View>
       )}
-
-      <View className="flex-1 w-full max-w-[611px] bg-transparent">
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        />
-      </View>
     </View>
   );
 }
