@@ -188,7 +188,7 @@ export default function WebLayout() {
             <Pressable
               key={tab.name}
               onPress={() => {
-                router.push(`/(auth)/(tabs)/${tab.name}` as Route);
+                router.push(`/(auth)/(tabs)/${tab.name}` as never);
                 setIsActive(segments[2] === tab.name ? true : false);
               }}
               className="flex-1 items-center justify-center gap-1"
