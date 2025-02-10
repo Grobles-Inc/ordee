@@ -3,20 +3,29 @@ import { OrdeeTabs } from "@/constants/tabs";
 import { useAuth } from "@/context"; // Import your authentication context
 import { useColorScheme } from "@/utils/expo/useColorScheme.web";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { Stack, useRouter, useSegments } from "expo-router";
 import React from "react";
-import { Pressable, Text, useWindowDimensions, View } from "react-native";
+import {
+  Platform,
+  Pressable,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 
 function SidebarItem({
   icon,
   title,
   unfocusedIcon,
+  onPress,
   href,
   isActive,
   compact = false,
 }: {
   icon: string;
   unfocusedIcon: string;
+  onPress: () => void;
   title: string;
   isActive: boolean;
   href: string;
@@ -48,7 +57,6 @@ function SidebarItem({
       onPress={() => {
         window?.scrollTo({ top: 0, behavior: "smooth" });
         router.push(href as any);
-        isActive;
       }}
       className={`flex flex-row items-center p-2 rounded-lg gap-3 mb-0.5
         hover:bg-gray-200 transition-all duration-200  ${
@@ -75,6 +83,7 @@ export default function WebLayout() {
   const { width } = useWindowDimensions();
   const segments = useSegments();
   const { profile } = useAuth();
+  const [isActive, setIsActive] = React.useState(false);
 
   const borderColor = colorScheme === "dark" ? "#2f3336" : "#eee";
   const isCompact = width < 1024;
@@ -111,20 +120,65 @@ export default function WebLayout() {
             <View className="">
               {filteredTabs.map((tab) => (
                 <SidebarItem
+                  onPress={() => {
+                    setIsActive(
+                      segments[segments.length - 1] === tab.name ? true : false
+                    );
+                  }}
                   key={tab.name}
                   icon={`https://api.iconify.design/${tab.icon[0]}`}
                   unfocusedIcon={`https://api.iconify.design/${tab.icon[1]}`}
                   title={tab.title}
                   href={tab.name}
                   compact={isCompact}
-                  isActive={
-                    segments.length === 2 &&
-                    segments[1] === tab.name.split("/").pop()
-                  }
+                  isActive={isActive}
                 />
               ))}
             </View>
           </View>
+        </View>
+      )}
+      {isMobile && (
+        <View
+          className={`fixed bottom-0 left-0 right-0 h-16 flex-row border-t ${
+            Platform.OS === "ios" ? "pb-5" : ""
+          }`}
+          style={{
+            borderTopColor: borderColor,
+            backgroundColor:
+              colorScheme === "dark"
+                ? "rgba(0, 0, 0, 0.7)"
+                : "rgba(255, 255, 255, 0.7)",
+            backdropFilter: Platform.OS === "web" ? "blur(12px)" : undefined,
+          }}
+        >
+          {filteredTabs.map((tab) => (
+            <Pressable
+              key={tab.name}
+              onPress={() => {
+                router.push(`/${tab.name}` as any);
+                setIsActive(
+                  segments[segments.length - 1] === tab.name ? true : false
+                );
+              }}
+              className="flex-1 items-center justify-center gap-1"
+            >
+              {isActive ? tab.icon[0] : tab.icon[1]}
+              <Text
+                className="text-xs font-medium"
+                style={{
+                  color:
+                    segments.length === 2
+                      ? "#FA2E47"
+                      : colorScheme === "dark"
+                      ? "#999"
+                      : "#666",
+                }}
+              >
+                {tab.title}
+              </Text>
+            </Pressable>
+          ))}
         </View>
       )}
 
