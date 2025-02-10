@@ -125,7 +125,7 @@ export default function ProfileScreen() {
                 className="flex-row flex items-center justify-between  p-4"
                 onPress={() =>
                   // Linking.openURL("https://cal.com/miguel-requena/meeting-ordee")
-                  router.push("/(auth)/(tabs)/profile/membership")
+                  router.push("/(auth)/(tabs)/profile/membership/paywall")
                 }
               >
                 <View className=" flex flex-col gap-4 w-4/5">
