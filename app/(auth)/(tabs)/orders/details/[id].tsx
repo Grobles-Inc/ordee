@@ -253,7 +253,7 @@ export default function OrderDetailsScreen() {
       <ScrollView
         className=" bg-white dark:bg-zinc-900"
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={{ padding: 16 }}
+        contentContainerStyle={{ paddingVertical: 16 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -266,7 +266,7 @@ export default function OrderDetailsScreen() {
 
         <View className="flex flex-col justify-between min-h-[450px] ">
           <View className="flex flex-col gap-10">
-            <View className="flex flex-col gap-4">
+            <View className="flex flex-col gap-4 px-4">
               <View className="flex flex-row gap-2">
                 <Chip icon={order.to_go ? "shopping" : "table-furniture"}>
                   {order.to_go ? "Para llevar" : "Para mesa"}
@@ -297,7 +297,7 @@ export default function OrderDetailsScreen() {
 
             <View className="flex flex-col gap-4">
               <View className="flex flex-col gap-4">
-                <View className="flex flex-row justify-between">
+                <View className="flex flex-row justify-between px-4">
                   <Text variant="titleSmall" className="w-60">
                     Items de la Orden
                   </Text>
@@ -306,7 +306,10 @@ export default function OrderDetailsScreen() {
                 </View>
                 <Divider />
                 {order?.items?.map((item, index) => (
-                  <View key={index} className="flex flex-row justify-between">
+                  <View
+                    key={index}
+                    className="flex flex-row justify-between px-4"
+                  >
                     <View className="flex flex-row items-center gap-2">
                       <AntDesign
                         name="checkcircleo"
@@ -327,7 +330,7 @@ export default function OrderDetailsScreen() {
           <View className="flex flex-col gap-4">
             <Divider />
 
-            <View className="flex flex-row justify-between">
+            <View className="flex flex-row justify-between px-4">
               <Text variant="titleMedium">Importe Total</Text>
               <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
                 S/.{order?.total?.toFixed(2)}

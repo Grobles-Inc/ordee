@@ -241,7 +241,7 @@ export default function AddOrderScreen() {
           onPress={updatingOrder ? onDelete : onReset}
         />
       </Appbar.Header>
-      <View className="bg-zinc-100 dark:bg-zinc-900 flex-1">
+      <View className=" dark:bg-zinc-900 flex-1">
         <ScrollView contentInsetAdjustmentBehavior="automatic">
           <View className="flex flex-col w-full items-center">
             <View className="w-full  overflow-hidden flex flex-col bg-white dark:bg-zinc-900">

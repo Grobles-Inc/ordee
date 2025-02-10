@@ -135,7 +135,7 @@ export default function WebLayout() {
                 isCompact ? "w-[72px] p-2" : "w-[275px] p-2"
               } h-full`}
             >
-              <View className="mb-8 pl-3 pt-3 flex flex-col gap-2 ">
+              <View className="mb-8  pt-3 flex flex-row items-center gap-2 ">
                 <Image
                   style={{
                     width: 100,
@@ -143,6 +143,7 @@ export default function WebLayout() {
                   }}
                   source={require("../../../assets/images/logo.png")}
                 />
+                <Text className="text-4xl text-[#FF6247] font-bold">Ordee</Text>
               </View>
 
               <View className="flex flex-col gap-4">

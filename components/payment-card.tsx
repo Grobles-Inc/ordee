@@ -3,9 +3,15 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { View } from "react-native";
-import { Card, Text, List } from "react-native-paper";
+import { List, Text } from "react-native-paper";
 
-export function PaymentCard({ order }: { order: IOrder }) {
+export function PaymentCard({
+  order,
+  index,
+}: {
+  order: IOrder;
+  index: number;
+}) {
   const formattedDate = new Date(order.date ?? new Date()).toLocaleString(
     "es-ES",
     {
@@ -19,6 +25,7 @@ export function PaymentCard({ order }: { order: IOrder }) {
 
   return (
     <List.Item
+      style={{ backgroundColor: index % 2 === 0 ? "#f5f5f5" : "white" }}
       onPress={() => {
         router.push(`/(auth)/(tabs)/payments/receipt/${order.id}`);
       }}

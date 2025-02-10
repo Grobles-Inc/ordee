@@ -156,10 +156,6 @@ export default function AddMealScreen() {
               <Text className="text-3xl font-bold dark:text-white">
                 {id ? "Editar Item" : "Agregar Item"}
               </Text>
-
-              <Text className="text-red-500  mt-2 text-center mx-14">
-                No olvides seleccionar la categoría.
-              </Text>
             </View>
             <Controller
               control={control}
@@ -298,13 +294,14 @@ export default function AddMealScreen() {
                 />
               )}
               {isLoading && <ActivityIndicator />}
+
               <Button
                 onPress={pickImage}
                 mode="contained-tonal"
-                icon="camera"
+                icon="upload"
                 disabled={isLoading}
               >
-                <Text>Subir imagen</Text>
+                <Text>{id ? "Cambiar imagen" : "Subir imagen"}</Text>
               </Button>
             </View>
             <View className="flex flex-col gap-2 mt-4">

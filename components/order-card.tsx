@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 import { Chip, List, Text } from "react-native-paper";
-export function OrderCard({ order }: { order: IOrder }) {
+export function OrderCard({ order, index }: { order: IOrder; index: number }) {
   const formattedDate = new Date(order.date ?? new Date()).toLocaleString(
     "es-ES",
     {
@@ -15,6 +15,7 @@ export function OrderCard({ order }: { order: IOrder }) {
   );
   return (
     <List.Item
+      style={{ backgroundColor: index % 2 === 0 ? "#f5f5f5" : "white" }}
       onPress={() => {
         router.push({
           pathname: "/(auth)/(tabs)/orders/details/[id]",

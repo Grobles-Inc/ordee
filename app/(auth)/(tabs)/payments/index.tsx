@@ -53,7 +53,7 @@ export default function PaidOrdersScreen() {
       {search && (
         <Animated.View className="m-4" entering={FadeInUp.duration(200)}>
           <Searchbar
-            placeholder="Buscar mesa..."
+            placeholder="Ingresa el número de mesa..."
             onChangeText={setSearchQuery}
             value={searchQuery}
             mode="bar"
@@ -74,7 +74,9 @@ export default function PaidOrdersScreen() {
             paddingBottom: 100,
           }}
           onRefresh={onRefresh}
-          renderItem={({ item: order }) => <PaymentCard order={order} />}
+          renderItem={({ item: order, index }) => (
+            <PaymentCard order={order} index={index} />
+          )}
           data={filteredOrders}
           estimatedItemSize={200}
           horizontal={false}

@@ -64,7 +64,7 @@ export default function OrdersScreen() {
       {search && (
         <Animated.View className="m-4" entering={FadeInUp.duration(200)}>
           <Searchbar
-            placeholder="Buscar mesa..."
+            placeholder="Ingresa el numero de mesa ..."
             onChangeText={setSearchQuery}
             value={searchQuery}
             mode="bar"
@@ -83,7 +83,9 @@ export default function OrdersScreen() {
           contentContainerStyle={{
             paddingBottom: 100,
           }}
-          renderItem={({ item: order }) => <OrderCard order={order} />}
+          renderItem={({ item: order, index }) => (
+            <OrderCard order={order} index={index} />
+          )}
           data={filteredOrders}
           refreshing={loading}
           onRefresh={onRefresh}

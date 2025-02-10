@@ -236,7 +236,7 @@ export default function TablesScreen() {
           />
         )}
       </View>
-      <Divider style={{ marginTop: 16 }} />
+      <Divider />
 
       <ScrollView
         contentContainerStyle={{ paddingVertical: 40 }}
