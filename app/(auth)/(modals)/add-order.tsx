@@ -218,7 +218,7 @@ export default function AddOrderScreen() {
   };
 
   return (
-    <View className="web:md:w-1/2 web:md:mx-auto web:md:justify-center web:md:flex web:md:flex-col flex-1">
+    <View className="web:md:w-1/3 web:md:mx-auto web:md:justify-center web:md:flex web:md:flex-col flex-1">
       <Appbar.Header
         style={{
           backgroundColor: "#FF6247",
@@ -241,15 +241,12 @@ export default function AddOrderScreen() {
           onPress={updatingOrder ? onDelete : onReset}
         />
       </Appbar.Header>
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        className="bg-zinc-100 dark:bg-zinc-900"
-        contentContainerClassName="backdrop-blur-md"
-      >
-        <View className="flex flex-col w-full items-center  ">
-          <View className="w-full  overflow-hidden flex flex-col bg-white dark:bg-zinc-900">
-            {/* FEATURE: Fixed Customers */}
-            {/* <Controller
+      <View className="bg-zinc-100 dark:bg-zinc-900 flex-1">
+        <ScrollView contentInsetAdjustmentBehavior="automatic">
+          <View className="flex flex-col w-full items-center">
+            <View className="w-full  overflow-hidden flex flex-col bg-white dark:bg-zinc-900">
+              {/* FEATURE: Fixed Customers */}
+              {/* <Controller
               control={control}
               name="id_customer"
               render={({ field: { value } }) => (
@@ -311,44 +308,44 @@ export default function AddOrderScreen() {
               ) : null;
             })()} */}
 
-            <Controller
-              control={control}
-              name="to_go"
-              render={({ field: { onChange, value } }) => (
-                <View className="flex flex-row justify-between items-center p-4">
-                  <Text variant="bodyLarge">Orden para llevar</Text>
-                  <Switch value={value} onValueChange={onChange} />
-                </View>
-              )}
-            />
-            <Divider />
-            <OrderItemsAccordion
-              items={itemsSelected}
-              setItems={setItemsSelected}
-            />
+              <Controller
+                control={control}
+                name="to_go"
+                render={({ field: { onChange, value } }) => (
+                  <View className="flex flex-row justify-between items-center p-4 web:md:py-6">
+                    <Text variant="bodyLarge">Orden para llevar</Text>
+                    <Switch value={value} onValueChange={onChange} />
+                  </View>
+                )}
+              />
+              <Divider />
+              <OrderItemsAccordion
+                items={itemsSelected}
+                setItems={setItemsSelected}
+              />
+            </View>
           </View>
-        </View>
 
-        {/* <CustomerFinder
+          {/* <CustomerFinder
           watch={watch}
           setValue={setValue}
           setIsRegisterDisabled={setIsRegisterDisabled}
           showCustomerModal={showCustomerModal}
           setShowCustomerModal={setShowCustomerModal}
         /> */}
-      </ScrollView>
-      <Button
-        mode="contained"
-        style={{
-          bottom: 40,
-          marginHorizontal: 16,
-        }}
-        onPress={updatingOrder ? handleSubmit(onUpdate) : handleSubmit(onAdd)}
-        loading={orderLoading}
-        disabled={isRegisterDisabled}
-      >
-        {updatingOrder ? "Guardar Cambios" : "Registrar Orden"}
-      </Button>
+        </ScrollView>
+        <Button
+          style={{
+            margin: 16,
+          }}
+          mode="contained"
+          onPress={updatingOrder ? handleSubmit(onUpdate) : handleSubmit(onAdd)}
+          loading={orderLoading}
+          disabled={isRegisterDisabled}
+        >
+          {updatingOrder ? "Guardar Cambios" : "Registrar Orden"}
+        </Button>
+      </View>
     </View>
   );
 }

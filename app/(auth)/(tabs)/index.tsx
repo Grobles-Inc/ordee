@@ -274,13 +274,13 @@ export default function TablesScreen() {
       >
         <BottomSheetView className="p-4 flex flex-col gap-4">
           <View className="flex flex-col gap-2">
-            <Text variant="bodyMedium" style={{ color: "gray" }}>
-              Número de Mesa
-            </Text>
+            <Text variant="titleMedium">Registrar Mesa</Text>
             <BottomSheetTextInput
               className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
               keyboardType="numeric"
-              value={String(number)}
+              placeholderTextColor={"gray"}
+              placeholder="Número de mesa"
+              value={number === 0 ? "" : number.toString()}
               onChangeText={(text) => {
                 const parsedNumber = Number(text);
                 if (!isNaN(parsedNumber) && parsedNumber >= 0) {
@@ -293,12 +293,12 @@ export default function TablesScreen() {
           </View>
 
           <Button mode="contained" onPress={onSubmitTable}>
-            Registrar Mesa
+            Registrar
           </Button>
 
           <Button
             onPress={() => tableBottomSheetRef.current?.close()}
-            mode="outlined"
+            mode="text"
           >
             Cancelar
           </Button>

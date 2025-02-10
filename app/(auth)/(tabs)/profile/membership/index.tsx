@@ -2,7 +2,7 @@ import { useAuth } from "@/context";
 import { AntDesign } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView, ScrollView, View } from "react-native";
 import { Button, Divider, Text } from "react-native-paper";
 
 export default function Membership() {
@@ -18,8 +18,11 @@ export default function Membership() {
   });
 
   return (
-    <SafeAreaView className="p-4 bg-white dark:bg-zinc-900 h-screen-safe flex-1 justify-between">
-      <View className="flex flex-col gap-6 px-4 py-8 ">
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      className="p-4 bg-white dark:bg-zinc-900 h-screen-safe flex-1 justify-between"
+    >
+      <View className="flex flex-col gap-6  py-8 ">
         <View className="flex flex-row gap-4 items-center ">
           <Image
             source={require("../../../../../assets/images/logo.png")}
@@ -51,13 +54,12 @@ export default function Membership() {
             </Text>
           </View>
         </View>
-        <Divider />
-        <View className="flex flex-col gap-4 rounded-xl">
+        <View className="flex flex-col gap-4 rounded-xl bg-zinc-100 p-4">
           <View className="flex flex-row gap-4 items-center">
             <AntDesign name="infocirlce" size={24} color="#0ea5e9" />
             <Text className="text-xl">Información del Plan</Text>
           </View>
-          <View className="flex flex-col gap-4 p-4">
+          <View className="flex flex-col gap-4">
             <Text>
               Se aplican límites y restricciones para la membresía con el plan
               gratuito. Tienes permitidas sólo 50 ordenes por día.
@@ -75,13 +77,13 @@ export default function Membership() {
             </View>
           </View>
         </View>
-        <Divider />
-
-        <Text>Monto de Recargo</Text>
-        <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-          S/. {profile.tenants?.plans?.price.toFixed(2)} soles /{" "}
-          {profile.tenants?.plans?.billing === "monthly" ? "mes" : "año"}
-        </Text>
+        <View className="flex flex-col gap-4 rounded-xl bg-zinc-100 p-4">
+          <Text>Monto de Recargo</Text>
+          <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
+            S/. {profile.tenants?.plans?.price.toFixed(2)} soles /{" "}
+            {profile.tenants?.plans?.billing === "monthly" ? "mes" : "año"}
+          </Text>
+        </View>
       </View>
       <Button
         style={{
@@ -94,6 +96,6 @@ export default function Membership() {
       >
         Ver Planes
       </Button>
-    </SafeAreaView>
+    </ScrollView>
   );
 }

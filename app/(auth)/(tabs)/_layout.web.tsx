@@ -1,10 +1,8 @@
-// layout.web.tsx
 import { OrdeeTabs } from "@/constants/tabs";
-import { useAuth } from "@/context"; // Import your authentication context
+import { useAuth } from "@/context";
 import { useColorScheme } from "@/utils/expo/useColorScheme.web";
 import { Image } from "expo-image";
-import { Route, router } from "expo-router";
-import { Stack, useRouter, useSegments } from "expo-router";
+import { router, Stack, useSegments } from "expo-router";
 import React from "react";
 import {
   Platform,
@@ -18,43 +16,23 @@ function SidebarItem({
   icon,
   title,
   unfocusedIcon,
-  onPress,
-  href,
   isActive,
+  href,
   compact = false,
 }: {
   icon: string;
   unfocusedIcon: string;
-  onPress: () => void;
   title: string;
   isActive: boolean;
   href: string;
   compact?: boolean;
 }) {
   const colorScheme = useColorScheme();
-  const router = useRouter();
   const hoverBg =
     colorScheme === "dark"
       ? "rgba(255, 59, 48, 0.1)"
       : "rgba(255, 59, 48, 0.1)";
-
-  const iconColor = isActive
-    ? "#FF6247"
-    : colorScheme === "dark"
-    ? "#ffffff"
-    : "#8E8E8F";
   const size = compact ? 28 : 24;
-  const tabIcon = (focused: boolean) => {
-    return (
-      <Image
-        style={{ width: size, height: size, tintColor: iconColor }}
-        source={{
-          uri: focused ? icon : unfocusedIcon,
-        }}
-        alt="icon"
-      />
-    );
-  };
 
   return (
     <Pressable
@@ -63,18 +41,29 @@ function SidebarItem({
         router.push(href as any);
       }}
       className={`flex flex-row items-center p-2 rounded-lg gap-3 mb-0.5
-        hover:bg-gray-200 transition-all duration-200  ${
+        hover:dark:bg-zinc-700 hover:bg-zinc-100 transition-all duration-200  ${
           compact ? "justify-center w-10 h-10 mx-auto" : "pl-2 pr-6 mr-8"
-        } ${isActive ? "bg-[#e6e6e7]" : ""}`}
+        } ${isActive ? "bg-zinc-200 dark:bg-zinc-600" : ""}`}
       style={({ pressed, hovered }) => [
         (pressed || hovered) && { backgroundColor: hoverBg },
       ]}
     >
-      {tabIcon(isActive)}
+      <Image
+        style={{
+          width: size,
+          height: size,
+        }}
+        source={{
+          uri: isActive ? icon : unfocusedIcon,
+        }}
+        alt="icon"
+      />
       {!compact && (
         <Text
-          className={`text-[15px] dark:text-white font-semibold ${
-            isActive ? "font-bold" : ""
+          className={`text-lg  font-semibold ${
+            isActive
+              ? "font-bold dark:text-white text-black"
+              : "text-black  dark:text-white"
           }`}
         >
           {title}
@@ -95,9 +84,9 @@ export default function WebLayout() {
     : colorScheme === "dark"
     ? "#ffffff"
     : "#8E8E8F";
-  const borderColor = colorScheme === "dark" ? "#2f3336" : "#eee";
   const isCompact = width < 1024;
   const isMobile = width < 768;
+  const borderColor = colorScheme === "dark" ? "#2f3336" : "#eee";
 
   const filteredTabs = OrdeeTabs.filter((tab) =>
     tab.roles.includes(profile?.role as string)
@@ -120,100 +109,112 @@ export default function WebLayout() {
   };
 
   return (
-      <View className="flex-1 "> <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        />
-    <View className="flex-row left-0 right-0 bg-white dark:bg-zinc-800 justify-center relative">
-      {!isMobile && (
-        <View
-          className={`${
-            isCompact ? "w-[72px]" : ""
-          } items-end sticky top-0 h-screen border-r border-gray-500 dark:border-zinc-800`}
-          style={{ borderRightColor: borderColor }}
-        >
-          <View
-            className={`sticky ${
-              isCompact ? "w-[72px] p-2" : "w-[275px] p-2"
-            } h-full`}
-          >
-            <View className="mb-8 pl-3 pt-3">
-              <Image
-                style={{
-                  width: 125,
-                  height: 125,
-                }}
-                source={require("../../../assets/images/logo.png")}
-              />
-            </View>
+    <>
+      {isMobile && (
+        <View className="flex-1 web:md:flex-none">
+          <Stack
+            screenOptions={{
+              headerShown: false,
+            }}
+          />
+        </View>
+      )}
 
-            <View className="">
-              {filteredTabs.map((tab) => (
-                <SidebarItem
-                  onPress={() => {
-                    setIsActive(segments[2] === tab.name ? true : false);
+      <View className="flex-row left-0 right-0 bg-white dark:bg-zinc-800 justify-center relative">
+        {!isMobile && (
+          <View
+            className={`${
+              isCompact ? "w-[72px]" : ""
+            } items-end sticky top-0 h-screen border-r `}
+            style={{
+              borderRightColor: borderColor,
+            }}
+          >
+            <View
+              className={`sticky ${
+                isCompact ? "w-[72px] p-2" : "w-[275px] p-2"
+              } h-full`}
+            >
+              <View className="mb-8 pl-3 pt-3 flex flex-col gap-2 ">
+                <Image
+                  style={{
+                    width: 100,
+                    height: 100,
                   }}
-                  key={tab.name}
-                  icon={`https://api.iconify.design/${tab.icon[0]}`}
-                  unfocusedIcon={`https://api.iconify.design/${tab.icon[1]}`}
-                  title={tab.title}
-                  href={tab.name}
-                  compact={isCompact}
-                  isActive={isActive}
+                  source={require("../../../assets/images/logo.png")}
                 />
-              ))}
+              </View>
+
+              <View className="flex flex-col gap-4">
+                {filteredTabs.map((tab) => (
+                  <SidebarItem
+                    key={tab.name}
+                    icon={`https://api.iconify.design/${tab.icon[0]}`}
+                    unfocusedIcon={`https://api.iconify.design/${tab.icon[1]}`}
+                    title={tab.title}
+                    href={tab.name}
+                    compact={isCompact}
+                    isActive={segments.includes(tab.name as never)}
+                  />
+                ))}
+              </View>
             </View>
           </View>
-        </View>
-      )}
-
-       
-    
-      {isMobile && (
-        <View
-          className={`fixed bottom-0 left-0 right-0 h-16 flex-row border-t ${
-            Platform.OS === "ios" ? "pb-5" : ""
-          }`}
-          style={{
-            borderTopColor: borderColor,
-            backgroundColor:
-              colorScheme === "dark"
-                ? "rgba(0, 0, 0, 0.7)"
-                : "rgba(255, 255, 255, 0.7)",
-            backdropFilter: Platform.OS === "web" ? "blur(12px)" : undefined,
-          }}
-        >
-          {filteredTabs.map((tab) => (
-            <Pressable
-              key={tab.name}
-              onPress={() => {
-                router.push(`/(auth)/(tabs)/${tab.name}` as never);
-                setIsActive(segments[2] === tab.name ? true : false);
+        )}
+        {!isMobile && (
+          <View className="flex-1 w-full max-w-[611px] bg-transparent">
+            <Stack
+              screenOptions={{
+                headerShown: false,
               }}
-              className="flex-1 items-center justify-center gap-1"
-            >
-              {tabIcon(
-                `https://api.iconify.design/${tab.icon[0]}`,
-                `https://api.iconify.design/${tab.icon[1]}`,
-                isActive
-              )}
-              <Text
-                className="text-xs font-medium"
-                style={{
-                  color: isActive
-                    ? "#FA2E47"
-                    : colorScheme === "dark"
-                    ? "#999"
-                    : "#666",
+            />
+          </View>
+        )}
+
+        {isMobile && (
+          <View
+            className={`fixed bottom-0 left-0 right-0 h-16 flex-row border-t ${
+              Platform.OS === "ios" ? "pb-5" : ""
+            }`}
+            style={{
+              backgroundColor:
+                colorScheme === "dark"
+                  ? "rgba(10, 10,10, 0.7)"
+                  : "rgba(255, 255, 255, 0.5)",
+              backdropFilter: Platform.OS === "web" ? "blur(12px)" : undefined,
+              borderTopColor: borderColor,
+            }}
+          >
+            {filteredTabs.map((tab) => (
+              <Pressable
+                key={tab.name}
+                onPress={() => {
+                  router.push(`/(auth)/(tabs)/${tab.name}` as never);
                 }}
+                className="flex-1 items-center justify-center gap-1"
               >
-                {tab.title}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-      )}
-    </View>  </View>
+                {tabIcon(
+                  `https://api.iconify.design/${tab.icon[0]}`,
+                  `https://api.iconify.design/${tab.icon[1]}`,
+                  segments.includes(tab.name as never)
+                )}
+                <Text
+                  className="text-xs font-medium"
+                  style={{
+                    color: segments.includes(tab.name as never)
+                      ? "#FA2E47"
+                      : colorScheme === "dark"
+                      ? "#999"
+                      : "#666",
+                  }}
+                >
+                  {tab.title}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        )}
+      </View>
+    </>
   );
 }

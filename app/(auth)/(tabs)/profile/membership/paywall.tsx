@@ -83,7 +83,7 @@ const PaywallScreen = () => {
   return (
     <ScrollView
       className="flex-1 p-5"
-      contentContainerStyle={{ paddingVertical: 30 }}
+      contentContainerStyle={{ paddingVertical: 30, paddingBottom: 100 }}
     >
       {/* Logo */}
       <View className="flex-row items-center justify-center mb-6">

@@ -10,6 +10,7 @@ import {
   RefreshControl,
   ScrollView,
   useColorScheme,
+  useWindowDimensions,
   View,
 } from "react-native";
 import {
@@ -24,6 +25,7 @@ import {
 
 export default function OrderDetailsScreen() {
   const params = useLocalSearchParams<{ id: string }>();
+  const isMobile = useWindowDimensions().width < 768;
   const [order, setOrder] = useState<IOrder>({} as IOrder);
   const colorScheme = useColorScheme();
   const [refreshing, setRefreshing] = React.useState(false);
@@ -247,10 +249,11 @@ export default function OrderDetailsScreen() {
     });
   };
   return (
-    <>
+    <View className="flex-1">
       <ScrollView
-        className="p-4 bg-white dark:bg-zinc-900"
+        className=" bg-white dark:bg-zinc-900"
         contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={{ padding: 16 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -261,7 +264,7 @@ export default function OrderDetailsScreen() {
           </View>
         )}
 
-        <View className="flex flex-col justify-between min-h-[450px]">
+        <View className="flex flex-col justify-between min-h-[450px] ">
           <View className="flex flex-col gap-10">
             <View className="flex flex-col gap-4">
               <View className="flex flex-row gap-2">
@@ -331,64 +334,67 @@ export default function OrderDetailsScreen() {
               </Text>
             </View>
           </View>
+
+          <Portal>
+            <Modal
+              visible={modalVisible}
+              onDismiss={() => setModalVisible(false)}
+              contentContainerStyle={{
+                borderRadius: 12,
+                padding: 24,
+                width: isMobile ? "100%" : 500,
+                marginHorizontal: "auto",
+                display: "flex",
+                gap: 10,
+                backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5,
+              }}
+            >
+              <View>
+                <View className="flex flex-row items-center gap-4">
+                  <Image
+                    style={{
+                      width: 30,
+                      height: 30,
+                    }}
+                    source={{
+                      uri: "https://img.icons8.com/?size=200&id=31337&format=png&color=ff6247",
+                    }}
+                  />
+                  <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
+                    Imprimir Comprobante
+                  </Text>
+                </View>
+                <View className="flex flex-col mt-3 ml-12">
+                  <Text>
+                    La orden ahora se registrará como pagada y se procedera con
+                    la impresión del comprobante.
+                  </Text>
+                </View>
+              </View>
+
+              <View className="flex flex-col justify-between gap-4  mt-7">
+                <Button mode="contained" onPress={confirmUpdate}>
+                  Imprimir
+                </Button>
+                <Button mode="text" onPress={() => setModalVisible(false)}>
+                  Cancelar
+                </Button>
+              </View>
+            </Modal>
+          </Portal>
         </View>
-
-        <Portal>
-          <Modal
-            visible={modalVisible}
-            onDismiss={() => setModalVisible(false)}
-            contentContainerStyle={{
-              borderRadius: 16,
-              padding: 24,
-              marginHorizontal: 16,
-              display: "flex",
-              gap: 10,
-              backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
-              shadowColor: "#000",
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
-            }}
-          >
-            <View>
-              <View className="flex flex-row items-center gap-2">
-                <Image
-                  style={{
-                    width: 30,
-                    height: 30,
-                  }}
-                  source={{
-                    uri: "https://img.icons8.com/?size=96&id=67F23l3ehnE5&format=png",
-                  }}
-                />
-                <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-                  Imprimir Comprobante
-                </Text>
-                
-              </View>
-              <View className="flex flex-col mt-3">
-                <Text>La orden ahora se registrará como pagada.</Text>
-              </View>
-            </View>
-
-            <View className="flex flex-col justify-between gap-4  mt-7">
-              <Button mode="contained" onPress={confirmUpdate}>
-                Aceptar
-              </Button>
-              <Button mode="outlined" onPress={() => setModalVisible(false)}>
-                Cancelar
-              </Button>
-            </View>
-          </Modal>
-        </Portal>
       </ScrollView>
       <Button
         mode="contained"
-        style={{ marginHorizontal: 16, marginVertical: 8 }}
+        style={{ bottom: 60, margin: 16 }}
         icon="printer-outline"
         onPress={() => {
           setModalVisible(true);
@@ -396,6 +402,6 @@ export default function OrderDetailsScreen() {
       >
         Imprimir Comprobante
       </Button>
-    </>
+    </View>
   );
 }

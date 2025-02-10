@@ -177,7 +177,7 @@ export default function ReceiptDetailsScreen() {
   // Feature: Printing in web platform
   const printOrder = async () => {
     const html = generateHTML();
-    
+
     if (Platform.OS === "web") {
       const iframe = document.createElement("iframe");
       iframe.style.display = "none";
@@ -200,6 +200,7 @@ export default function ReceiptDetailsScreen() {
     <ScrollView
       className=" bg-zinc-100 dark:bg-zinc-800"
       contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={{ paddingBottom: 100 }}
     >
       {loading && (
         <View className="h-screen-safe flex-1 items-center justify-center">
@@ -321,11 +322,12 @@ export default function ReceiptDetailsScreen() {
         Imprimir Comprobante
       </Button>
       <Button
-        mode="contained-tonal"
-        style={{ margin: 20 }}
+        icon="chevron-left"
+        mode="text"
+        style={{ margin: 10 }}
         onPress={() => router.back()}
       >
-        Cerrar
+        Volver Atrás
       </Button>
     </ScrollView>
   );

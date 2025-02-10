@@ -71,7 +71,7 @@ export default function PaidOrdersScreen() {
         <FlashList
           refreshing={loading}
           contentContainerStyle={{
-            padding: 16,
+            paddingBottom: 100,
           }}
           onRefresh={onRefresh}
           renderItem={({ item: order }) => <PaymentCard order={order} />}

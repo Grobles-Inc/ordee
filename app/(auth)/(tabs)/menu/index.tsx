@@ -166,6 +166,7 @@ export default function MenuScreen() {
           refreshing={refreshing}
           contentContainerStyle={{
             padding: 16,
+            paddingBottom: 100,
           }}
           onRefresh={onRefresh}
           renderItem={({ item: meal }) => <MealCard meal={meal} />}

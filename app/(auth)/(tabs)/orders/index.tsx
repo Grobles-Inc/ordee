@@ -81,7 +81,7 @@ export default function OrdersScreen() {
         )}
         <FlashList
           contentContainerStyle={{
-            padding: 16,
+            paddingBottom: 100,
           }}
           renderItem={({ item: order }) => <OrderCard order={order} />}
           data={filteredOrders}

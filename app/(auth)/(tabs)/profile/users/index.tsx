@@ -66,7 +66,7 @@ export default function UsersScreen() {
         </View>
       )}
       <FlashList
-        contentContainerStyle={{ paddingHorizontal: 16 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
         renderItem={({ item: user }) => (
           <Card
             key={user.id}

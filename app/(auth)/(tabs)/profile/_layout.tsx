@@ -323,7 +323,7 @@ export default function ProfileLayout() {
               setName("");
               setDescription("");
             }}
-            mode="outlined"
+            mode="text"
           >
             Cancelar
           </Button>
@@ -367,7 +367,7 @@ export default function ProfileLayout() {
 
           <Button
             onPress={() => categoryBottomSheetRef.current?.close()}
-            mode="outlined"
+            mode="text"
           >
             Cancelar
           </Button>
