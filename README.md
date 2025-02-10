@@ -1,4 +1,4 @@
-# [Ordee](ordee-app.vercel.app)
+# [Ordee](https://ordee-app.vercel.app)
 
 A mobile app for restaurants, covering processes for orders, menu, meals, receipts and much more. 
 | ![Img 1](https://i.postimg.cc/xjsxw2t3/phone1.png) | ![Img 2](https://i.postimg.cc/jjmqg9Bx/telefono2.png) | ![Img 3](https://i.postimg.cc/htCtxhr7/telefono3.png) |
