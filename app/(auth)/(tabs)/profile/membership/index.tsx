@@ -19,7 +19,9 @@ export default function Membership() {
 
   return (
     <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
+      
+contentContainerStyle={{ paddingBottom: 100 }}
+contentInsetAdjustmentBehavior="automatic"
       className="p-4 bg-white dark:bg-zinc-900 h-screen-safe flex-1 justify-between"
     >
       <View className="flex flex-col gap-6  py-8 ">
