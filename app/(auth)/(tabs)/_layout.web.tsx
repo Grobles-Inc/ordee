@@ -3,7 +3,7 @@ import { OrdeeTabs } from "@/constants/tabs";
 import { useAuth } from "@/context"; // Import your authentication context
 import { useColorScheme } from "@/utils/expo/useColorScheme.web";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { Route, router } from "expo-router";
 import { Stack, useRouter, useSegments } from "expo-router";
 import React from "react";
 import {
@@ -38,7 +38,11 @@ function SidebarItem({
       ? "rgba(255, 59, 48, 0.1)"
       : "rgba(255, 59, 48, 0.1)";
 
-  const iconColor = isActive ? "#FF6247" : "#8E8E8F";
+  const iconColor = isActive
+    ? "#FF6247"
+    : colorScheme === "dark"
+    ? "#ffffff"
+    : "#8E8E8F";
   const size = compact ? 28 : 24;
   const tabIcon = (focused: boolean) => {
     return (
@@ -69,7 +73,9 @@ function SidebarItem({
       {tabIcon(isActive)}
       {!compact && (
         <Text
-          className={`text-[15px] font-semibold ${isActive ? "font-bold" : ""}`}
+          className={`text-[15px] dark:text-white font-semibold ${
+            isActive ? "font-bold" : ""
+          }`}
         >
           {title}
         </Text>
@@ -84,7 +90,11 @@ export default function WebLayout() {
   const segments = useSegments();
   const { profile } = useAuth();
   const [isActive, setIsActive] = React.useState(false);
-  const iconColor = isActive ? "#FF6247" : "#8E8E8F";
+  const iconColor = isActive
+    ? "#FF6247"
+    : colorScheme === "dark"
+    ? "#ffffff"
+    : "#8E8E8F";
   const borderColor = colorScheme === "dark" ? "#2f3336" : "#eee";
   const isCompact = width < 1024;
   const isMobile = width < 768;
@@ -110,7 +120,7 @@ export default function WebLayout() {
   };
 
   return (
-    <View className="flex-row left-0 right-0 bg-white justify-center relative">
+    <View className="flex-row left-0 right-0 bg-white dark:bg-zinc-900 justify-center relative">
       {!isMobile && (
         <View
           className={`${
@@ -137,9 +147,7 @@ export default function WebLayout() {
               {filteredTabs.map((tab) => (
                 <SidebarItem
                   onPress={() => {
-                    setIsActive(
-                      segments[segments.length - 1] === tab.name ? true : false
-                    );
+                    setIsActive(segments[2] === tab.name ? true : false);
                   }}
                   key={tab.name}
                   icon={`https://api.iconify.design/${tab.icon[0]}`}
@@ -180,10 +188,8 @@ export default function WebLayout() {
             <Pressable
               key={tab.name}
               onPress={() => {
-                router.push(`/${tab.name}` as any);
-                setIsActive(
-                  segments[segments.length - 1] === tab.name ? true : false
-                );
+                router.push(`/(auth)/(tabs)/${tab.name}` as Route);
+                setIsActive(segments[2] === tab.name ? true : false);
               }}
               className="flex-1 items-center justify-center gap-1"
             >
@@ -195,12 +201,11 @@ export default function WebLayout() {
               <Text
                 className="text-xs font-medium"
                 style={{
-                  color:
-                    segments.length === 2
-                      ? "#FA2E47"
-                      : colorScheme === "dark"
-                      ? "#999"
-                      : "#666",
+                  color: isActive
+                    ? "#FA2E47"
+                    : colorScheme === "dark"
+                    ? "#999"
+                    : "#666",
                 }}
               >
                 {tab.title}
