@@ -349,6 +349,6 @@ export default function AddOrderScreen() {
       >
         {updatingOrder ? "Guardar Cambios" : "Registrar Orden"}
       </Button>
-    </>
+    </View>
   );
 }
