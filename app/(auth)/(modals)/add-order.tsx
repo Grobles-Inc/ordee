@@ -218,7 +218,7 @@ export default function AddOrderScreen() {
   };
 
   return (
-    <>
+    <View className="web:md:w-1/2 web:md:mx-auto web:md:justify-center web:md:flex web:md:flex-col flex-1">
       <Appbar.Header
         style={{
           backgroundColor: "#FF6247",
@@ -244,7 +244,7 @@ export default function AddOrderScreen() {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         className="bg-zinc-100 dark:bg-zinc-900"
-        contentContainerClassName="web:md:w-1/2 backdrop-blur-md"
+        contentContainerClassName="backdrop-blur-md"
       >
         <View className="flex flex-col w-full items-center  ">
           <View className="w-full  overflow-hidden flex flex-col bg-white dark:bg-zinc-900">
