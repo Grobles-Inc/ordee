@@ -94,7 +94,7 @@ function RootLayoutNav() {
           <PaperProvider theme={paperTheme}>
             <Slot />
           </PaperProvider>
-          <Toaster />
+          <Toaster className="web:md:w-1/3" />
         </ThemeProvider>
       </GestureHandlerRootView>
     </AuthContextProvider>

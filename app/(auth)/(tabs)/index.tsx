@@ -202,6 +202,10 @@ export default function TablesScreen() {
     };
   }, []);
 
+  useEffect(() => {
+    tableBottomSheetRef.current?.close();
+  }, []);
+
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 justify-center items-center bg-white dark:bg-zinc-900">

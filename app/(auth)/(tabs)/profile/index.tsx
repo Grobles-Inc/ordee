@@ -62,8 +62,8 @@ export default function ProfileScreen() {
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
-      className="bg-white dark:bg-zinc-900 "
-      contentContainerStyle={{ padding: 16 }}
+      className="bg-white dark:bg-zinc-900 flex-1"
+      contentContainerStyle={{ padding: 16, flexGrow: 1 }}
       style={{ marginTop: headerHeight }}
       contentInsetAdjustmentBehavior="automatic"
     >

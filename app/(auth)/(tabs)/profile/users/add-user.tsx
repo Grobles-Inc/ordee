@@ -15,11 +15,8 @@ import { ActivityIndicator, Button, List, TextInput } from "react-native-paper";
 import { toast } from "sonner-native";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
-import {
-  getPlanLimits,
-  isUserLimitReached,
-  PLAN_LIMITS,
-} from "@/utils/limiter";
+import { getPlanLimits, isUserLimitReached } from "@/utils/limiter";
+import { Platform } from "react-native";
 
 interface IUser {
   name: string;
@@ -95,10 +92,19 @@ export default function AddUserScreen() {
     try {
       const { limits } = await getPlanLimits(profile.id_tenant as string);
       if (await isUserLimitReached(profile.id_tenant as string)) {
-        Alert.alert(
-          "Límite de Plan Excedido",
-          `Su plan actual permite un máximo de ${limits.categories} usuarios. Por favor, actualice su plan para agregar más usuarios.`
-        );
+        Platform.OS === "web"
+          ? toast.error(
+              `
+              Límite de Plan Excedido`,
+              {
+                description:
+                  "El plan actual permite un máximo de ${limits.categories} usuarios. Por favor, actualice su plan para agregar más usuarios.",
+              }
+            )
+          : Alert.alert(
+              "Límite de Plan Excedido",
+              `Su plan actual permite un máximo de ${limits.categories} usuarios. Por favor, actualice su plan para agregar más usuarios.`
+            );
         return;
       }
       const { data: authData, error: authError } =

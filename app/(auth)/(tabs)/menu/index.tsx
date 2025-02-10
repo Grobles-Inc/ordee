@@ -69,11 +69,12 @@ export default function MenuScreen() {
     return true;
   });
   return (
-    <>
+    <View className="flex-1">
       <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800 ">
         <Appbar.Content title="Menú" titleStyle={{ fontWeight: "bold" }} />
         <Appbar.Action
           icon="magnify"
+          mode={search ? "contained-tonal" : undefined}
           selected={search}
           onPress={() => setSearch((prev) => !prev)}
         />
@@ -184,6 +185,6 @@ export default function MenuScreen() {
           }
         />
       </View>
-    </>
+    </View>
   );
 }

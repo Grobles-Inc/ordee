@@ -120,12 +120,12 @@ export default function WebLayout() {
   };
 
   return (
-    <View className="flex-row left-0 right-0 bg-white dark:bg-zinc-900 justify-center relative">
+    <View className="flex-row left-0 right-0 bg-white dark:bg-zinc-800 justify-center relative">
       {!isMobile && (
         <View
           className={`${
             isCompact ? "w-[72px]" : ""
-          } items-end sticky top-0 h-screen border-r border-gray-500`}
+          } items-end sticky top-0 h-screen border-r border-gray-500 dark:border-zinc-800`}
           style={{ borderRightColor: borderColor }}
         >
           <View

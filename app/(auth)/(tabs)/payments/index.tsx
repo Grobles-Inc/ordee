@@ -38,7 +38,7 @@ export default function PaidOrdersScreen() {
     return true;
   });
   return (
-    <>
+    <View className="flex-1">
       <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
         <Appbar.Content
           titleStyle={{ fontWeight: "bold" }}
@@ -46,7 +46,7 @@ export default function PaidOrdersScreen() {
         />
         <Appbar.Action
           icon="magnify"
-          selected={search}
+          mode={search ? "contained-tonal" : undefined}
           onPress={() => setSearch((prev) => !prev)}
         />
       </Appbar.Header>
@@ -91,6 +91,6 @@ export default function PaidOrdersScreen() {
           }
         />
       </View>
-    </>
+    </View>
   );
 }

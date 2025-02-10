@@ -168,7 +168,6 @@ export default function AddOrderScreen() {
   };
 
   const onAdd = async (data: IOrder) => {
-    
     if (!profile.id) return;
     if (itemsSelected.length === 0) {
       toast.error("Orden sin productos", {
@@ -209,7 +208,7 @@ export default function AddOrderScreen() {
       //       .eq("id", selectedCustomer.id);
       //   }
       // }
-      
+
       reset();
       setItemsSelected([]);
     } catch (err) {
@@ -245,6 +244,7 @@ export default function AddOrderScreen() {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         className="bg-zinc-100 dark:bg-zinc-900"
+        contentContainerClassName="web:md:w-1/2 backdrop-blur-md"
       >
         <View className="flex flex-col w-full items-center  ">
           <View className="w-full  overflow-hidden flex flex-col bg-white dark:bg-zinc-900">
