@@ -112,6 +112,7 @@ export default function DailyReportScreen() {
     totalOrders: 0,
     totalAmount: 0,
     peakHour: "",
+    mostRequestedPlates: [] as { name: string; count: number }[],
   });
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => {
@@ -124,9 +125,10 @@ export default function DailyReportScreen() {
     try {
       setLoading(true);
       const orders = await getDailyPaidOrders();
-      const salesByHour = new Array(12).fill(0);
+      const salesByHour: number[] = new Array(12).fill(0);
       let dailyTotal = 0;
       const newDailyTotals: { [key: string]: number } = {};
+      const plateCounts = new Map<string, number>();
 
       orders.forEach((order: IOrder) => {
         if (order.date) {
@@ -134,6 +136,12 @@ export default function DailyReportScreen() {
           const hour = orderDate.getHours();
           const timeIndex = Math.floor(hour / 2);
           const orderTotal = calculateOrderTotal(order);
+
+          // Count plates
+          order.items.forEach((item) => {
+            const count = plateCounts.get(item.name) || 0;
+            plateCounts.set(item.name, Number(count) + Number(item.quantity || 1));
+          });
 
           salesByHour[timeIndex] += orderTotal;
           dailyTotal += orderTotal;
@@ -145,6 +153,12 @@ export default function DailyReportScreen() {
           newDailyTotals[orderDateString] += orderTotal;
         }
       });
+
+      // Get top 5 most requested plates
+      const mostRequestedPlates = Array.from(plateCounts.entries())
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
 
       setDailySales((prev) =>
         prev.map((item, index) => ({
@@ -174,6 +188,7 @@ export default function DailyReportScreen() {
         totalOrders: orders.length,
         totalAmount: dailyTotal,
         peakHour: orders.length > 0 ? peakHourLabel : "N/A",
+        mostRequestedPlates,
       });
       setDailyTotals(newDailyTotals);
     } catch (error) {
@@ -295,8 +310,17 @@ export default function DailyReportScreen() {
                 title="Total de pedidos"
                 data={orderDetails.totalOrders}
               />
-
               <SalesDetails title="Hora pico" data={orderDetails.peakHour} />
+              <View className="mt-4">
+                <Text style={[styles.detailText, { fontWeight: '600', marginBottom: 12 }]}>
+                  Platos más solicitados:
+                </Text>
+                {orderDetails.mostRequestedPlates.map((plate, index) => (
+                  <Text key={plate.name} style={[styles.detailText, { marginLeft: 8 }]}>
+                    {index + 1}. {plate.name} ({plate.count} pedidos)
+                  </Text>
+                ))}
+              </View>
             </View>
           </View>
           <Calendar
