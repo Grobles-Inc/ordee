@@ -4,7 +4,7 @@ import { supabase } from "@/utils";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React, { useEffect } from "react";
-import { Alert, ScrollView, View } from "react-native";
+import { Alert, Platform, ScrollView, View } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -32,19 +32,25 @@ export default function UsersScreen() {
   }, []);
 
   const onDelete = (id: string) => {
-    Alert.alert("Eliminar", "¿Estás seguro de eliminar este usuario?", [
-      {
-        text: "Sí",
-        style: "destructive",
-        onPress: async () => {
-          deleteUser(id);
+    if (Platform.OS === "web") {
+      if (confirm("¿Estás seguro de eliminar a este usuario?")) {
+        deleteUser(id);
+      }
+    } else {
+      Alert.alert("Eliminar", "¿Estás seguro de eliminar este usuario?", [
+        {
+          text: "Sí",
+          style: "destructive",
+          onPress: async () => {
+            deleteUser(id);
+          },
         },
-      },
-      {
-        text: "No",
-        style: "cancel",
-      },
-    ]);
+        {
+          text: "No",
+          style: "cancel",
+        },
+      ]);
+    }
   };
 
   const getRoleLabel = (role: string) => {
@@ -57,7 +63,10 @@ export default function UsersScreen() {
   };
 
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic">
+    <ScrollView
+      contentContainerClassName="pb-24"
+      contentInsetAdjustmentBehavior="automatic"
+    >
       {loading && (
         <View className="flex flex-col gap-2 p-4">
           <UserSkeleton />

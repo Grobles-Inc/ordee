@@ -24,11 +24,13 @@ export function PaymentCard({ order }: { order: IOrder }) {
       title={"Mesa " + order.tables?.number}
       description={formattedDate}
       left={(props) => (
-        <List.Icon {...props} icon="account-cash" color="green" />
+        <View className="bg-green-100 rounded-full p-2 ml-4 flex justify-center items-center ">
+          <List.Icon icon="alpha-s-circle" color="#00e680" />
+        </View>
       )}
       right={(props) => (
         <View className="flex flex-row items-center  gap-4">
-          <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
+          <Text variant="bodyLarge" style={{ fontWeight: "bold" }}>
             S/. {order.total.toFixed(2)}
           </Text>
           <FontAwesome6 name="chevron-right" size={16} color="#a1a1aa" />

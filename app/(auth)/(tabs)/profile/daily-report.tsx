@@ -77,7 +77,8 @@ LocaleConfig.locales["es"] = {
 LocaleConfig.defaultLocale = "es";
 const calculateOrderTotal = (order: IOrder): number => {
   return order.items.reduce(
-    (sum, meal) => sum + (Number(meal.price) || 0) * (Number(meal.quantity) || 1),
+    (sum, meal) =>
+      sum + (Number(meal.price) || 0) * (Number(meal.quantity) || 1),
     0
   );
 };
@@ -195,7 +196,8 @@ export default function DailyReportScreen() {
           if (!newDailyTotals[orderDateString]) {
             newDailyTotals[orderDateString] = 0;
           }
-          newDailyTotals[orderDateString] += order.total || calculateOrderTotal(order);
+          newDailyTotals[orderDateString] +=
+            order.total || calculateOrderTotal(order);
         }
       });
 
@@ -244,6 +246,7 @@ export default function DailyReportScreen() {
   return (
     <ScrollView
       contentContainerStyle={styles.scrollContent}
+      contentContainerClassName="pb-24"
       contentInsetAdjustmentBehavior="automatic"
       className="bg-white dark:bg-zinc-900"
     >
@@ -279,7 +282,7 @@ export default function DailyReportScreen() {
                 xAxisLabelTextStyle={styles.chartText}
                 noOfSections={5}
               />
-              <View className="flex flex-row gap-2 items-center">
+              <View className="flex flex-row gap-2 items-center web:md:hidden">
                 <AntDesign name="swapleft" size={20} color="#FF6247" />
                 <Text variant="labelSmall" style={{ color: "gray" }}>
                   Desliza a la izquierda

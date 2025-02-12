@@ -18,6 +18,7 @@ import {
   Button as NativeButton,
   Platform,
   useColorScheme,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { Button, Text } from "react-native-paper";
@@ -32,7 +33,12 @@ export default function ProfileLayout() {
   const [description, setDescription] = useState("");
   const { addCategory } = useCategoryContext();
   const { addCustomer, loading } = useCustomer();
-  const snapPoints = useMemo(() => ["25%", "50%"], []);
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+  const snapPoints = useMemo(() => {
+    if (isMobile) return ["50%"];
+    return ["40%", "50%"];
+  }, [isMobile]);
   const {
     control,
     handleSubmit,

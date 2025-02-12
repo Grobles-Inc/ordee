@@ -1,24 +1,30 @@
 import { useOrderContext } from "@/context";
 import { IOrder } from "@/interfaces";
 import React from "react";
-import { Alert, View } from "react-native";
+import { Alert, Platform, View } from "react-native";
 import { Card, Divider, IconButton, Text } from "react-native-paper";
 
 export function GuestOrderCard({ order }: { order: IOrder }) {
   const { updateOrderServedStatus } = useOrderContext();
   const onOrderStatusChange = (id: string) => {
-    Alert.alert("Preparado", "Marcar como pedido preparado", [
-      {
-        text: "Sí",
-        onPress: () => {
-          updateOrderServedStatus(id);
+    if (Platform.OS === "web") {
+      if (confirm("¿Estás seguro de marcar como pedido preparado?")) {
+        updateOrderServedStatus(id);
+      }
+    } else {
+      Alert.alert("Preparado", "Marcar como pedido preparado", [
+        {
+          text: "Sí",
+          onPress: () => {
+            updateOrderServedStatus(id);
+          },
         },
-      },
-      {
-        text: "No",
-        style: "cancel",
-      },
-    ]);
+        {
+          text: "No",
+          style: "cancel",
+        },
+      ]);
+    }
   };
   return (
     <Card
