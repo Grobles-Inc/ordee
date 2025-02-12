@@ -66,13 +66,13 @@ const PaywallScreen = () => {
     "Administración del Menú",
     "Impresión de Comprobantes",
     "Todos los del plan Free incluidos",
-    "Sin anuncios",
-    "Soporte Agendado",
+    "Soporte Inmediato",
+    "Actualizaciones futuras",
     "Órdenes ilimitadas",
-    "Administración de Usuarios",
+    "Hasta 5 usuarios activos en simultáneo",
     "Todos los del plan Essential incluidos",
-    "Request de features en próximas versiones",
-    "Soporte 24/7",
+    "Request de branding para tu restaurante",
+    "Sin límite de usuarios en simultáneo",
   ];
 
   const isDisabled = selectedPlan?.id === profile.tenants?.plans?.id;
@@ -168,8 +168,8 @@ const PaywallScreen = () => {
                   {plan.name === "free"
                     ? "Funcionalidades básicas."
                     : plan.name === "essential"
-                    ? "Incluye órdenes ilimitadas."
-                    : "Incluye órdenes y cuentas ilimitadas."}
+                    ? "Ordenes ilimitadas."
+                    : "Ordenes y cuentas ilimitadas."}
                 </Text>
                 <View>
                   {getFeaturesForPlan(

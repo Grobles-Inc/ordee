@@ -20,6 +20,7 @@ import {
   ScrollView,
   TouchableOpacity,
   useColorScheme,
+  useWindowDimensions,
   View,
 } from "react-native";
 import {
@@ -134,7 +135,12 @@ export default function TablesScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const tableBottomSheetRef = useRef<BottomSheet>(null);
   const [number, setNumber] = useState<number>(0);
-  const snapPoints = useMemo(() => ["40%"], []);
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+  const snapPoints = useMemo(() => {
+    if (isMobile) return ["50%"];
+    return ["40%", "50%"];
+  }, [isMobile]);
   const isDarkMode = colorScheme === "dark";
 
   async function onRefresh() {
@@ -200,10 +206,6 @@ export default function TablesScreen() {
     return () => {
       channel.unsubscribe();
     };
-  }, []);
-
-  useEffect(() => {
-    tableBottomSheetRef.current?.close();
   }, []);
 
   if (isLoading) {

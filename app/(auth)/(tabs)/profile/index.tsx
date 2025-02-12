@@ -100,7 +100,7 @@ export default function ProfileScreen() {
           <>
             <View className="bg-zinc-100 p-4 rounded-xl dark:bg-zinc-800 w-full flex flex-col gap-4">
               <Text variant="titleSmall" style={{ color: "gray" }}>
-                Total Ordenes Diarias
+                Ordenes de hoy
               </Text>
 
               <View>

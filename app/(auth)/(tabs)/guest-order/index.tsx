@@ -14,6 +14,8 @@ export default function HomeScreen() {
   const { getUnservedOrders, loading } = useOrderContext();
   React.useEffect(() => {
     getUnservedOrders().then((orders) => setOrders(orders));
+  }, []);
+  React.useEffect(() => {
     const channel = supabase
       .channel("orders-changes")
       .on(

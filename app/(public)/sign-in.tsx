@@ -17,6 +17,7 @@ type TLogin = {
 
 export default function SignInScreen() {
   const [loading, setLoading] = React.useState(false);
+
   const [secureEntry, setSecureEntry] = React.useState(false);
   const {
     control,
@@ -29,6 +30,14 @@ export default function SignInScreen() {
       password: "",
     },
   });
+
+  const onSubmitWithoutEmail = async () => {
+    await supabase.auth.signInWithPassword({
+      email: "admin@admin.com",
+      password: "admin123456",
+    });
+    reset();
+  };
 
   const onSubmit = async (data: TLogin) => {
     setLoading(true);
@@ -142,19 +151,19 @@ export default function SignInScreen() {
                 mode="contained"
                 style={{ marginTop: 20 }}
                 onPress={() => {
-                  if (Platform.OS === "web") {
-                    const input = event?.target as HTMLInputElement;
-                    input.addEventListener("keydown", (e) => {
-                      if (e.key === "Enter") {
-                        handleSubmit(onSubmit)();
-                      }
-                    });
-                  }
-                  handleSubmit(onSubmit)();
+                  handleSubmit(onSubmit);
                 }}
                 loading={loading}
               >
                 Iniciar Sesión
+              </Button>
+              <Button
+                mode="contained-tonal"
+                onPress={() => {
+                  onSubmitWithoutEmail();
+                }}
+              >
+                Continuar sin cuenta
               </Button>
             </View>
             <View className=" flex flex-col gap-2">

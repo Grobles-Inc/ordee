@@ -68,9 +68,32 @@ export const CategoryContextProvider = ({
   };
 
   const deleteCategory = async (id: string) => {
-    const { error } = await supabase.from("categories").delete().eq("id", id);
+    const { data: mealsWithCategory, error } = await supabase
+      .from("meals")
+      .select("id")
+      .eq("id_category", id);
     if (error) {
-      console.error("Error deleting category:", error);
+      console.error("Error finding meals with category:", error);
+      toast.error("Error al eliminar categoría!", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
+      return;
+    }
+    if (mealsWithCategory.length > 0) {
+      toast.error("ERROR : Categoría en uso", {
+        description:
+          "La categoria tiene " +
+          mealsWithCategory.length +
+          " platos asociados",
+      });
+      return;
+    }
+    const { error: deleteError } = await supabase
+      .from("categories")
+      .delete()
+      .eq("id", id);
+    if (deleteError) {
+      console.error("Error deleting category:", deleteError);
       toast.error("Error al eliminar categoría!", {
         icon: <FontAwesome name="times-circle" size={20} color="red" />,
       });

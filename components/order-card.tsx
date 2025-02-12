@@ -25,11 +25,15 @@ export function OrderCard({ order }: { order: IOrder }) {
       }}
       title={"Mesa " + order.tables?.number}
       description={order.served ? null : "En espera"}
-      left={(props) => <List.Icon {...props} icon="food" color="#FF6247" />}
+      left={(props) => (
+        <View className="bg-orange-100 rounded-full p-2 ml-4 flex justify-center items-center ">
+          <List.Icon icon="food" color="#FF6247" />
+        </View>
+      )}
       right={(props) => (
         <View className="flex flex-row items-center gap-4 ">
           <Text
-            variant="bodyMedium"
+            variant="bodyLarge"
             style={{ fontWeight: "bold", textTransform: "uppercase" }}
           >
             {formattedDate}
