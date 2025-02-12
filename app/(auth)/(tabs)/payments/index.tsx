@@ -8,14 +8,29 @@ import { View } from "react-native";
 import { Appbar, Divider, Searchbar, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInUp } from "react-native-reanimated";
+import { IOrder } from "@/interfaces";
+
+const getDateString = (date: Date | undefined): string => {
+  if (!date) {
+    return getDateString(new Date());
+  }
+  return date.toISOString().split('T')[0];
+};
+
+interface GroupedOrder {
+  date: string;
+  orders: IOrder[];
+}
 
 export default function PaidOrdersScreen() {
   const { paidOrders, getPaidOrders, loading } = useOrderContext();
   const [search, setSearch] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
+
   async function onRefresh() {
     await getPaidOrders();
   }
+
   React.useEffect(() => {
     getPaidOrders();
     supabase.channel("db-changes").on(
@@ -30,16 +45,57 @@ export default function PaidOrdersScreen() {
       }
     );
   }, []);
-  const filteredOrders = paidOrders.filter((order) => {
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      return order.tables?.number.toString().toLowerCase().includes(query);
-    }
-    return true;
-  });
+
+  const groupedOrders = React.useMemo(() => {
+    const filtered = paidOrders.filter((order) => {
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase();
+        return order.tables?.number.toString().toLowerCase().includes(query);
+      }
+      return true;
+    });
+
+    const groups = filtered.reduce((acc: { [key: string]: any[] }, order) => {
+      const dateStr = getDateString(order.date ? new Date(order.date) : undefined);
+      if (!acc[dateStr]) {
+        acc[dateStr] = [];
+      }
+      acc[dateStr].push(order);
+      return acc;
+    }, {});
+
+    return Object.entries(groups)
+      .map(([date, orders]) => ({ date, orders }))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [paidOrders, searchQuery]);
+
+  const renderItem = ({ item: group }: { item: GroupedOrder }) => (
+    <View className="mx-4 rounded-lg overflow-hidden">
+      <View className="">
+        <View className="py-2 px-4">
+          <Text variant="bodySmall" style={{ color: "gray" }}>
+            Fecha: {getDateString(new Date(group.date))}
+          </Text>
+        </View>
+      </View>
+      <View>
+        {group.orders.map((order, index) => (
+          <React.Fragment key={order.id}>
+            <View className="px-2">
+              <PaymentCard order={order} />
+            </View>
+            {index < group.orders.length - 1 && (
+              <Divider className="mx-4" />
+            )}
+          </React.Fragment>
+        ))}
+      </View>
+    </View>
+  );
+
   return (
     <View className="flex-1">
-      <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
+      <Appbar.Header className="border-b">
         <Appbar.Content
           titleStyle={{ fontWeight: "bold" }}
           title="Pedidos Pagados"
@@ -60,7 +116,7 @@ export default function PaidOrdersScreen() {
           />
         </Animated.View>
       )}
-      <View className="flex-1 ">
+      <View className="flex-1">
         {loading && (
           <View className="flex flex-col gap-2 p-4">
             <OrderCardSkeleton />
@@ -71,13 +127,13 @@ export default function PaidOrdersScreen() {
         <FlashList
           refreshing={loading}
           contentContainerStyle={{
-            paddingBottom: 100,
+            paddingVertical: 16,
           }}
           onRefresh={onRefresh}
-          renderItem={({ item: order }) => <PaymentCard order={order} />}
-          data={filteredOrders}
-          ItemSeparatorComponent={() => <Divider className="my-2" />}
-          estimatedItemSize={200}
+          renderItem={renderItem}
+          data={groupedOrders}
+          estimatedItemSize={250}
+          ItemSeparatorComponent={() => <View className="h-4" />}
           horizontal={false}
           ListEmptyComponent={
             <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">
