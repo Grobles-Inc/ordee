@@ -70,8 +70,8 @@ export default function PaidOrdersScreen() {
   }, [paidOrders, searchQuery]);
 
   const renderItem = ({ item: group }: { item: GroupedOrder }) => (
-    <View className="mx-4 rounded-lg overflow-hidden">
-      <View className="">
+    <View className="overflow-hidden">
+      <View>
         <View className="py-2 px-4">
           <Text variant="bodySmall" style={{ color: "gray" }}>
             Fecha: {getDateString(new Date(group.date))}
@@ -81,11 +81,11 @@ export default function PaidOrdersScreen() {
       <View>
         {group.orders.map((order, index) => (
           <React.Fragment key={order.id}>
-            <View className="px-2">
+            <View className="">
               <PaymentCard order={order} />
             </View>
             {index < group.orders.length - 1 && (
-              <Divider className="mx-4" />
+              <Divider className="" />
             )}
           </React.Fragment>
         ))}
