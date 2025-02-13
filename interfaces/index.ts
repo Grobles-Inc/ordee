@@ -77,6 +77,7 @@ export interface IMeal {
   image_url: string;
   id_category: string;
   quantity: number | string;
+  stock: boolean;
 }
 
 export interface IMealContextProvider {

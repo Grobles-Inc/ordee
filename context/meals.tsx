@@ -84,7 +84,7 @@ export const MealContextProvider = ({
       .from("meals")
       .select("*")
       .eq("id_tenant", profile.id_tenant)
-      .eq("stock", true)
+      
       .order("created_at", { ascending: false });
 
     if (error) {

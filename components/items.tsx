@@ -44,16 +44,10 @@ export function OrderItemsAccordion({
     setItems((prevItems) => {
       const newItemsSelected = [...prevItems];
       const index = newItemsSelected.findIndex((i) => i.id === item.id);
-      if (quantity > 0) {
-        if (index === -1) {
-          newItemsSelected.push({ ...item, quantity });
-        } else {
-          newItemsSelected[index] = { ...newItemsSelected[index], quantity };
-        }
+      if (index === -1) {
+        newItemsSelected.push({ ...item, quantity });
       } else {
-        if (index !== -1) {
-          newItemsSelected.splice(index, 1);
-        }
+        newItemsSelected[index] = { ...newItemsSelected[index], quantity };
       }
       return newItemsSelected;
     });
