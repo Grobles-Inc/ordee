@@ -19,10 +19,9 @@ export default function Membership() {
 
   return (
     <ScrollView
-      
-contentContainerStyle={{ paddingBottom: 100 }}
-contentInsetAdjustmentBehavior="automatic"
-      className="p-4 bg-white dark:bg-zinc-900 h-screen-safe flex-1 justify-between"
+      contentContainerStyle={{ paddingBottom: 100, justifyContent: "space-between" }}
+      contentInsetAdjustmentBehavior="automatic"
+      className="p-4 bg-white dark:bg-zinc-900 h-screen-safe flex-1"  
     >
       <View className="flex flex-col gap-6  py-8 ">
         <View className="flex flex-row gap-4 items-center ">
@@ -56,7 +55,7 @@ contentInsetAdjustmentBehavior="automatic"
             </Text>
           </View>
         </View>
-        <View className="flex flex-col gap-4 rounded-xl bg-zinc-100 p-4">
+        <View className="flex flex-col gap-4 rounded-xl p-4">
           <View className="flex flex-row gap-4 items-center">
             <AntDesign name="infocirlce" size={24} color="#0ea5e9" />
             <Text className="text-xl">Información del Plan</Text>
@@ -75,11 +74,11 @@ contentInsetAdjustmentBehavior="automatic"
             </View>
             <View className="flex flex-row gap-1 items-center">
               <Text style={{ color: "gray" }}>UUID: </Text>
-              <Text>{profile.id}</Text>
+              <Text style={{ flexShrink: 1, flexWrap: 'wrap' }}>{profile.id}</Text>
             </View>
           </View>
         </View>
-        <View className="flex flex-col gap-4 rounded-xl bg-zinc-100 p-4">
+        <View className="flex flex-col gap-4 rounded-xl p-4">
           <Text>Monto de Recargo</Text>
           <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
             S/. {profile.tenants?.plans?.price.toFixed(2)} soles /{" "}

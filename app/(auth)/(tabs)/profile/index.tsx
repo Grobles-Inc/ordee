@@ -63,7 +63,7 @@ export default function ProfileScreen() {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
       className="bg-white dark:bg-zinc-900 flex-1"
-      contentContainerStyle={{ padding: 16, flexGrow: 1 }}
+      contentContainerStyle={{ padding: 16, flexGrow: 1, paddingBottom: 50 }}
       style={{ marginTop: headerHeight }}
       contentInsetAdjustmentBehavior="automatic"
     >
@@ -149,7 +149,7 @@ export default function ProfileScreen() {
         )}
         <View className="my-4" />
         <Text style={{ color: "gray" }} className="px-6 py-2 uppercase">
-          MENU DE Navegación
+          MENÚ DE NAVEGACIÓN
         </Text>
         <View className="flex flex-col gap-1 w-full items-start bg-zinc-100 dark:bg-zinc-800 rounded-xl p-4">
           <Button
@@ -208,11 +208,11 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      <Text className="text-muted-foreground opacity-40  mt-36 mx-auto ">
+      <Text className="text-muted-foreground opacity-40 mt-10 mx-auto ">
         {profile.id}
       </Text>
-      <Text className="text-muted-foreground opacity-40   mx-auto text-sm">
-        Versión 1.0.1
+      <Text className="text-muted-foreground opacity-40 mb-3 mx-auto text-sm">
+        Versión 1.0.2
       </Text>
 
       <View className="absolute bottom-[150px] right-[-150px] w-[200px] h-[300px] rounded-xl rotate-[-45deg] bg-orange-300 shadow-lg" />
