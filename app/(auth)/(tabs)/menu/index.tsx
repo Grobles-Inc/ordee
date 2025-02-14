@@ -5,7 +5,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Platform, View } from "react-native";
+import { Platform, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   ActivityIndicator,
@@ -91,73 +91,13 @@ export default function MenuScreen() {
     <View className="flex-1">
       <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800 ">
         <Appbar.Content title="Menú" titleStyle={{ fontWeight: "bold" }} />
-        <Menu
-          visible={visibleA}
-          onDismiss={() => setVisibleA(false)}
-          anchor={
-            <Button
-              mode="outlined"
-              onPress={() => setVisibleA(true)}
-              contentStyle={{
-              flexDirection: "row", // Alinear texto e ícono en una fila
-              alignItems: "center", // Centrar verticalmente
-              justifyContent: "center", // Centrar horizontalmente
-              paddingHorizontal: 5, // Espaciado interno
-              }}
-              style={{
-              margin: 16,
-              borderWidth: 0, // Sin borde
-              borderRadius: 8,
-              alignSelf: "center", // Centrar el botón en su contenedor
-              backgroundColor: "#FF6247", // Color de fondo
-              minWidth: 120, // Ancho mínimo para que el contenido se centre mejor
-              }}
-            >
-              <Text className="flex align-middle gap-3 py-4" style={{ color: "white" }}>
-                {getLabel()} 
-                <Ionicons className="pt-10" name="chevron-down" size={20} color="white" />
-                </Text>
-              
-            </Button>
-          }
-          contentStyle={{
-            borderRadius: 12,
-            marginTop: 60,
-            marginLeft: 17 // Set padding top to 50
-          }}
-        >
-          <Menu.Item
-            onPress={() => {
-              setFilter("all");
-              setVisibleA(false);
-            }}
-            title="Todos"
-            leadingIcon={filter === "all" ? "check" : undefined}
-          />
-          <Menu.Item
-            onPress={() => {
-              setFilter("inStock");
-              setVisibleA(false);
-            }}
-            title="En stock"
-            leadingIcon={filter === "inStock" ? "check" : undefined}
-          />
-          <Menu.Item
-            onPress={() => {
-              setFilter("outOfStock");
-              setVisibleA(false);
-            }}
-            title="Sin stock"
-            leadingIcon={filter === "outOfStock" ? "check" : undefined}
-          />
-        </Menu>
         <Appbar.Action
           icon="magnify"
           mode={search ? "contained-tonal" : undefined}
           selected={search}
           onPress={() => setSearch((prev) => !prev)}
         />
-        
+
         <Menu
           visible={visible}
           style={{
@@ -227,6 +167,78 @@ export default function MenuScreen() {
               }}
             />
           )}
+          <Divider />
+          <Text
+            variant="labelSmall"
+            style={{
+              color: "gray",
+            }}
+            className="ml-4"
+          >
+            Platos
+          </Text>
+          <View style={{ margin: 16 }}>
+    {/* Opción "Todos" */}
+    <TouchableOpacity
+      onPress={() => {
+        setFilter("all");
+        setVisible(false);
+      }}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 10,
+      }}
+    >
+      <Ionicons
+        name={filter === "all" ? "checkmark-circle" : "list"}
+        size={20}
+        color={filter === "all" ? "#FF6247" : "#fff"}
+      />
+      <Text style={{ marginLeft: 10 }}>Todos</Text>
+    </TouchableOpacity>
+
+    {/* Opción "En stock" */}
+    <TouchableOpacity
+      onPress={() => {
+        setFilter("inStock");
+        setVisible(false);
+      }}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 10,
+      }}
+    >
+      <Ionicons
+        name={filter === "inStock" ? "checkmark-circle" : "cube"}
+        size={20}
+        color={filter === "inStock" ? "#FF6247" : "#fff"}
+      />
+      <Text style={{ marginLeft: 10 }}>En stock</Text>
+    </TouchableOpacity>
+
+    {/* Opción "Sin stock" */}
+    <TouchableOpacity
+      onPress={() => {
+        setFilter("outOfStock");
+        setVisible(false);
+      }}
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 10,
+      }}
+    >
+      <Ionicons
+        name={filter === "outOfStock" ? "checkmark-circle" : "close-circle"}
+        size={20}
+        color={filter === "outOfStock" ? "#FF6247" : "#fff"}
+      />
+      <Text style={{ marginLeft: 10 }}>Sin stock</Text>
+    </TouchableOpacity>
+  </View>
+
         </Menu>
       </Appbar.Header>
       {search && (
@@ -242,7 +254,7 @@ export default function MenuScreen() {
       <Divider className="hidden web:block" />
       <View className="flex-1">
         {/* Selector de filtro */}
-        
+
 
         {/* Lista de comidas */}
         {loading && <ActivityIndicator className="mt-20" color="red" />}
