@@ -36,7 +36,7 @@ export default function SignInScreen() {
       email: "admin@admin.com",
       password: "admin123456",
     });
-    reset();
+   
   };
 
   const onSubmit = async (data: TLogin) => {
