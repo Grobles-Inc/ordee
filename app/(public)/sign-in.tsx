@@ -150,18 +150,18 @@ export default function SignInScreen() {
               <Button
                 mode="contained"
                 style={{ marginTop: 20 }}
-                onPress={() => {
-                  handleSubmit(onSubmit);
-                }}
+                onPress={
+                  handleSubmit(onSubmit)
+                }
                 loading={loading}
               >
                 Iniciar Sesión
               </Button>
               <Button
                 mode="contained-tonal"
-                onPress={() => {
-                  onSubmitWithoutEmail();
-                }}
+                onPress={
+                  onSubmitWithoutEmail()}
+                
               >
                 Continuar sin cuenta
               </Button>
