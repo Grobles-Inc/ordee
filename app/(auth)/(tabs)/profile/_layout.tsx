@@ -137,19 +137,19 @@ export default function ProfileLayout() {
             headerBackVisible: true,
             headerShadowVisible: true,
             headerLargeTitleShadowVisible: false,
-            headerRight: () => {
-              return Platform.OS === "ios" ? (
-                <NativeButton
-                  title="Cancelar"
-                  color="#FF6247"
-                  onPress={() => router.back()}
-                />
-              ) : (
-                <Button mode="text" onPress={() => router.back()}>
-                  Cancelar
-                </Button>
-              );
-            },
+            // headerRight: () => {
+            //   return Platform.OS === "ios" ? (
+            //     <NativeButton
+            //       title="Cancelar"
+            //       color="#FF6247"
+            //       onPress={() => router.back()}
+            //     />
+            //   ) : (
+            //     <Button mode="text" onPress={() => router.back()}>
+            //       Cancelar
+            //     </Button>
+            //   );
+            // },
           }}
         />
         <Stack.Screen

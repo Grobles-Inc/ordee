@@ -460,7 +460,7 @@ export default function OrderDetailsScreen() {
           </Portal>
         </View>
       </ScrollView>
-      <View className=" bg-transparent dark:bg-zinc-800 bottom-14 p-4 flex flex-col gap-2">
+      <View className=" bg-transparent dark:bg-zinc-800 p-4 flex flex-col gap-2">
         <Button
           mode="contained"
           style={{ marginBottom: 96, margin: 16 }}

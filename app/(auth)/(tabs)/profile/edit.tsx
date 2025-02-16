@@ -179,13 +179,21 @@ export default function EditProfileScreen() {
             />
           </View>
         </View>
-        <View className="mt-16">
+        <View className="mt-14 p-4 gap-2">
           <Button
             mode="contained"
             onPress={handleSubmit(onSubmit)}
             loading={loading}
           >
             Actualizar Perfil
+          </Button>
+          <Button
+            mode="text"
+            onPress={() => router.back()}
+          >
+            <Text className="text-red-500">
+              Cancelar
+            </Text>
           </Button>
         </View>
       </ScrollView>

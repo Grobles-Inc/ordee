@@ -52,8 +52,8 @@ export function MealCard({ meal }: { meal: IMeal }) {
       <Card.Cover source={{ uri: meal.image_url }} />
       <Card.Title
         title={meal.name}
-        subtitle={`${meal.quantity} porciones`}
-        subtitleStyle={{ color: "gray" }}
+        subtitle={`${meal.quantity} porciones - ${meal.stock ? "En Stock" : "Sin Stock"}`}
+        subtitleStyle={{ color: meal.stock ? "#10B981" : "#c26775", fontWeight: "bold" }}
       />
       <Card.Content className="flex flex-row justify-between items-center">
         <Text variant="titleLarge">S/. {meal.price.toFixed(2)}</Text>
@@ -67,12 +67,6 @@ export function MealCard({ meal }: { meal: IMeal }) {
             }}
           />
         </View>
-      </Card.Content>
-      {/* Indicador de stock */}
-      <Card.Content>
-        <Text style={{ color: meal.stock ? "green" : "red" }}>
-          {meal.stock ? "En stock" : "Sin stock"}
-        </Text>
       </Card.Content>
     </Card>
   );
