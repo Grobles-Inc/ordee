@@ -17,10 +17,11 @@
     "@gorhom/bottom-sheet": "5",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/native": "^7.0.0",
-    "@shopify/flash-list": "1.7.1",
+    "@shopify/flash-list": "1.7.3",
     "@supabase/supabase-js": "^2.46.2",
     "date-fns-tz": "^3.2.0",
     "expo": "~52.0.25",
+    "expo-blur": "~14.0.3",
     "expo-crypto": "~14.0.2",
     "expo-device": "~7.0.2",
     "expo-font": "~13.0.1",
@@ -41,7 +42,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-hook-form": "^7.53.2",
-    "react-native": "0.76.6",
+    "react-native": "0.76.7",
     "react-native-calendars": "^1.1307.0",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-gifted-charts": "^1.4.47",
@@ -54,8 +55,7 @@
     "react-native-web": "~0.19.13",
     "sonner-native": "^0.16.2",
     "tailwindcss": "^3.4.15",
-    "use-debounce": "^10.0.4",
-    "expo-blur": "~14.0.3"
+    "use-debounce": "^10.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
