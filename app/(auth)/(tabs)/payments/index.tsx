@@ -9,13 +9,7 @@ import { Appbar, Divider, Searchbar, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { IOrder } from "@/interfaces";
-
-const getDateString = (date: Date | undefined): string => {
-  if (!date) {
-    return getDateString(new Date());
-  }
-  return date.toISOString().split('T')[0];
-};
+import { formatOrderDate } from "@/utils/dateFormatter";
 
 interface GroupedOrder {
   date: string;
@@ -56,7 +50,7 @@ export default function PaidOrdersScreen() {
     });
 
     const groups = filtered.reduce((acc: { [key: string]: any[] }, order) => {
-      const dateStr = getDateString(order.date ? new Date(order.date) : undefined);
+      const dateStr = order.date ? formatOrderDate(new Date(order.date)) : "Unknown Date";
       if (!acc[dateStr]) {
         acc[dateStr] = [];
       }
@@ -74,7 +68,7 @@ export default function PaidOrdersScreen() {
       <View>
         <View className="py-2 px-4">
           <Text variant="bodySmall" style={{ color: "gray" }}>
-            Fecha: {getDateString(new Date(group.date))}
+            Fecha: {group.date}
           </Text>
         </View>
       </View>
