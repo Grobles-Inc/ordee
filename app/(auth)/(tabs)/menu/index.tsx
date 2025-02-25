@@ -59,7 +59,11 @@ export default function MenuScreen() {
 
   const filteredMeals = meals.filter((meal) => {
     if (categoryId && meal.id_category !== categoryId) return false;
-    if (searchQuery.trim() && !meal.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (
+      searchQuery.trim() &&
+      !meal.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+      return false;
     if (filter === "inStock" && !meal.stock) return false;
     if (filter === "outOfStock" && meal.stock) return false;
     return true;
@@ -73,27 +77,31 @@ export default function MenuScreen() {
         <Menu
           visible={visible}
           onDismiss={() => setVisible(false)}
-          anchor={<Appbar.Action icon={MORE_ICON} onPress={() => setVisible(true)} />}
+          anchor={
+            <Appbar.Action icon={MORE_ICON} onPress={() => setVisible(true)} />
+          }
         >
           <Menu.Item
             onPress={() => {
               router.push("/menu/add-meal");
-                setVisible(false);
-              }}
-              leadingIcon="note-plus-outline"
-              title="Agregar nuevo item"
-              />
-              <Menu.Item
-              trailingIcon={categoryId === undefined ? "check" : undefined}
-              onPress={() => {
-                setCategoryId(undefined);
-                setVisible(false);
-              }}
-              leadingIcon="book-alphabet"
-              title="Ver Todos"
-              />
-              <Divider />
-          <Text variant="labelSmall" style={{ color: "gray" }} className="ml-4">Categorías</Text>
+              setVisible(false);
+            }}
+            leadingIcon="note-plus-outline"
+            title="Agregar nuevo item"
+          />
+          <Menu.Item
+            trailingIcon={categoryId === undefined ? "check" : undefined}
+            onPress={() => {
+              setCategoryId(undefined);
+              setVisible(false);
+            }}
+            leadingIcon="book-alphabet"
+            title="Ver Todos"
+          />
+          <Divider />
+          <Text variant="labelSmall" style={{ color: "gray" }} className="ml-4">
+            Categorías
+          </Text>
           <Divider />
           {categories.map((category) => (
             <Menu.Item
@@ -108,8 +116,10 @@ export default function MenuScreen() {
             />
           ))}
           <Divider />
-          <Text variant="labelSmall" style={{ color: "gray" }} className="ml-4">Platos</Text>
-          <View style={{ margin: 16 }}>
+          <Text variant="labelSmall" style={{ color: "gray" }} className="ml-4">
+            Stock
+          </Text>
+          <View style={{ paddingHorizontal: 16 }}>
             {["all", "inStock", "outOfStock"].map((option) => (
               <TouchableOpacity
                 key={option}
@@ -117,7 +127,11 @@ export default function MenuScreen() {
                   setFilter(option);
                   setVisible(false);
                 }}
-                style={{ flexDirection: "row", alignItems: "center", paddingVertical: 10 }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingVertical: 10,
+                }}
               >
                 <Ionicons
                   name={
@@ -134,11 +148,15 @@ export default function MenuScreen() {
                       : "close-circle"
                   }
                   size={20}
-                  color={filter === option ? "#FF6247" : "#fff"}
+                  color={filter === option ? "#FF6247" : "gray"}
                 />
-                <Text style={{ marginLeft: 10 }}>{
-                  option === "all" ? "Todos" : option === "inStock" ? "En stock" : "Sin stock"
-                }</Text>
+                <Text style={{ marginLeft: 10 }}>
+                  {option === "all"
+                    ? "Todos"
+                    : option === "inStock"
+                    ? "En stock"
+                    : "Sin stock"}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -146,7 +164,12 @@ export default function MenuScreen() {
       </Appbar.Header>
       {search && (
         <Animated.View className="m-4" entering={FadeInUp.duration(200)}>
-          <Searchbar placeholder="Buscar item..." onChangeText={setSearchQuery} value={searchQuery} mode="bar" />
+          <Searchbar
+            placeholder="Buscar item..."
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+            mode="bar"
+          />
         </Animated.View>
       )}
       <Divider className="hidden web:block" />
@@ -163,7 +186,9 @@ export default function MenuScreen() {
           ListEmptyComponent={
             <SafeAreaView className="flex flex-col items-center justify-center mt-20">
               <Image
-                source={{ uri: "https://cdn-icons-png.flaticon.com/128/17768/17768786.png" }}
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/128/17768/17768786.png",
+                }}
                 style={{ width: 100, height: 100, opacity: 0.5 }}
               />
               <Text style={{ color: "gray" }}>No hay items para mostrar</Text>

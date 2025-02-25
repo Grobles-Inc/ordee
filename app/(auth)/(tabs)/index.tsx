@@ -218,7 +218,7 @@ export default function TablesScreen() {
 
   return (
     <SafeAreaView className="p-4 bg-white dark:bg-zinc-900 h-screen">
-      <View className="flex flex-row justify-between items-center web:p-4">
+      <View className="flex flex-row pb-4 justify-between items-center web:p-4">
         <View className="flex flex-col gap-2">
           <Text
             className="text-4xl dark:text-white"

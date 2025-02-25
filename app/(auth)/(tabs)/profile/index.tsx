@@ -151,7 +151,7 @@ export default function ProfileScreen() {
         <Text style={{ color: "gray" }} className="px-6 py-2 uppercase">
           MENÚ DE NAVEGACIÓN
         </Text>
-        <View className="flex flex-col gap-1 w-full items-start bg-zinc-100 dark:bg-zinc-800 rounded-xl p-4">
+        <View className="flex flex-col gap-2 w-full items-start bg-red-100 dark:bg-zinc-800 rounded-xl p-4">
           <Button
             icon="account-group-outline"
             onPress={() => router.push("/(auth)/(tabs)/profile/users")}
@@ -159,7 +159,6 @@ export default function ProfileScreen() {
           >
             Usuarios
           </Button>
-          <Divider />
           <Button
             icon="badge-account-outline"
             onPress={() => router.push("/(auth)/(tabs)/profile/membership")}
@@ -167,7 +166,6 @@ export default function ProfileScreen() {
           >
             Membresía
           </Button>
-          <Divider />
           <Button
             icon="book-open-page-variant-outline"
             onPress={() => router.push("/(auth)/(tabs)/profile/categories")}
@@ -175,7 +173,6 @@ export default function ProfileScreen() {
           >
             Categorías
           </Button>
-          <Divider />
           {/* <Button
           icon="account-heart-outline"
           onPress={() => router.push("/(auth)/(tabs)/profile/customers")}
@@ -190,7 +187,6 @@ export default function ProfileScreen() {
           >
             Reporte Diario
           </Button>
-          <Divider />
           {Platform.OS === "web" && (
             <Button icon="logout" onPress={signOut}>
               Cerrar Sesión

@@ -50,7 +50,9 @@ export default function PaidOrdersScreen() {
     });
 
     const groups = filtered.reduce((acc: { [key: string]: any[] }, order) => {
-      const dateStr = order.date ? formatOrderDate(new Date(order.date)) : "Unknown Date";
+      const dateStr = order.date
+        ? formatOrderDate(new Date(order.date))
+        : "Unknown Date";
       if (!acc[dateStr]) {
         acc[dateStr] = [];
       }
@@ -68,7 +70,7 @@ export default function PaidOrdersScreen() {
       <View>
         <View className="py-2 px-4">
           <Text variant="bodySmall" style={{ color: "gray" }}>
-            Fecha: {group.date}
+            {group.date}
           </Text>
         </View>
       </View>
@@ -78,9 +80,7 @@ export default function PaidOrdersScreen() {
             <View className="">
               <PaymentCard order={order} />
             </View>
-            {index < group.orders.length - 1 && (
-              <Divider className="" />
-            )}
+            {index < group.orders.length - 1 && <Divider className="" />}
           </React.Fragment>
         ))}
       </View>
@@ -89,10 +89,13 @@ export default function PaidOrdersScreen() {
 
   return (
     <ScrollView
-      contentContainerStyle={{ paddingBottom: 100, justifyContent: "space-between" }}
+      contentContainerStyle={{
+        paddingBottom: 100,
+        justifyContent: "space-between",
+      }}
     >
       <View className="flex-1">
-        <Appbar.Header className="border-b">
+        <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
           <Appbar.Content
             titleStyle={{ fontWeight: "bold" }}
             title="Pedidos Pagados"

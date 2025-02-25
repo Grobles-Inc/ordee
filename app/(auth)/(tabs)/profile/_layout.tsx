@@ -133,10 +133,8 @@ export default function ProfileLayout() {
           name="edit"
           options={{
             title: "Editar Perfil",
-            headerLargeTitle: true,
             headerBackVisible: true,
             headerShadowVisible: true,
-            headerLargeTitleShadowVisible: false,
             // headerRight: () => {
             //   return Platform.OS === "ios" ? (
             //     <NativeButton

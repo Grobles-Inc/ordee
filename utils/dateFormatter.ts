@@ -4,7 +4,7 @@ import { IOrder } from "../interfaces";
 
 export function formatOrderDate(fecha: Date): string {
   if (fecha instanceof Date && !isNaN(fecha.getTime())) {
-    return format(fecha, "dd 'de' MMMM 'de' yyyy", { locale: es });
+    return format(fecha, "dd/MM/yyyy", { locale: es });
   } else {
     console.error("Fecha inválida:", fecha);
     return "";

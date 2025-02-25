@@ -34,8 +34,7 @@ export default function PaymentsLayout() {
         name="receipt/[id]"
         options={{
           title: "Detalles del Pedido",
-          presentation: "modal",
-          headerShown: false,
+          headerBackTitle: "Atrás ",
         }}
       />
     </Stack>

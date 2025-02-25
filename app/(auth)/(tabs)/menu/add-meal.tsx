@@ -150,13 +150,11 @@ export default function AddMealScreen() {
       {loading ? (
         <ActivityIndicator className="mt-20" />
       ) : (
-        <ScrollView contentInsetAdjustmentBehavior="automatic">
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          contentContainerStyle={{ paddingBottom: 100 }}
+        >
           <View className="flex flex-col justify-center align-middle w-full p-4">
-            <View className="flex flex-col mb-4 justify-center items-center">
-              <Text className="text-3xl font-bold dark:text-white">
-                {id ? "Editar Item" : "Agregar Item"}
-              </Text>
-            </View>
             <Controller
               control={control}
               name="id_category"
@@ -314,9 +312,6 @@ export default function AddMealScreen() {
                 disabled={loading}
               >
                 {id ? "Actualizar" : "Registrar"} Item
-              </Button>
-              <Button mode="text" onPress={() => router.back()}>
-                Cancelar
               </Button>
             </View>
           </View>

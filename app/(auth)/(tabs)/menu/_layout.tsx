@@ -1,9 +1,17 @@
+import { FontAwesome6 } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import React from "react";
-import { Button as NativeButton, Platform } from "react-native";
-import { Button } from "react-native-paper";
+import {
+  Button as NativeButton,
+  Platform,
+  TouchableOpacity,
+  useColorScheme,
+} from "react-native";
+import { Button, Icon } from "react-native-paper";
 
 export default function MenuLayout() {
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === "dark";
   return (
     <Stack>
       <Stack.Screen
@@ -33,9 +41,17 @@ export default function MenuLayout() {
       <Stack.Screen
         name="add-meal"
         options={{
-          title: "Agregar Item",
-          headerShown: false,
+          title: "Formulario de Item",
           presentation: "modal",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <FontAwesome6
+                name="xmark"
+                size={20}
+                color={isDarkMode ? "white" : "black"}
+              />
+            </TouchableOpacity>
+          ),
         }}
       />
     </Stack>

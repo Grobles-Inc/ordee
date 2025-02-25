@@ -220,7 +220,7 @@ const PaywallScreen = () => {
           Adquirir
         </Button>
         <Button mode="text" onPress={() => router.back()}>
-          Cancelar
+          Quizá más tarde
         </Button>
       </View>
     </ScrollView>

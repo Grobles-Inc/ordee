@@ -142,27 +142,27 @@ export default function ReceiptDetailsScreen() {
                 <th align="right">Total</th>
             </tr>
             ${order?.items
-        .map(
-          (item) => `
+              .map(
+                (item) => `
                 <tr>
                     <td class="item-name">${item.name}</td>
                     <td class="quantity-col">${item.quantity}</td>
                     <td class="price-col">${item.price.toFixed(2)}</td>
                     <td class="price-col">${(
-              item.price * Number(item.quantity)
-            ).toFixed(2)}</td>
+                      item.price * Number(item.quantity)
+                    ).toFixed(2)}</td>
                 </tr>
             `
-        )
-        .join("")}
+              )
+              .join("")}
         </table>
         <div class="total-section">
             <table width="100%">
                 <tr>
                     <td><strong>Total:</strong></td>
                     <td align="right"><strong>S/. ${order.total.toFixed(
-          2
-        )}</strong></td>
+                      2
+                    )}</strong></td>
                 </tr>
             </table>
         </div>
@@ -212,7 +212,7 @@ export default function ReceiptDetailsScreen() {
       <ScrollView
         className=" bg-zinc-100 dark:bg-zinc-800"
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 60 }}
       >
         <View className="bg-white p-6 dark:bg-zinc-900">
           <View className="flex-row items-center justify-between">
@@ -319,15 +319,15 @@ export default function ReceiptDetailsScreen() {
             </View>
           ))}
         </View>
-      </ScrollView>
-      <View className=" bg-zinc-100 dark:bg-zinc-800 p-4 flex flex-col gap-2">
-        <Button mode="contained" icon="printer-outline" onPress={printOrder}>
+        <Button
+          mode="contained"
+          style={{ marginTop: 16, marginHorizontal: 16 }}
+          icon="printer-outline"
+          onPress={printOrder}
+        >
           Imprimir Comprobante
         </Button>
-        <Button icon="chevron-left" mode="text" onPress={() => router.back()}>
-          Volver Atrás
-        </Button>
-      </View>
+      </ScrollView>
     </View>
   );
 }

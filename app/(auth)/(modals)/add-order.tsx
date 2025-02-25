@@ -235,11 +235,13 @@ export default function AddOrderScreen() {
           title={`Mesa ${number}`}
           titleStyle={{ fontWeight: "bold", color: "white" }}
         />
-        <Appbar.Action
-          icon={updatingOrder ? "delete-outline" : "eraser"}
-          color="white"
-          onPress={updatingOrder ? onDelete : onReset}
-        />
+        {updatingOrder && (
+          <Appbar.Action
+            icon="delete-outline"
+            color="white"
+            onPress={onDelete}
+          />
+        )}
       </Appbar.Header>
       <View className=" dark:bg-zinc-900 flex-1">
         <ScrollView contentInsetAdjustmentBehavior="automatic">
@@ -336,8 +338,10 @@ export default function AddOrderScreen() {
         </ScrollView>
         <Button
           style={{
-            margin: 16,
-            marginBottom: 24,
+            margin: 20,
+            position: "absolute",
+            width: "90%",
+            bottom: 36,
           }}
           mode="contained"
           onPress={updatingOrder ? handleSubmit(onUpdate) : handleSubmit(onAdd)}

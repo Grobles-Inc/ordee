@@ -365,7 +365,7 @@ export default function OrderDetailsScreen() {
               <View className="flex flex-col gap-4">
                 <View className="flex flex-row justify-between px-4">
                   <Text variant="titleSmall" className="w-60">
-                    Items de la Orden
+                    {""}
                   </Text>
                   <Text variant="titleSmall">Precio/u</Text>
                   <Text variant="titleSmall">Und.</Text>
@@ -459,11 +459,9 @@ export default function OrderDetailsScreen() {
             </Modal>
           </Portal>
         </View>
-      </ScrollView>
-      <View className=" bg-transparent dark:bg-zinc-800 p-4 flex flex-col gap-2">
         <Button
           mode="contained"
-          style={{ marginBottom: 96, margin: 16 }}
+          style={{ marginTop: 64, margin: 16 }}
           icon="printer-outline"
           onPress={() => {
             setModalVisible(true);
@@ -471,7 +469,7 @@ export default function OrderDetailsScreen() {
         >
           Imprimir Comprobante
         </Button>
-      </View>
+      </ScrollView>
     </View>
   );
 }
