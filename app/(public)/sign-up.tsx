@@ -2,18 +2,22 @@ import { supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { toast } from "sonner-native";
-type TSignUp = {
-  email: string;
-  password: string;
-  name: string;
-  company: string;
-  last_name: string;
-};
+import { z } from "zod";
+
+const SignUpSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  company: z.string().min(1, "Company name is required"),
+});
+
 export default function SignUpScreen() {
   const [loading, setLoading] = React.useState(false);
   const [secureEntry, setSecureEntry] = React.useState(false);
@@ -22,81 +26,68 @@ export default function SignUpScreen() {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<TSignUp>({
+  } = useForm<z.infer<typeof SignUpSchema>>({
+    resolver: zodResolver(SignUpSchema),
     defaultValues: {
       email: "",
       password: "",
       name: "",
       company: "",
-      last_name: "",
+      lastName: "",
     },
   });
 
-  const onSubmit = async (data: TSignUp) => {
+  const onSubmit = async (data: z.infer<typeof SignUpSchema>) => {
     setLoading(true);
-
     try {
-      const { data: user, error: signUpError } = await supabase.auth.signUp({
+      // Prepara los datos que necesita el trigger en options.data
+      const userMetadata = {
+        name: data.name,
+        lastName: data.lastName, // Asegúrate de que el nombre de la clave coincida con lo que espera la función (lastName vs last_name)
+        company: data.company,
+        // Puedes añadir otros datos iniciales si tu función los maneja
+      };
+
+      // ÚNICA LLAMADA: El trigger se encargará del resto (crear tenant y account)
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
-
         options: {
-          data: {
-            company: data.company,
-          },
+          data: userMetadata // Pasar los datos para el trigger
         },
       });
 
-      if (signUpError || !user.user?.user_metadata) {
+      if (signUpError) {
+        // El error ahora podría venir del trigger si falla (ej. company vacío, plan default no existe, error en INSERT en ordee.accounts)
         console.error("SIGNUP ERROR", signUpError);
+        setLoading(false);
+
+        alert(`Sign up failed: ${signUpError.message}`); // El mensaje puede ser genérico ("Database error saving new user")
         return;
       }
 
-      const { error: companyError } = await supabase.from("tenants").insert({
-        name: data.company,
-        id_admin: user?.user?.id,
-      });
+      if (!authData || !authData.user) {
+        console.error("SIGNUP ISSUE", "No user data returned after sign up.");
+        alert("Sign up process issue. Please try again or contact support.");
+        setLoading(false);
 
-      if (companyError) {
-        console.error("COMPANY INSERT ERROR", companyError);
         return;
       }
 
-      // Wait for a short period to ensure the insert is processed
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      // ¡Éxito! El usuario está en auth.users, y el trigger *debería* haber creado
+      // el tenant en ordee.tenants y el account en ordee.accounts.
+      console.log("Sign up successful, trigger executed:", authData.user);
+      toast.success("Cuenta creada correctamente");
+      // Redirige al usuario a la página principal o dashboard
+      // router.push('/dashboard'); // O la ruta que corresponda
 
-      const { data: companyData, error: companyFetchError } = await supabase
-        .from("tenants")
-        .select("*")
-        .eq("id_admin", user?.user?.id)
-        .single();
-      if (companyFetchError || !companyData) {
-        console.error("COMPANY FETCH ERROR", companyFetchError);
-      }
-
-      const { error: accountError } = await supabase.from("accounts").insert({
-        name: data.name,
-        last_name: data.last_name,
-        role: "admin",
-        id_tenant: companyData.id,
-        id: user?.user?.id,
-      });
-
-      if (accountError) {
-        console.error("ACCOUNT ERROR", accountError);
-      }
-
-      reset();
-      toast.success("Cuenta creada exitosamente!", {
-        icon: <FontAwesome name="check-circle" size={20} color="green" />,
-      });
     } catch (error) {
-      console.error("ERROR", error);
-    } finally {
+      console.error("UNEXPECTED SIGNUP ERROR", error);
       setLoading(false);
-    }
 
-    router.push("/(auth)/(tabs)");
+      toast.error("Ocurrió un error inesperado durante el registro");
+    }
+    setLoading(false);
   };
 
   return (
@@ -176,20 +167,20 @@ export default function SignUpScreen() {
             />
             <Controller
               control={control}
-              name="last_name"
+              name="lastName"
               render={({ field: { onChange, value } }) => (
                 <View className="flex flex-col gap-2">
                   <TextInput
                     label="Apellidos"
                     mode="outlined"
-                    error={errors.last_name ? true : false}
+                    error={errors.lastName ? true : false}
                     onChangeText={onChange}
                     value={value}
                   />
-                  {errors.last_name && (
+                  {errors.lastName && (
                     <View className="flex flex-row gap-1">
                       <Text className="text-red-500">
-                        {errors.last_name.message}
+                        {errors.lastName.message}
                       </Text>
                     </View>
                   )}

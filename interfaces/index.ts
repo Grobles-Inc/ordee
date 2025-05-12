@@ -142,7 +142,7 @@ export interface IOrderContextProvider {
   getOrderById: (id: string) => Promise<IOrder>;
   order: IOrder;
   paidOrders: IOrder[];
-  deleteOrder: (id: string, id_table: number, order: any) => Promise<void>;
+  deleteOrder: (orderId: string, tableId: string, itemsToRestore: { meal_id: string; quantity: number }[]) => Promise<void>;
 
   getDailyPaidOrders: () => Promise<IOrder[]>;
   getUnpaidOrders: () => Promise<IOrder[]>;

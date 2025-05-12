@@ -37,7 +37,9 @@
         {
           "photosPermission": "Ordee tendra acceso a tus fotos para poder agregarlas a tus menues."
         }
-      ]
+      ],
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

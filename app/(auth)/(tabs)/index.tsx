@@ -90,7 +90,7 @@ function TableSvg({ table }: { table: ITable }) {
         [
           {
             text: "Aceptar",
-            onPress: () => {},
+            onPress: () => { },
             style: "cancel",
           },
         ],
@@ -221,6 +221,7 @@ export default function TablesScreen() {
       <View className="flex flex-row pb-4 justify-between items-center web:p-4">
         <View className="flex flex-col gap-2">
           <Text
+            onPress={() => supabase.auth.signOut()}
             className="text-4xl dark:text-white"
             style={{ fontWeight: "700" }}
           >

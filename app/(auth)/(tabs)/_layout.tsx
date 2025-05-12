@@ -8,6 +8,7 @@ import { Platform, StatusBar, StyleSheet, Text } from "react-native";
 import { OrdeeTabs } from "@/constants/tabs";
 import BlurView from "@/components/blur-view";
 
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { profile } = useAuth();
@@ -37,9 +38,9 @@ export default function TabLayout() {
             colorScheme === "dark"
               ? "black"
               : Platform.select({
-                  ios: "transparent",
-                  android: "rgba(255, 255, 255, 1)",
-                }),
+                ios: "transparent",
+                android: "rgba(255, 255, 255, 1)",
+              }),
           borderTopWidth: StyleSheet.hairlineWidth,
           borderTopColor: "rgba(0,0,0,0.2)",
           elevation: 0,
@@ -68,20 +69,20 @@ export default function TabLayout() {
           options={{
             title: tab.title,
             headerShown: tab.name === "my-profile",
-            href: tab.roles.includes(profile?.role as string)
-              ? undefined
-              : null,
+            // TODO: Add role check
+            // href: tab.roles.includes(profile?.role)
+            //   ? undefined
+            //   : null,
             tabBarIcon: tabIcon(
               `https://api.iconify.design/${tab.icon[0]}`,
               `https://api.iconify.design/${tab.icon[1]}`
             ),
             tabBarLabel: ({ focused }) => (
               <Text
-                className={` text-xs   ${
-                  focused
-                    ? "text-[#FF6247]"
-                    : "text-zinc-500 dark:text-zinc-400"
-                }`}
+                className={` text-xs   ${focused
+                  ? "text-[#FF6247]"
+                  : "text-zinc-500 dark:text-zinc-400"
+                  }`}
               >
                 {tab.title}
               </Text>

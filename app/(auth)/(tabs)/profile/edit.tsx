@@ -1,18 +1,16 @@
 import { useAuth } from "@/context";
 import { IUser } from "@/interfaces";
+import { useHeaderHeight } from "@react-navigation/elements";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
-  Keyboard,
   KeyboardAvoidingView,
   ScrollView,
   Text,
-  Touchable,
-  View,
+  View
 } from "react-native";
-import { useHeaderHeight } from "@react-navigation/elements";
 import {
   ActivityIndicator,
   Avatar,
@@ -20,14 +18,11 @@ import {
   IconButton,
   TextInput,
 } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 export default function EditProfileScreen() {
   const { updateProfile, loading, profile, session } = useAuth();
   const [image_url, setImage_url] = React.useState<string>(profile?.image_url);
   const [isLoading, setIsLoading] = React.useState(false);
-  const headerHeight = useHeaderHeight();
   const {
     control,
     handleSubmit,
