@@ -87,6 +87,31 @@ export function AuthContextProvider({
         throw error;
       }
 
+      // Funcion para crear un perfil si no existe
+      if (!data || data.length === 0) {
+        console.log("No profile found in accounts, user might be new");
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user?.user_metadata) {
+          const { error: createError } = await supabase
+            .from("accounts")
+            .insert({
+              id: user.id,
+              name: user.user_metadata.name || user.user_metadata.full_name || "Usuario",
+              last_name: user.user_metadata.lastName || user.user_metadata.last_name || "",
+              role: "admin",
+              image_url: "",
+            });
+          
+          if (createError) {
+            console.error("Error creating profile:", createError);
+          } else {
+            return getProfile(id, retryCount - 1);
+          }
+        }
+        setProfile(null);
+        return;
+      }
+
       setProfile(data[0]);
     } catch (error) {
       console.error("Profile fetch error:", error);

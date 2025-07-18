@@ -11,7 +11,7 @@ import BlurView from "@/components/blur-view";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { profile } = useAuth();
+  const { profile, loading } = useAuth();
 
   const tabIcon = (focusedIcon: string, unfocusedIcon: string) => {
     return ({ color, focused }: { color: string; focused: boolean }) => (
@@ -32,15 +32,10 @@ export default function TabLayout() {
         headerShown: false,
         lazy: true,
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
         tabBarStyle: {
           position: "absolute",
-          backgroundColor:
-            colorScheme === "dark"
-              ? "black"
-              : Platform.select({
-                ios: "transparent",
-                android: "rgba(255, 255, 255, 1)",
-              }),
+          backgroundColor: colorScheme === "dark" ? "#000000" : "#ffffff",
           borderTopWidth: StyleSheet.hairlineWidth,
           borderTopColor: "rgba(0,0,0,0.2)",
           elevation: 0,
@@ -50,16 +45,16 @@ export default function TabLayout() {
         },
         tabBarHideOnKeyboard: true,
         freezeOnBlur: true,
-        tabBarBackground: () =>
-          Platform.OS === "ios" ? (
-            <BlurView
-              tint={
-                colorScheme === "dark" ? "dark" : "systemThickMaterialLight"
-              }
-              intensity={80}
-              style={StyleSheet.absoluteFill}
-            />
-          ) : null,
+        // tabBarBackground: () =>
+        //   Platform.OS === "ios" ? (
+        //     <BlurView
+        //       tint={
+        //         colorScheme === "dark" ? "dark" : "systemThickMaterialLight"
+        //       }
+        //       intensity={80}
+        //       style={StyleSheet.absoluteFill}
+        //     />
+        //   ) : null,
       }}
     >
       {OrdeeTabs.map((tab) => (
@@ -69,10 +64,9 @@ export default function TabLayout() {
           options={{
             title: tab.title,
             headerShown: tab.name === "my-profile",
-            // TODO: Add role check
-            // href: tab.roles.includes(profile?.role)
-            //   ? undefined
-            //   : null,
+            href: !profile?.role || tab.roles.includes(profile.role)
+              ? undefined
+              : null,
             tabBarIcon: tabIcon(
               `https://api.iconify.design/${tab.icon[0]}`,
               `https://api.iconify.design/${tab.icon[1]}`

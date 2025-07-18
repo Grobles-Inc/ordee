@@ -77,9 +77,19 @@ export default function SignUpScreen() {
       // ¡Éxito! El usuario está en auth.users, y el trigger *debería* haber creado
       // el tenant en ordee.tenants y el account en ordee.accounts.
       console.log("Sign up successful, trigger executed:", authData.user);
+      
+      // Asignar rol "admin" por defecto al usuario recién registrado
+      const { error: roleUpdateError } = await supabase
+        .from("accounts")
+        .update({ role: "admin" })
+        .eq("id", authData.user.id);
+
+      if (roleUpdateError) {
+        console.error("Error updating user role:", roleUpdateError);
+      }
+
       toast.success("Cuenta creada correctamente");
-      // Redirige al usuario a la página principal o dashboard
-      // router.push('/dashboard'); // O la ruta que corresponda
+
 
     } catch (error) {
       console.error("UNEXPECTED SIGNUP ERROR", error);
