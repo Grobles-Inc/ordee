@@ -26,15 +26,12 @@ export default function AddOrderScreen() {
     setUpdatingOrder,
   } = useOrderContext();
   const { profile } = useAuth();
-  // const { getCustomers, customers } = useCustomer();
-  // const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [count, setCount] = useState<number | null>(0);
   const [isRegisterDisabled, setIsRegisterDisabled] = useState(false);
 
   if (!profile) return null;
 
   useEffect(() => {
-    // getCustomers();
     getOrdersCountByMonth().then((count) => setCount(count));
   }, []);
 
@@ -54,7 +51,7 @@ export default function AddOrderScreen() {
             try {
               await deleteOrder(
                 updatingOrder?.id as string,
-                Number(updatingOrder?.id_table),
+                updatingOrder?.id_table as string,
                 updatingOrder
               );
               router.replace("/(auth)/(tabs)/orders");
@@ -135,7 +132,6 @@ export default function AddOrderScreen() {
         id: updatingOrder?.id || data.id,
         id_user: updatingOrder?.id_user || data.id_user,
         paid: updatingOrder?.paid || data.paid,
-        // id_customer: updatingOrder?.id_customer || data.id_customer || null,
         id_table: id_table,
         items: itemsSelected,
         total: itemsSelected.reduce(
@@ -147,20 +143,6 @@ export default function AddOrderScreen() {
       await updateOrder(orderData);
       reset();
       setUpdatingOrder(null);
-
-      // if (data.free) {
-      //   const selectedCustomer = customers.find(
-      //     (c) => c.id === data.id_customer
-      //   );
-      //   if (selectedCustomer) {
-      //     await supabase
-      //       .from("customers")
-      //       .update({
-      //         total_free_orders: selectedCustomer.total_free_orders - 1,
-      //       })
-      //       .eq("id", selectedCustomer.id);
-      //   }
-      // }
     } catch (err) {
       console.error("An error occurred:", err);
       alert("Algo sucedió mal, vuelve a intentarlo.");
@@ -187,27 +169,12 @@ export default function AddOrderScreen() {
         paid: false,
         id_table: id_table,
         items: itemsSelected,
-        // id_customer: data.id_customer || null,
         total: itemsSelected.reduce(
           (acc, item) => acc + Number(item.quantity) * Number(item.price),
           0
         ),
       };
       addOrder(orderData);
-      // if (data.free) {
-      //   const selectedCustomer = customers.find(
-      //     (c) => c.id === data.id_customer
-      //   );
-      //   console.log("selectedCustomer", selectedCustomer);
-      //   if (selectedCustomer) {
-      //     await supabase
-      //       .from("customers")
-      //       .update({
-      //         total_free_orders: selectedCustomer.total_free_orders - 1,
-      //       })
-      //       .eq("id", selectedCustomer.id);
-      //   }
-      // }
 
       reset();
       setItemsSelected([]);
@@ -246,70 +213,7 @@ export default function AddOrderScreen() {
       <View className=" dark:bg-zinc-900 flex-1">
         <ScrollView contentInsetAdjustmentBehavior="automatic">
           <View className="flex flex-col w-full items-center">
-            <View className="w-full  overflow-hidden flex flex-col bg-white dark:bg-zinc-900">
-              {/* FEATURE: Fixed Customers */}
-              {/* <Controller
-              control={control}
-              name="id_customer"
-              render={({ field: { value } }) => (
-                <View className="flex flex-row gap-2 justify-between items-center p-4 w-full">
-                  <View>
-                    <Text variant="bodyLarge">Cliente Fijo</Text>
-                    {value && (
-                      <Text variant="bodyMedium" className="opacity-60">
-                        {(() => {
-                          const customer = customers.find(
-                            (c) => c.id === value
-                          );
-                          return (
-                            <>
-                              {customer?.full_name} -{" "}
-                              {customer?.total_free_orders} pedidos gratis
-                            </>
-                          );
-                        })()}
-                      </Text>
-                    )}
-                  </View>
-                  <Switch
-                    value={!!value}
-                    onValueChange={(checked) => {
-                      if (checked) {
-                        setShowCustomerModal(true);
-                      } else {
-                        setValue("id_customer", undefined);
-                        setValue("free", false);
-                      }
-                    }}
-                  />
-                </View>
-              )}
-            />
-            <Divider />
-
-            {(() => {
-              const selectedCustomer = customers.find(
-                (c) => c.id === watch("id_customer")
-              );
-              return (selectedCustomer?.total_free_orders ?? 0) > 0 ? (
-                <>
-                  <Controller
-                    control={control}
-                    name="free"
-                    render={({ field: { onChange, value } }) => (
-                      <View className="flex flex-row gap-2 justify-between items-center p-4">
-                        <View>
-                          <Text variant="titleMedium">Orden Gratuita</Text>
-                        </View>
-                        <Switch value={value} onValueChange={onChange} />
-                      </View>
-                    )}
-                  />
-                  <Divider />
-                </>
-              ) : null;
-            })()} */}
-
+            <View className="w-full  overflow-hidden flex flex-col bg-white">
               <Controller
                 control={control}
                 name="to_go"
@@ -327,14 +231,6 @@ export default function AddOrderScreen() {
               />
             </View>
           </View>
-
-          {/* <CustomerFinder
-          watch={watch}
-          setValue={setValue}
-          setIsRegisterDisabled={setIsRegisterDisabled}
-          showCustomerModal={showCustomerModal}
-          setShowCustomerModal={setShowCustomerModal}
-        /> */}
         </ScrollView>
         <Button
           style={{

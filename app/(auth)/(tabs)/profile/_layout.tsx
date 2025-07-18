@@ -1,5 +1,5 @@
-import { useCategoryContext, useCustomer } from "@/context";
-import { ICategory, ICustomer } from "@/interfaces";
+import { useCategoryContext } from "@/context";
+import { ICategory } from "@/interfaces";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetTextInput,
@@ -25,32 +25,19 @@ import { Button, Text } from "react-native-paper";
 import { toast } from "sonner-native";
 
 export default function ProfileLayout() {
-  const customerBottomSheetRef = useRef<BottomSheet>(null);
   const categoryBottomSheetRef = useRef<BottomSheet>(null);
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const { addCategory } = useCategoryContext();
-  const { addCustomer, loading } = useCustomer();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
   const snapPoints = useMemo(() => {
     if (isMobile) return ["50%"];
     return ["40%", "50%"];
   }, [isMobile]);
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ICustomer>({
-    defaultValues: {
-      full_name: "",
-      total_free_orders: 0,
-      total_orders: 0,
-    },
-  });
+
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop
@@ -62,15 +49,6 @@ export default function ProfileLayout() {
     []
   );
 
-  const onSubmit = async (data: ICustomer) => {
-    addCustomer({
-      ...data,
-      total_free_orders: Number(data.total_free_orders),
-      total_orders: Number(data.total_orders),
-    });
-    customerBottomSheetRef.current?.close();
-    reset();
-  };
 
   const onSubmitCategory = async (e: any) => {
     if (name === "") {
@@ -89,7 +67,6 @@ export default function ProfileLayout() {
   };
 
   useEffect(() => {
-    customerBottomSheetRef.current?.close();
     categoryBottomSheetRef.current?.close();
   }, []);
   return (
@@ -187,33 +164,7 @@ export default function ProfileLayout() {
             },
           }}
         />
-        <Stack.Screen
-          name="customers"
-          options={{
-            title: "Clientes Fijos",
-            headerLargeTitle: true,
-            headerShadowVisible: true,
-            headerLargeTitleShadowVisible: false,
-            headerBackVisible: true,
 
-            headerRight: () => {
-              return Platform.OS === "ios" ? (
-                <NativeButton
-                  title="Agregar"
-                  color="#FF6247"
-                  onPress={() => customerBottomSheetRef.current?.expand()}
-                />
-              ) : (
-                <Button
-                  mode="contained-tonal"
-                  onPress={() => customerBottomSheetRef.current?.expand()}
-                >
-                  Agregar
-                </Button>
-              );
-            },
-          }}
-        />
         <Stack.Screen
           name="settings"
           options={{
@@ -235,104 +186,6 @@ export default function ProfileLayout() {
           }}
         />
       </Stack>
-      <BottomSheet
-        ref={customerBottomSheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        enablePanDownToClose={true}
-        handleIndicatorStyle={{ backgroundColor: "gray" }}
-        backgroundStyle={{ backgroundColor: isDarkMode ? "#262626" : "white" }}
-        backdropComponent={renderBackdrop}
-      >
-        <BottomSheetView className="p-4 flex flex-col gap-4 ">
-          <Controller
-            control={control}
-            name="full_name"
-            rules={{
-              required: "Requerido",
-            }}
-            render={({ field: { onChange, value } }) => (
-              <View className="flex flex-col gap-2">
-                <Text variant="bodyMedium" style={{ color: "gray" }}>
-                  Nombres Completos
-                </Text>
-                <BottomSheetTextInput
-                  className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
-                  value={value}
-                  onChangeText={onChange}
-                />
-                {errors.full_name && (
-                  <Text className="text-red-500 ml-4">
-                    {errors.full_name.message}
-                  </Text>
-                )}
-              </View>
-            )}
-          />
-          <Controller
-            control={control}
-            name="total_orders"
-            render={({ field: { onChange, value } }) => (
-              <View className="flex flex-col gap-2">
-                <Text variant="bodyMedium" style={{ color: "gray" }}>
-                  Total de Ordenes
-                </Text>
-                <BottomSheetTextInput
-                  className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
-                  value={String(value)}
-                  onChangeText={onChange}
-                />
-
-                {errors.total_orders && (
-                  <Text className="text-red-500 ml-4">
-                    {errors.total_orders.message}
-                  </Text>
-                )}
-              </View>
-            )}
-          />
-          <Controller
-            control={control}
-            name="total_free_orders"
-            render={({ field: { onChange, value } }) => (
-              <View className="flex flex-col gap-2">
-                <Text variant="bodyMedium" style={{ color: "gray" }}>
-                  Ordenes Gratis
-                </Text>
-                <BottomSheetTextInput
-                  className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
-                  value={String(value)}
-                  onChangeText={onChange}
-                />
-                {errors.total_free_orders && (
-                  <Text className="text-red-500 ml-4">
-                    {errors.total_free_orders.message}
-                  </Text>
-                )}
-              </View>
-            )}
-          />
-
-          <Button
-            mode="contained"
-            onPress={handleSubmit(onSubmit)}
-            loading={loading}
-          >
-            Registrar Cliente
-          </Button>
-
-          <Button
-            onPress={() => {
-              customerBottomSheetRef.current?.close();
-              setName("");
-              setDescription("");
-            }}
-            mode="text"
-          >
-            Cancelar
-          </Button>
-        </BottomSheetView>
-      </BottomSheet>
       <BottomSheet
         ref={categoryBottomSheetRef}
         index={-1}

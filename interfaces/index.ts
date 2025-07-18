@@ -6,7 +6,6 @@ export interface ITenant {
   id_admin: string;
   id_plan: string;
   logo: string;
-  created_at: Date;
   plans?: IPlan;
   queries: number;
 }
@@ -34,30 +33,15 @@ export interface IAuthContextProvider {
   getUsers: () => void;
   users: IUser[];
 }
-export interface ICustomerContextProvider {
-  loading: boolean;
-  deleteCustomer: (id: string) => void;
-  addCustomer: (customer: ICustomer) => void;
-  getCustomerById: (id: string) => void;
-  getCustomers: () => void;
-  customers: ICustomer[];
-  customer: ICustomer;
-}
+
 
 export interface ICategory {
   id?: string;
   name: string;
   description: string;
-  created_at?: Date;
   id_tenant?: string;
 }
-export interface ICustomer {
-  id?: string;
-  id_tenant: string;
-  full_name: string;
-  total_orders: number;
-  total_free_orders: number;
-}
+
 
 export interface ICategoryContextProvider {
   addCategory: (category: ICategory) => Promise<void>;
@@ -73,7 +57,6 @@ export interface IMeal {
   name: string;
   price: number;
   categories?: ICategory;
-  created_at?: Date;
   image_url: string;
   id_category: string;
   quantity: number | string;
@@ -104,11 +87,9 @@ export interface IOrder {
   id_table: string;
   date?: Date;
   users?: IUser;
-  customers?: ICustomer;
   tenants?: ITenant;
   id_tenant: string;
   tables?: ITable;
-  id_customer?: string | null;
   id_user: string;
   free?: boolean;
   served: boolean;

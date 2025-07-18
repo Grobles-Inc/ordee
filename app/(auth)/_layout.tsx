@@ -1,6 +1,6 @@
 import {
   CategoryContextProvider,
-  CustomerContextProvider,
+
   MealContextProvider,
   OrderContextProvider,
 } from "@/context";
@@ -10,23 +10,23 @@ export default function Layout() {
     <OrderContextProvider>
       <CategoryContextProvider>
         <MealContextProvider>
-          <CustomerContextProvider>
-            <Stack
-              screenOptions={{
-                gestureEnabled: false,
+
+          <Stack
+            screenOptions={{
+              gestureEnabled: false,
+            }}
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="(modals)/add-order"
+              options={{
+                title: "Agregar Orden",
+                presentation: "card",
+                headerShown: false,
               }}
-            >
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="(modals)/add-order"
-                options={{
-                  title: "Agregar Orden",
-                  presentation: "card",
-                  headerShown: false,
-                }}
-              />
-            </Stack>
-          </CustomerContextProvider>
+            />
+          </Stack>
+
         </MealContextProvider>
       </CategoryContextProvider>
     </OrderContextProvider>

@@ -188,36 +188,36 @@ export default function OrderDetailsScreen() {
                       <th align="right">Total</th>
                   </tr>
                   ${order?.items
-                    .map(
-                      (item) => `
+        .map(
+          (item) => `
                       <tr>
                           <td class="item-name">${item.name}</td>
                           <td class="quantity-col">${item.quantity}</td>
                           <td class="price-col">${(typeof item.price ===
-                          "number"
-                            ? item.price
-                            : parseFloat(item.price)
-                          ).toFixed(2)}</td>
+              "number"
+              ? item.price
+              : parseFloat(item.price)
+            ).toFixed(2)}</td>
                           <td class="price-col">${(
-                            (typeof item.price === "number"
-                              ? item.price
-                              : parseFloat(item.price)) *
-                            (typeof item.quantity === "number"
-                              ? item.quantity
-                              : parseInt(item.quantity))
-                          ).toFixed(2)}</td>
+              (typeof item.price === "number"
+                ? item.price
+                : parseFloat(item.price)) *
+              (typeof item.quantity === "number"
+                ? item.quantity
+                : parseInt(item.quantity))
+            ).toFixed(2)}</td>
                       </tr>
                   `
-                    )
-                    .join("")}
+        )
+        .join("")}
               </table>
               <div class="total-section">
                   <table width="100%">
                       <tr>
                           <td><strong>Total:</strong></td>
                           <td align="right"><strong>S/. ${order.total.toFixed(
-                            2
-                          )}</strong></td>
+          2
+        )}</strong></td>
                       </tr>
                   </table>
               </div>
@@ -351,14 +351,6 @@ export default function OrderDetailsScreen() {
                   </Chip>
                 )}
               </View>
-              {order.id_customer && (
-                <View className="flex flex-col gap-1 items-start">
-                  <Text style={{ color: "gray" }}>Cliente:</Text>
-                  <Text style={{ fontWeight: "bold" }}>
-                    {order.customers?.full_name}
-                  </Text>
-                </View>
-              )}
             </View>
 
             <View className="flex flex-col gap-4">

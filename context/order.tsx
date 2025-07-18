@@ -82,7 +82,6 @@ export const OrderContextProvider = ({
       // 1. Prepare order data (excluding items)
       const orderDataToInsert = {
         id_table: order.id_table,
-        id_customer: order.id_customer,
         id_user: order.id_user,
         free: order.free,
         served: order.served,
@@ -380,7 +379,6 @@ export const OrderContextProvider = ({
       .select(`
         *,
         users:id_user(*),
-        customers:id_customer(full_name),
         tenants:id_tenant(name, logo),
         tables:id_table(number),
         order_meals!inner (
