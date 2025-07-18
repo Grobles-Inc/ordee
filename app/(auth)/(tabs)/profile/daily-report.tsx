@@ -76,11 +76,14 @@ LocaleConfig.locales["es"] = {
 };
 LocaleConfig.defaultLocale = "es";
 const calculateOrderTotal = (order: IOrder): number => {
-  return order.items.reduce(
-    (sum, meal) =>
-      sum + (Number(meal.price) || 0) * (Number(meal.quantity) || 1),
-    0
-  );
+  if (order.order_meals && Array.isArray(order.order_meals)) {
+    return order.order_meals.reduce(
+      (sum: number, meal: any) =>
+        sum + (Number(meal.meals?.price) || 0) * (Number(meal.quantity) || 1),
+      0
+    );
+  }
+  return order.total || 0;
 };
 
 const timeZone = "America/Lima";
@@ -138,10 +141,13 @@ export default function DailyReportScreen() {
           const orderTotal = calculateOrderTotal(order);
 
           // Count plates
-          order.items.forEach((item) => {
-            const count = plateCounts.get(item.name) || 0;
-            plateCounts.set(item.name, Number(count) + Number(item.quantity || 1));
-          });
+          if (order.order_meals && Array.isArray(order.order_meals)) {
+            order.order_meals.forEach((meal: any) => {
+              const mealName = meal.meals?.name || 'Unknown';
+              const count = plateCounts.get(mealName) || 0;
+              plateCounts.set(mealName, count + Number(meal.quantity || 1));
+            });
+          }
 
           salesByHour[timeIndex] += orderTotal;
           dailyTotal += orderTotal;

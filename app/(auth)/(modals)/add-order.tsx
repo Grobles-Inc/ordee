@@ -49,12 +49,22 @@ export default function AddOrderScreen() {
           text: "Aceptar",
           onPress: async () => {
             try {
-              await deleteOrder(
-                updatingOrder?.id as string,
-                updatingOrder?.id_table as string,
-                updatingOrder
-              );
-              router.replace("/(auth)/(tabs)/orders");
+              if (updatingOrder && updatingOrder.id && updatingOrder.id_table) {
+                const itemsToRestore = updatingOrder.items.map((item) => ({
+                  meal_id: item.id,
+                  quantity: Number(item.quantity),
+                }));
+
+                await deleteOrder(
+                  updatingOrder.id,
+                  updatingOrder.id_table,
+                  itemsToRestore
+                );
+                router.replace("/(auth)/(tabs)/orders");
+              } else {
+                console.error("No se pudo eliminar la orden: datos incompletos.");
+                alert("No se pudo eliminar la orden, falta información.");
+              }
             } catch (err) {
               console.error("An error occurred:", err);
               alert("Algo sucedió mal, vuelve a intentarlo.");
@@ -125,8 +135,12 @@ export default function AddOrderScreen() {
       return;
     }
     try {
+      if (!profile || !profile.id_tenant) {
+        throw new Error("El perfil del usuario no está disponible.");
+      }
       const orderData: IOrder = {
         ...data,
+        id_tenant: profile.id_tenant,
         served: updatingOrder?.served || data.served,
         to_go: data.to_go,
         id: updatingOrder?.id || data.id,

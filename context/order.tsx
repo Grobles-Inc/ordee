@@ -83,7 +83,6 @@ export const OrderContextProvider = ({
       const orderDataToInsert = {
         id_table: order.id_table,
         id_user: order.id_user,
-        free: order.free,
         served: order.served,
         to_go: order.to_go,
         paid: order.paid,
@@ -120,11 +119,10 @@ export const OrderContextProvider = ({
       const newOrderId = insertedOrderData.id;
 
       // 3. Prepare items for the order_meals table
-      const orderMealsDataToInsert = order.items.map((meal) => ({
+      const orderMealsDataToInsert = order.order_meals.map((meal) => ({
         order_id: newOrderId,
         meal_id: meal.id,
-        quantity: Number(meal.quantity), // Ensure quantity is a number
-        // Optional: store price_per_item if needed
+        quantity: Number(meal.quantity)
       }));
 
       // 4. Insert items into the order_meals table
@@ -134,75 +132,66 @@ export const OrderContextProvider = ({
 
       if (orderMealsError) {
         console.error("Error inserting order items:", orderMealsError);
-        // Consider rolling back the order insertion or handling the error appropriately
         alert("Error inserting order items");
         setLoading(false);
-        // Potentially delete the order created in step 2 if items fail
-        // await supabase.from("orders").delete().eq("id", newOrderId);
         return;
       }
 
-      // 5. Update meal stock (similar logic as before)
       const mealStockUpdates = await Promise.all(
-        order.items.map(async (meal): Promise<{ id: string; quantity: number } | null> => {
-          const { data: currentMeal, error: fetchError } = await supabase
-            .from("meals")
-            .select("quantity")
-            .eq("id", meal.id) // Use meal.id from the items array
-            .eq("id_tenant", profile.id_tenant)
-            .single();
+        order.order_meals.map(
+          async (meal): Promise<Partial<IMeal> | null> => {
+            const { data: currentMeal, error: fetchError } = await supabase
+              .from("meals")
+              .select("id, name, price, id_category, quantity, stock")
+              .eq("id", meal.id)
+              .eq("id_tenant", profile.id_tenant)
+              .single();
 
-          if (fetchError) {
-            console.error("Error fetching meal quantity:", fetchError);
-            alert("Error fetching meal quantity");
-            return null;
+            if (fetchError) {
+              console.error("Error fetching meal:", fetchError);
+              alert("Error fetching meal");
+              return null;
+            }
+
+            if (!currentMeal) {
+              console.error("Meal not found during stock update:", meal.id);
+              alert(`Meal with ID ${meal.id} not found.`);
+              return null;
+            }
+
+            return {
+              ...currentMeal,
+              quantity: currentMeal.quantity - Number(meal.quantity),
+            };
           }
-
-          if (currentMeal === null) {
-            console.error("Meal not found during stock update:", meal.id);
-            alert(`Meal with ID ${meal.id} not found.`);
-            return null; // Skip update for this meal
-          }
-
-          const newQuantity = currentMeal.quantity - Number(meal.quantity);
-          return {
-            id: meal.id,
-            quantity: newQuantity,
-            // No need to include id_tenant here for upsert on meals based on ID
-          };
-        })
+        )
       );
 
-      // Filter out any null results from failed fetches
-      const validMealStockUpdates = mealStockUpdates.filter(update => update !== null) as { id: string; quantity: number }[];
+      const validMealStockUpdates = mealStockUpdates.filter(
+        (update) => update !== null
+      ) as Partial<IMeal>[];
 
-      // 6. Apply meal stock updates
       const { error: mealsError } = await supabase
         .from("meals")
         .upsert(validMealStockUpdates);
 
       if (mealsError) {
         console.error("Error updating meals:", mealsError);
-        // Consider the implications - order placed, but stock not updated
         alert("Order placed, but failed to update meal stock.");
         setLoading(false);
         return;
       }
 
-      // 7. Update table status if not a 'to_go' order
       if (!order.to_go) {
         const { error: tableError } = await supabase
           .from("tables")
-          .update({ status: false }) // Assuming false means occupied
+          .update({ status: false })
           .eq("id", order.id_table)
           .eq("id_tenant", profile.id_tenant);
 
         if (tableError) {
           console.error("Error updating table status:", tableError);
           alert("Order placed, but failed to update table status.");
-          // Note: Order is already placed, so don't return necessarily, but log/notify
-          // setLoading(false); // Allow the success toast to show?
-          // return;
         }
       }
 
@@ -272,7 +261,7 @@ export const OrderContextProvider = ({
     setLoading(true);
     const { data, error } = await supabase
       .from("orders")
-      .select("*, tables(id, number)")
+      .select("*, tables(id, number), order_meals(quantity, meals(name))")
       .eq("paid", true)
       .eq("id_tenant", profile?.id_tenant)
       .order("date", { ascending: false });
@@ -300,7 +289,7 @@ export const OrderContextProvider = ({
     // 1. Restore meal quantities before deleting the order
     // (Doing this first avoids issues if order deletion fails after stock is adjusted)
     const mealStockUpdates = await Promise.all(
-      itemsToRestore.map(async item => {
+      itemsToRestore.map(async (item) => {
         // Fetch current quantity
         const { data: currentMeal, error: fetchError } = await supabase
           .from("meals")
@@ -309,7 +298,10 @@ export const OrderContextProvider = ({
           .single();
 
         if (fetchError || !currentMeal) {
-          console.error(`Error fetching quantity for meal ${item.meal_id} during delete:`, fetchError);
+          console.error(
+            `Error fetching quantity for meal ${item.meal_id} during delete:`,
+            fetchError
+          );
           return null; // Skip update if fetch fails
         }
 
@@ -320,10 +312,14 @@ export const OrderContextProvider = ({
     );
 
     // Filter out any null results from failed fetches
-    const validUpdates = mealStockUpdates.filter(update => update !== null) as { id: string; quantity: number }[];
+    const validUpdates = mealStockUpdates.filter(
+      (update) => update !== null
+    ) as { id: string; quantity: number }[];
 
     if (validUpdates.length > 0) {
-      const { error: mealError } = await supabase.from("meals").upsert(validUpdates);
+      const { error: mealError } = await supabase
+        .from("meals")
+        .upsert(validUpdates);
       if (mealError) {
         console.error("Error restoring meal quantities:", mealError);
         toast.error("Error al restaurar stock de platillos.", {
@@ -336,7 +332,10 @@ export const OrderContextProvider = ({
     }
 
     // 2. Delete the order (ON DELETE CASCADE handles order_meals)
-    const { error: deleteError } = await supabase.from("orders").delete().eq("id", orderId);
+    const { error: deleteError } = await supabase
+      .from("orders")
+      .delete()
+      .eq("id", orderId);
 
     if (deleteError) {
       console.error("Error deleting order:", deleteError);
@@ -376,7 +375,8 @@ export const OrderContextProvider = ({
     setLoading(true);
     const { data, error } = await supabase
       .from("orders") // Start from orders table
-      .select(`
+      .select(
+        `
         *,
         users:id_user(*),
         tenants:id_tenant(name, logo),
@@ -385,11 +385,20 @@ export const OrderContextProvider = ({
           quantity,
           meals!inner ( * )
         )
-      `) // Join order_meals and then meals
+      `
+      ) // Join order_meals and then meals
       .eq("id", id) // Filter by order ID
       .single(); // Expect a single order
 
     if (error) throw error;
+
+    // Patch: flatten order_meals into items
+    if (data && data.order_meals) {
+      data.items = data.order_meals.map((om: any) => ({
+        ...om.meals,
+        quantity: om.quantity,
+      }));
+    }
 
     setLoading(false);
     setOrder(data);
@@ -399,36 +408,88 @@ export const OrderContextProvider = ({
   async function updateOrder(order: IOrder) {
     setLoading(true);
 
-    // 1. Fetch current order items from order_meals to calculate stock differences
-    const { data: currentOrderMeals, error: fetchCurrentError } = await supabase
-      .from("order_meals")
-      .select("meal_id, quantity")
-      .eq("order_id", order.id);
+    // 1. Fetch current order items to calculate stock differences
+    const { data: currentOrderMeals, error: fetchCurrentError } =
+      await supabase
+        .from("order_meals")
+        .select("meal_id, quantity")
+        .eq("order_id", order.id);
 
     if (fetchCurrentError) {
-      console.error("Error fetching current order items for update:", fetchCurrentError);
-      toast.error("Error al obtener items actuales para actualizar.", { icon: <FontAwesome name="times-circle" size={20} color="red" /> });
+      console.error(
+        "Error fetching current order items for update:",
+        fetchCurrentError
+      );
+      toast.error("Error al obtener items actuales para actualizar.", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
       setLoading(false);
       return;
     }
 
-    // 2. Calculate stock adjustments needed
-    // (This part can be complex: find items added, removed, quantity changed)
-    // For simplicity: restore stock for all old items, deduct stock for all new items.
+    // 2. Create maps for easier lookup
+    const currentMealsMap = new Map(
+      currentOrderMeals.map((item) => [item.meal_id, item.quantity])
+    );
+    const newMealsMap = new Map(
+      order.order_meals.map((item) => [item.id, Number(item.quantity)])
+    );
 
-    // 2a. Restore stock for old items
-    if (currentOrderMeals && currentOrderMeals.length > 0) {
-      // Similar logic to deleteOrder's stock restoration part... (omitted for brevity, assume it runs)
-      console.log("Restoring stock for old items (implementation needed)...");
+    const stockAdjustments: { id: string; quantity: number }[] = [];
+
+    // 3. Fetch all relevant meal data in one go
+    const allMealIds = [
+      ...new Set([...currentMealsMap.keys(), ...newMealsMap.keys()]),
+    ];
+    const { data: allMealsData, error: fetchMealsError } = await supabase
+      .from("meals")
+      .select("id, quantity")
+      .in("id", allMealIds);
+
+    if (fetchMealsError) {
+      console.error("Error fetching meal data:", fetchMealsError);
+      toast.error("Error al obtener datos de los platillos.", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
+      setLoading(false);
+      return;
     }
 
-    // 2b. Deduct stock for new items
-    // Similar logic to addOrder's stock deduction part... (omitted for brevity, assume it runs)
-    console.log("Deducting stock for new items (implementation needed)...");
-    // IMPORTANT: Add proper stock adjustment logic here based on the diff between
-    // currentOrderMeals and order.items before proceeding. Handle potential errors.
+    const allMealsMap = new Map(
+      allMealsData.map((meal) => [meal.id, meal.quantity])
+    );
 
-    // 3. Delete existing order_meals entries for this order
+    // 4. Calculate stock changes
+    for (const [mealId, currentQuantity] of allMealsMap.entries()) {
+      const oldQuantity = currentMealsMap.get(mealId) || 0;
+      const newQuantity = newMealsMap.get(mealId) || 0;
+      const quantityDiff = oldQuantity - newQuantity;
+
+      if (quantityDiff !== 0) {
+        stockAdjustments.push({
+          id: mealId,
+          quantity: currentQuantity + quantityDiff,
+        });
+      }
+    }
+
+    // 5. Update meal stocks
+    if (stockAdjustments.length > 0) {
+      const { error: mealError } = await supabase
+        .from("meals")
+        .upsert(stockAdjustments);
+
+      if (mealError) {
+        console.error("Error updating meal quantities:", mealError);
+        toast.error("Error al actualizar el stock de los platillos.", {
+          icon: <FontAwesome name="times-circle" size={20} color="red" />,
+        });
+        setLoading(false);
+        return;
+      }
+    }
+
+    // 6. Delete old order_meals entries
     const { error: deleteError } = await supabase
       .from("order_meals")
       .delete()
@@ -436,41 +497,52 @@ export const OrderContextProvider = ({
 
     if (deleteError) {
       console.error("Error deleting old order items:", deleteError);
-      toast.error("Error al eliminar items antiguos del pedido.", { icon: <FontAwesome name="times-circle" size={20} color="red" /> });
-      // Consider rolling back stock changes if possible
+      toast.error("Error al eliminar items antiguos del pedido.", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
       setLoading(false);
       return;
     }
 
-    // 4. Insert new order_meals entries
-    const newOrderMealsData = order.items.map(item => ({
+    // 7. Insert new order_meals entries
+    const newOrderMealsData = order.order_meals.map((item) => ({
       order_id: order.id,
       meal_id: item.id,
-      quantity: Number(item.quantity)
+      quantity: Number(item.quantity),
     }));
 
     if (newOrderMealsData.length > 0) {
-      const { error: insertError } = await supabase.from("order_meals").insert(newOrderMealsData);
+      const { error: insertError } = await supabase
+        .from("order_meals")
+        .insert(newOrderMealsData);
       if (insertError) {
         console.error("Error inserting new order items:", insertError);
-        toast.error("Error al insertar nuevos items del pedido.", { icon: <FontAwesome name="times-circle" size={20} color="red" /> });
-        // Critical state: Old items deleted, new items failed. Requires manual intervention or more robust rollback.
+        toast.error("Error al insertar nuevos items del pedido.", {
+          icon: <FontAwesome name="times-circle" size={20} color="red" />,
+        });
         setLoading(false);
         return;
       }
     }
 
-    // 5. Update the main order details (excluding items)
-    // Create an object with only the fields allowed in the 'orders' table
-    const { items, ...orderUpdateData } = order; // Exclude items array
+    // 8. Update the main order details
+    const { order_meals, ...orderUpdateData } = order;
     const { error: updateOrderError } = await supabase
       .from("orders")
-      .update(orderUpdateData) // Use the filtered data
+      .update(orderUpdateData)
       .eq("id", order.id);
-    toast.success("Pedido actualizado!", {
-      icon: <FontAwesome name="check-circle" size={20} color="green" />,
-    }); router.back();
-    if (updateOrderError) console.error("Update Order Error", updateOrderError);
+
+    if (updateOrderError) {
+      console.error("Update Order Error", updateOrderError);
+      toast.error("Error al actualizar el pedido.", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
+    } else {
+      toast.success("Pedido actualizado!", {
+        icon: <FontAwesome name="check-circle" size={20} color="green" />,
+      });
+      router.back();
+    }
     setLoading(false);
     setUpdatingOrder(null);
   }
@@ -495,7 +567,7 @@ export const OrderContextProvider = ({
   async function getUnpaidOrders() {
     const { data, error } = await supabase
       .from("orders")
-      .select("*, tables(id, number), order_meals(quantity, meals(name))") // Fetch basic item info for display if needed
+      .select("*, tables(id, number), order_meals(quantity, meals(name))")
       .eq("paid", false)
       .eq("id_tenant", profile?.id_tenant)
       .order("date", { ascending: false });

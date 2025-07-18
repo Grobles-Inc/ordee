@@ -341,15 +341,6 @@ export default function OrderDetailsScreen() {
                     <Text className="text-green-600 px-2">Pagado</Text>
                   </View>
                 )}
-                {order.free && (
-                  <Chip
-                    style={{
-                      backgroundColor: "#e7e5e4",
-                    }}
-                  >
-                    Gratis
-                  </Chip>
-                )}
               </View>
             </View>
 

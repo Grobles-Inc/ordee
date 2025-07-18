@@ -91,11 +91,10 @@ export interface IOrder {
   id_tenant: string;
   tables?: ITable;
   id_user: string;
-  free?: boolean;
   served: boolean;
   to_go: boolean;
   paid: boolean;
-  items: IMeal[];
+  order_meals: IMeal[];
   total: number;
 }
 export interface IPlan {
