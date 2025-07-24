@@ -201,7 +201,7 @@ export default function ProfileScreen() {
         {profile.id}
       </Text>
       <Text className="text-muted-foreground opacity-40 mb-3 mx-auto text-sm">
-        Versión 1.0.2
+        Versión 1.0.3
       </Text>
 
       <View className="absolute bottom-[150px] right-[-150px] w-[200px] h-[300px] rounded-xl rotate-[-45deg] bg-orange-300 shadow-lg" />
