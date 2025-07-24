@@ -33,8 +33,8 @@ export default function SignInScreen() {
 
   const onSubmitWithoutEmail = async () => {
     await supabase.auth.signInWithPassword({
-      email: "admin@admin.com",
-      password: "admin123456",
+      email: "miguel@gmail.com",
+      password: "miguel123",
     });
   };
 
