@@ -7,6 +7,7 @@ export interface ITenant {
   id_plan: string;
   logo: string;
   plans?: IPlan;
+  created_at: string;
   queries: number;
 }
 

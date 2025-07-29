@@ -2,8 +2,8 @@ import { useAuth } from "@/context";
 import { AntDesign } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { SafeAreaView, ScrollView, View } from "react-native";
-import { Button, Divider, Text } from "react-native-paper";
+import { ScrollView, View } from "react-native";
+import { Button, Text } from "react-native-paper";
 
 export default function Membership() {
   const router = useRouter();
@@ -38,8 +38,8 @@ export default function Membership() {
               {profile.tenants?.plans?.name === "essential"
                 ? "Plan Essential"
                 : profile.tenants?.plans?.name === "pro"
-                ? "Plan Pro"
-                : "Plan Gratuito"}
+                  ? "Plan Pro"
+                  : "Plan Gratuito"}
             </Text>
 
             <Text
