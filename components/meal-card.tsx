@@ -13,7 +13,7 @@ export function MealCard({ meal }: { meal: IMeal }) {
   const onDelete = (id: string) => {
     if (Platform.OS === "web") {
       if (confirm("¿Estás seguro de eliminar este item?")) {
-        deleteMeal(id, url).catch((error: any) => {
+        deleteMeal(id, url || "").catch((error: any) => {
           alert("Error al eliminar: " + error.message);
         });
       }
@@ -24,7 +24,7 @@ export function MealCard({ meal }: { meal: IMeal }) {
           style: "destructive",
           onPress: async () => {
             try {
-              await deleteMeal(id, url);
+              await deleteMeal(id, url || "");
             } catch (error: any) {
               alert("Error al eliminar: " + error.message);
             }

@@ -1,5 +1,7 @@
 import * as Crypto from "expo-crypto";
-export const getPublicIdFromUrl = (url: string) => {
+export const getPublicIdFromUrl = (url: string | null | undefined) => {
+
+  if (!url) return null;
   const splitUrl = url.split("/");
   const publicIdWithExtension = splitUrl.slice(7).join("/");
   const publicId = publicIdWithExtension.split(".")[0];
