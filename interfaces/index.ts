@@ -96,6 +96,7 @@ export interface IOrder {
   to_go: boolean;
   paid: boolean;
   order_meals: IMeal[];
+  items: IMeal[];
   total: number;
 }
 export interface IPlan {

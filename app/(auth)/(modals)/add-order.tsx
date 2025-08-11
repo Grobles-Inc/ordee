@@ -147,6 +147,7 @@ export default function AddOrderScreen() {
         id_user: updatingOrder?.id_user || data.id_user,
         paid: updatingOrder?.paid || data.paid,
         id_table: id_table,
+        order_meals: itemsSelected,
         items: itemsSelected,
         total: itemsSelected.reduce(
           (acc, item) => acc + Number(item.quantity) * Number(item.price),
@@ -182,6 +183,7 @@ export default function AddOrderScreen() {
         id_user: profile.id,
         paid: false,
         id_table: id_table,
+        order_meals: itemsSelected,
         items: itemsSelected,
         total: itemsSelected.reduce(
           (acc, item) => acc + Number(item.quantity) * Number(item.price),

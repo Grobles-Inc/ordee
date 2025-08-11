@@ -475,17 +475,21 @@ export const OrderContextProvider = ({
 
     // 5. Update meal stocks
     if (stockAdjustments.length > 0) {
-      const { error: mealError } = await supabase
-        .from("meals")
-        .upsert(stockAdjustments);
 
-      if (mealError) {
-        console.error("Error updating meal quantities:", mealError);
-        toast.error("Error al actualizar el stock de los platillos.", {
-          icon: <FontAwesome name="times-circle" size={20} color="red" />,
-        });
-        setLoading(false);
-        return;
+      for (const adjustment of stockAdjustments){
+        const { error: mealError } = await supabase
+          .from("meals")
+          .update({ quantity: adjustment.quantity })
+          .eq("id", adjustment.id);
+
+          if (mealError) {
+            console.error("Error updating meal quantities:", mealError);
+            toast.error("Error al actualizar el stock de los platillos.", {
+              icon: <FontAwesome name="times-circle" size={20} color="red" />,
+            });
+            setLoading(false);
+            return;
+          }
       }
     }
 
@@ -526,7 +530,7 @@ export const OrderContextProvider = ({
     }
 
     // 8. Update the main order details
-    const { order_meals, ...orderUpdateData } = order;
+    const { order_meals, items, ...orderUpdateData } = order;
     const { error: updateOrderError } = await supabase
       .from("orders")
       .update(orderUpdateData)
