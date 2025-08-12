@@ -1,4 +1,4 @@
-import { useAuth } from "@/context";
+import { useAuth } from "@/context/auth";
 import React, { useState } from "react";
 import {
   Appearance,

@@ -1,4 +1,4 @@
-import { useOrderContext } from "@/context";
+import { useOrderStore } from "@/context/order";
 import { IOrder } from "@/interfaces";
 import { FontAwesome5, FontAwesome6 as Icon } from "@expo/vector-icons";
 import * as Print from "expo-print";
@@ -15,7 +15,7 @@ export default function ReceiptDetailsScreen() {
 
   const isCompact = width < 1024;
   const isMobile = width < 768;
-  const { getOrderById, loading } = useOrderContext();
+  const { getOrderById, loading } = useOrderStore();
   React.useEffect(() => {
     getOrderById(params.id).then((order) => {
       setOrder(order);
@@ -142,27 +142,27 @@ export default function ReceiptDetailsScreen() {
                 <th align="right">Total</th>
             </tr>
             ${order?.items
-              .map(
-                (item) => `
+        .map(
+          (item) => `
                 <tr>
                     <td class="item-name">${item.name}</td>
                     <td class="quantity-col">${item.quantity}</td>
                     <td class="price-col">${item.price.toFixed(2)}</td>
                     <td class="price-col">${(
-                      item.price * Number(item.quantity)
-                    ).toFixed(2)}</td>
+              item.price * Number(item.quantity)
+            ).toFixed(2)}</td>
                 </tr>
             `
-              )
-              .join("")}
+        )
+        .join("")}
         </table>
         <div class="total-section">
             <table width="100%">
                 <tr>
                     <td><strong>Total:</strong></td>
                     <td align="right"><strong>S/. ${order.total.toFixed(
-                      2
-                    )}</strong></td>
+          2
+        )}</strong></td>
                 </tr>
             </table>
         </div>

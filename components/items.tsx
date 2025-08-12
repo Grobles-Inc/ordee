@@ -1,5 +1,7 @@
-import { useOrderContext } from "@/context";
-import { useCategoryContext, useMealContext } from "@/context";
+import { useOrderStore } from "@/context/order";
+import { useCategoryStore } from "@/context/category";
+import { useMealStore } from "@/context/meals";
+import { useAuth } from "@/context/auth";
 import { IMeal } from "@/interfaces";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
@@ -26,9 +28,10 @@ export function OrderItemsAccordion({
     categories,
     getCategories,
     loading: categoriesLoading,
-  } = useCategoryContext();
-  const { updatingOrder } = useOrderContext();
-  const { getMealsByCategoryId, loading: mealsLoading } = useMealContext();
+  } = useCategoryStore();
+  const { updatingOrder } = useOrderStore();
+  const { getMealsByCategoryId, loading: mealsLoading } = useMealStore();
+  const { profile } = useAuth();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [categoryMeals, setCategoryMeals] = useState<Record<string, IMeal[]>>(
     {}
@@ -61,17 +64,19 @@ export function OrderItemsAccordion({
 
     setExpandedId(categoryId);
     if (!categoryMeals[categoryId]) {
-      const meals = await getMealsByCategoryId(categoryId);
+      const meals = await getMealsByCategoryId(categoryId, profile.id_tenant);
       setCategoryMeals((prev) => ({
         ...prev,
-        [categoryId]: meals,
+        [categoryId]: meals || [],
       }));
     }
   };
 
   useEffect(() => {
-    getCategories();
-  }, []);
+    if (profile.id_tenant) {
+      getCategories(profile.id_tenant);
+    }
+  }, [profile.id_tenant]);
 
   return (
     <>

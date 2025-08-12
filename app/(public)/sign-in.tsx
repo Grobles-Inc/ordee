@@ -5,7 +5,6 @@ import { router } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Platform } from "react-native";
 import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";

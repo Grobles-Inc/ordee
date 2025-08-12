@@ -1,6 +1,6 @@
 import { OrderCardSkeleton, OrderCard } from "@/components";
-import { useOrderContext } from "@/context";
-import { supabase } from "@/utils";
+import { useOrderStore } from "@/context/order";
+import { useAuth } from "@/context/auth";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
@@ -10,33 +10,32 @@ import Animated, { FadeInUp } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OrdersScreen() {
-  const { getUnpaidOrders, unpaidOrders } = useOrderContext();
+  const { getUnpaidOrders, unpaidOrders, subscribeToOrders } = useOrderStore();
+  const { profile } = useAuth();
   const [search, setSearch] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [loading, setLoading] = React.useState(true);
+
   async function onRefresh() {
-    getUnpaidOrders();
+    if (profile?.id_tenant) {
+      await getUnpaidOrders(profile.id_tenant);
+    }
   }
+
   React.useEffect(() => {
-    setLoading(true);
-    getUnpaidOrders();
-    setLoading(false);
-  }, []);
+    if (profile?.id_tenant) {
+      setLoading(true);
+      getUnpaidOrders(profile.id_tenant);
+      setLoading(false);
+    }
+  }, [profile?.id_tenant]);
+
   React.useEffect(() => {
-    const subscription = supabase
-      .channel("orders")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "orders" },
-        () => {
-          getUnpaidOrders();
-        }
-      )
-      .subscribe();
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+    if (profile?.id_tenant) {
+      const unsubscribe = subscribeToOrders(profile.id_tenant);
+      return unsubscribe;
+    }
+  }, [profile?.id_tenant]);
 
   const filteredOrders = unpaidOrders.filter((order) => {
     if (searchQuery.trim()) {

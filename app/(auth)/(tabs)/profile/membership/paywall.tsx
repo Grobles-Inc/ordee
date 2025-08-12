@@ -1,4 +1,4 @@
-import { useAuth } from "@/context";
+import { useAuth } from "@/context/auth";
 import { IPlan } from "@/interfaces";
 import { sendWhatsAppMeessage, supabase } from "@/utils";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -107,29 +107,25 @@ const PaywallScreen = () => {
       {/* Toggle Buttons */}
       <View className="flex-row justify-center mb-6">
         <TouchableOpacity
-          className={`px-10 py-3 rounded-l-full ${
-            isMonthly ? "bg-[#FF6247]" : "bg-gray-200"
-          }`}
+          className={`px-10 py-3 rounded-l-full ${isMonthly ? "bg-[#FF6247]" : "bg-gray-200"
+            }`}
           onPress={() => setIsMonthly(true)}
         >
           <Text
-            className={` ${
-              isMonthly ? "text-white font-bold" : "text-gray-700"
-            }`}
+            className={` ${isMonthly ? "text-white font-bold" : "text-gray-700"
+              }`}
           >
             Mensual
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className={`px-10 py-3 rounded-r-full ${
-            !isMonthly ? "bg-[#FF6247]" : "bg-gray-200"
-          }`}
+          className={`px-10 py-3 rounded-r-full ${!isMonthly ? "bg-[#FF6247]" : "bg-gray-200"
+            }`}
           onPress={() => setIsMonthly(false)}
         >
           <Text
-            className={` ${
-              !isMonthly ? "text-white font-bold" : "text-gray-700"
-            }`}
+            className={` ${!isMonthly ? "text-white font-bold" : "text-gray-700"
+              }`}
           >
             Anual
           </Text>
@@ -146,11 +142,10 @@ const PaywallScreen = () => {
               onPress={() => setSelectedPlan(plan)}
             >
               <View
-                className={` p-4 border    rounded-2xl ${
-                  selectedPlan?.id === plan.id
+                className={` p-4 border    rounded-2xl ${selectedPlan?.id === plan.id
                     ? "border-[#FF6247]  border-2 dark:bg-orange-800/20 bg-orange-500/10 "
                     : "border-zinc-200 dark:border-zinc-600"
-                }`}
+                  }`}
               >
                 {profile.tenants?.plans?.id === plan.id && (
                   <Text className="bg-teal-400 w-28 text-center  rounded-full px-2 py-1">
@@ -168,8 +163,8 @@ const PaywallScreen = () => {
                   {plan.name === "free"
                     ? "Funcionalidades básicas."
                     : plan.name === "essential"
-                    ? "Ordenes ilimitadas."
-                    : "Ordenes y cuentas ilimitadas."}
+                      ? "Ordenes ilimitadas."
+                      : "Ordenes y cuentas ilimitadas."}
                 </Text>
                 <View>
                   {getFeaturesForPlan(

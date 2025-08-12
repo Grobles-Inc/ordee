@@ -1,5 +1,5 @@
 import { ORDEE_THEME } from "@/constants/ordee";
-import { AuthContextProvider } from "@/context";
+import { AuthContextProvider } from "@/context/auth";
 import { DARK_NAV_THEME, NAV_THEME } from "@/utils";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";

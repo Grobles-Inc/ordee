@@ -1,4 +1,4 @@
-import { useOrderContext } from "@/context";
+import { useOrderStore } from "@/context/order";
 import { IOrder } from "@/interfaces";
 import { supabase } from "@/utils";
 import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
@@ -31,7 +31,7 @@ export default function OrderDetailsScreen() {
   const colorScheme = useColorScheme();
   const [refreshing, setRefreshing] = React.useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const { getOrderById, loading, updatePaidStatus } = useOrderContext();
+  const { getOrderById, loading, updatePaidStatus } = useOrderStore();
 
   React.useEffect(() => {
     getOrderById(params.id).then((order) => {

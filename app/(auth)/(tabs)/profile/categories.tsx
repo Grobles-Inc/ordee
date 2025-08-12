@@ -1,5 +1,6 @@
 import { CategorySkeleton } from "@/components";
-import { useCategoryContext } from "@/context";
+import { useCategoryStore } from "@/context/category";
+import { useAuth } from "@/context/auth";
 import { supabase } from "@/utils";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
@@ -11,10 +12,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CategoriesScreen() {
   const { deleteCategory, getCategories, categories, loading } =
-    useCategoryContext();
+    useCategoryStore();
+  const { profile } = useAuth();
 
   React.useEffect(() => {
-    getCategories();
+    if (profile?.id_tenant) {
+      getCategories(profile.id_tenant);
+    }
+  }, [profile?.id_tenant]);
+
+  React.useEffect(() => {
+    if (!profile?.id_tenant) return;
 
     const channel = supabase
       .channel("categories-changes")
@@ -26,7 +34,9 @@ export default function CategoriesScreen() {
           table: "categories",
         },
         (payload) => {
-          getCategories();
+          if (profile?.id_tenant) {
+            getCategories(profile.id_tenant);
+          }
         }
       )
       .subscribe();
@@ -35,12 +45,14 @@ export default function CategoriesScreen() {
     return () => {
       channel.unsubscribe();
     };
-  }, []);
+  }, [profile?.id_tenant]);
 
   const onDelete = (id: string) => {
     if (Platform.OS === "web") {
       if (confirm("¿Estás seguro de eliminar a esta categoría?")) {
-        deleteCategory(id);
+        if (profile?.id_tenant) {
+          deleteCategory(id, profile.id_tenant);
+        }
       }
     } else {
       Alert.alert("Eliminar", "¿Estás seguro de eliminar esta categoría?", [
@@ -49,7 +61,9 @@ export default function CategoriesScreen() {
           style: "destructive",
           onPress: async () => {
             try {
-              await deleteCategory(id);
+              if (profile?.id_tenant) {
+                await deleteCategory(id, profile.id_tenant);
+              }
             } catch (error: any) {
               alert("Error al eliminar: " + error.message);
             }

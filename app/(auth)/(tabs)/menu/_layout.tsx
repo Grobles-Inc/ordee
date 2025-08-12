@@ -2,12 +2,9 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import React from "react";
 import {
-  Button as NativeButton,
-  Platform,
   TouchableOpacity,
-  useColorScheme,
+  useColorScheme
 } from "react-native";
-import { Button, Icon } from "react-native-paper";
 
 export default function MenuLayout() {
   const colorScheme = useColorScheme();

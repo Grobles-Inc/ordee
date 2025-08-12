@@ -1,9 +1,9 @@
 import { OrdeeTabs } from "@/constants/tabs";
-import { useAuth } from "@/context";
+import { useAuth } from "@/context/auth";
 import { useColorScheme } from "@/utils/expo/useColorScheme.web";
 import { Image } from "expo-image";
 import { router, Stack, useSegments } from "expo-router";
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Platform,
   Pressable,
@@ -41,8 +41,7 @@ function SidebarItem({
         router.push(href as any);
       }}
       className={`flex flex-row items-center p-2 rounded-lg gap-3 mb-0.5
-        hover:dark:bg-zinc-700 hover:bg-zinc-100 transition-all duration-200  ${
-          compact ? "justify-center w-10 h-10 mx-auto" : "pl-2 pr-6 mr-8"
+        hover:dark:bg-zinc-700 hover:bg-zinc-100 transition-all duration-200  ${compact ? "justify-center w-10 h-10 mx-auto" : "pl-2 pr-6 mr-8"
         } ${isActive ? "bg-zinc-200 dark:bg-zinc-600" : ""}`}
       style={({ pressed, hovered }) => [
         (pressed || hovered) && { backgroundColor: hoverBg },
@@ -60,11 +59,10 @@ function SidebarItem({
       />
       {!compact && (
         <Text
-          className={`text-lg  font-semibold ${
-            isActive
-              ? "font-bold dark:text-white text-black"
-              : "text-black  dark:text-white"
-          }`}
+          className={`text-lg  font-semibold ${isActive
+            ? "font-bold dark:text-white text-black"
+            : "text-black  dark:text-white"
+            }`}
         >
           {title}
         </Text>
@@ -77,31 +75,41 @@ export default function WebLayout() {
   const colorScheme = useColorScheme();
   const { width } = useWindowDimensions();
   const segments = useSegments();
-  const { profile } = useAuth();
-  const [isActive, setIsActive] = React.useState(false);
-  const iconColor = isActive
-    ? "#FF6247"
-    : colorScheme === "dark"
-    ? "#ffffff"
-    : "#8E8E8F";
+  const { profile, loading } = useAuth();
+
   const isCompact = width < 1024;
   const isMobile = width < 768;
   const borderColor = colorScheme === "dark" ? "#2f3336" : "#eee";
 
-  const filteredTabs = OrdeeTabs.filter((tab) =>
-    tab.roles.includes(profile?.role as string)
-  );
+  // Show loading state while profile is loading
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
-  const tabIcon = (
-    focusedIcon: string,
-    unfocusedIcon: string,
-    focused: boolean
-  ) => {
+  const filteredTabs = OrdeeTabs.filter((tab) => {
+    // If profile or role is not available, show all tabs as fallback
+    if (!profile || !profile.role || profile.role === "") {
+      console.log("No profile role found, showing all tabs");
+      return true;
+    }
+    const hasAccess = tab.roles.includes(profile.role);
+    console.log(`Tab ${tab.name} access for role ${profile.role}:`, hasAccess);
+    return hasAccess;
+  });
+
+  console.log("Profile:", profile);
+  console.log("Filtered tabs:", filteredTabs.map(t => t.name));
+
+  const tabIcon = (focusedIcon: string, unfocusedIcon: string) => {
     return (
       <Image
-        style={{ width: 28, height: 28, tintColor: iconColor }}
+        style={{ width: 28, height: 28 }}
         source={{
-          uri: focused ? focusedIcon : unfocusedIcon,
+          uri: focusedIcon,
         }}
         alt="icon"
       />
@@ -123,17 +131,15 @@ export default function WebLayout() {
       <View className="flex-row left-0 right-0 bg-white dark:bg-zinc-800 justify-center relative">
         {!isMobile && (
           <View
-            className={`${
-              isCompact ? "w-[72px]" : ""
-            } items-end sticky top-0 h-screen border-r `}
+            className={`${isCompact ? "w-[72px]" : ""
+              } items-end sticky top-0 h-screen border-r `}
             style={{
               borderRightColor: borderColor,
             }}
           >
             <View
-              className={`sticky ${
-                isCompact ? "w-[82px] p-2" : "w-[275px] p-2"
-              } h-full`}
+              className={`sticky ${isCompact ? "w-[82px] p-2" : "w-[275px] p-2"
+                } h-full`}
             >
               <View className="mb-8 web:md:pl-2 pt-3 flex flex-row items-center gap-2 ">
                 <Image
@@ -173,9 +179,8 @@ export default function WebLayout() {
 
         {isMobile && (
           <View
-            className={`fixed bottom-0 left-0 right-0 h-16 flex-row border-t ${
-              Platform.OS === "ios" ? "pb-5" : ""
-            }`}
+            className={`fixed bottom-0 left-0 right-0 h-16 flex-row border-t ${Platform.OS === "ios" ? "pb-5" : ""
+              }`}
             style={{
               backgroundColor:
                 colorScheme === "dark"
@@ -195,8 +200,7 @@ export default function WebLayout() {
               >
                 {tabIcon(
                   `https://api.iconify.design/${tab.icon[0]}`,
-                  `https://api.iconify.design/${tab.icon[1]}`,
-                  segments.includes(tab.name as never)
+                  `https://api.iconify.design/${tab.icon[1]}`
                 )}
                 <Text
                   className="text-xs font-medium"
@@ -204,8 +208,8 @@ export default function WebLayout() {
                     color: segments.includes(tab.name as never)
                       ? "#FA2E47"
                       : colorScheme === "dark"
-                      ? "#999"
-                      : "#666",
+                        ? "#999"
+                        : "#666",
                   }}
                 >
                   {tab.title}

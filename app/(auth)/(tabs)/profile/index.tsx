@@ -1,4 +1,5 @@
-import { useAuth, useOrderContext } from "@/context";
+import { useAuth } from "@/context/auth";
+import { useOrderStore } from "@/context/order";
 import { supabase } from "@/utils";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -21,38 +22,52 @@ export default function ProfileScreen() {
   const [count, setCount] = React.useState(0);
   const [refreshing, setRefreshing] = React.useState(false);
   const [expoPushToken, setExpoPushToken] = React.useState("");
-  const { getOrdersCountByDay } = useOrderContext();
+  const { getOrdersCountByDay, subscribeToOrders } = useOrderStore();
   const router = useRouter();
   const headerHeight = useHeaderHeight();
   const colorScheme = useColorScheme();
 
   async function onRefresh() {
+    if (!profile.id_tenant) return;
+
     setRefreshing(true);
-    await getOrdersCountByDay();
-    setRefreshing(false);
+    try {
+      const orderCount = await getOrdersCountByDay(profile.id_tenant);
+      setCount(orderCount || 0);
+    } catch (error) {
+      console.error("Error refreshing order count:", error);
+    } finally {
+      setRefreshing(false);
+    }
   }
   React.useEffect(() => {
-    getOrdersCountByDay().then((count) => setCount(count as number));
-    supabase
-      .channel("db-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "meals",
-        },
-        (payload) => {
-          getOrdersCountByDay().then((count) => setCount(count as number));
-        }
-      )
-      .subscribe();
-  }, [count]);
+    if (!profile.id_tenant) return;
+
+    const loadOrderCount = async () => {
+      try {
+        const orderCount = await getOrdersCountByDay(profile.id_tenant);
+        setCount(orderCount || 0);
+      } catch (error) {
+        console.error("Error loading order count:", error);
+      }
+    };
+
+    loadOrderCount();
+
+    // Subscribe to real-time updates using the store's subscription method
+    const unsubscribe = subscribeToOrders(profile.id_tenant);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [profile.id_tenant]);
 
   useFocusEffect(
     React.useCallback(() => {
-      getOrdersCountByDay().then((count) => setCount(count as number));
-    }, [])
+      if (!profile.id_tenant) return;
+
+      getOrdersCountByDay(profile.id_tenant).then((count) => setCount(count || 0));
+    }, [profile.id_tenant])
   );
 
   const value = count / 50;

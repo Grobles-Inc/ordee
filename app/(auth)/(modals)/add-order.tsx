@@ -1,5 +1,6 @@
 import { OrderItemsAccordion } from "@/components";
-import { useAuth, useOrderContext } from "@/context";
+import { useAuth } from "@/context/auth";
+import { useOrderStore } from "@/context/order";
 import { IMeal, IOrder } from "@/interfaces";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
@@ -24,7 +25,7 @@ export default function AddOrderScreen() {
     getOrdersCountByMonth,
     updatingOrder,
     setUpdatingOrder,
-  } = useOrderContext();
+  } = useOrderStore();
   const { profile } = useAuth();
   const [count, setCount] = useState<number | null>(0);
   const [isRegisterDisabled, setIsRegisterDisabled] = useState(false);

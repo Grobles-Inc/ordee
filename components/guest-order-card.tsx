@@ -1,11 +1,11 @@
-import { useOrderContext } from "@/context";
+import { useOrderStore } from "@/context/order";
 import { IOrder } from "@/interfaces";
 import React from "react";
 import { Alert, Platform, View } from "react-native";
 import { Card, Divider, IconButton, Text } from "react-native-paper";
 
 export function GuestOrderCard({ order }: { order: IOrder }) {
-  const { updateOrderServedStatus } = useOrderContext();
+  const { updateOrderServedStatus } = useOrderStore();
   const onOrderStatusChange = (id: string) => {
     if (Platform.OS === "web") {
       if (confirm("¿Estás seguro de marcar como pedido preparado?")) {

@@ -1,19 +1,19 @@
 import { MealCard } from "@/components";
-import { useCategoryContext, useMealContext } from "@/context";
-import { supabase } from "@/utils";
+import { useAuth } from "@/context/auth";
+import { useCategoryStore } from "@/context/category";
+import { useMealStore } from "@/context/meals";
+import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, TouchableOpacity, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import {
-  ActivityIndicator,
   Appbar,
   Divider,
   Menu,
   Searchbar,
-  Text,
+  Text
 } from "react-native-paper";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,10 +21,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const MORE_ICON = Platform.OS === "ios" ? "dots-horizontal" : "dots-vertical";
 
 export default function MenuScreen() {
-  const { getDailyMeals, meals } = useMealContext();
-  const { categories, getCategories } = useCategoryContext();
-
-  const [loading, setLoading] = useState(true);
+  const { getDailyMeals, meals, subscribeToMeals } = useMealStore();
+  const { categories, getCategories } = useCategoryStore();
+  const { profile } = useAuth();
   const [search, setSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryId, setCategoryId] = useState<string>();
@@ -33,27 +32,24 @@ export default function MenuScreen() {
   const [filter, setFilter] = useState("all"); // Estado para el filtro de stock
 
   useEffect(() => {
-    getCategories();
-    getDailyMeals().then(() => setLoading(false));
-  }, []);
+    if (profile?.id_tenant) {
+      getCategories(profile.id_tenant);
+      getDailyMeals(profile.id_tenant);
+    }
+  }, [profile?.id_tenant]);
 
   useEffect(() => {
-    const channel = supabase
-      .channel("db-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "meals" },
-        () => getDailyMeals()
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+    if (profile?.id_tenant) {
+      const unsubscribe = subscribeToMeals(profile.id_tenant);
+      return unsubscribe;
+    }
+  }, [profile?.id_tenant]);
 
   async function onRefresh() {
     setRefreshing(true);
-    await getDailyMeals();
+    if (profile?.id_tenant) {
+      await getDailyMeals(profile.id_tenant);
+    }
     setRefreshing(false);
   }
 
@@ -140,12 +136,12 @@ export default function MenuScreen() {
                         ? "checkmark-circle"
                         : "list"
                       : option === "inStock"
-                      ? filter === "inStock"
-                        ? "checkmark-circle"
-                        : "cube"
-                      : filter === "outOfStock"
-                      ? "checkmark-circle"
-                      : "close-circle"
+                        ? filter === "inStock"
+                          ? "checkmark-circle"
+                          : "cube"
+                        : filter === "outOfStock"
+                          ? "checkmark-circle"
+                          : "close-circle"
                   }
                   size={20}
                   color={filter === option ? "#FF6247" : "gray"}
@@ -154,8 +150,8 @@ export default function MenuScreen() {
                   {option === "all"
                     ? "Todos"
                     : option === "inStock"
-                    ? "En stock"
-                    : "Sin stock"}
+                      ? "En stock"
+                      : "Sin stock"}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -174,7 +170,6 @@ export default function MenuScreen() {
       )}
       <Divider className="hidden web:block" />
       <View className="flex-1">
-        {loading && <ActivityIndicator className="mt-20" color="red" />}
         <FlashList
           refreshing={refreshing}
           onRefresh={onRefresh}

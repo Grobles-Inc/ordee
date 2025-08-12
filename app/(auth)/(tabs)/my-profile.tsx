@@ -1,4 +1,4 @@
-import { useAuth } from "@/context";
+import { useAuth } from "@/context/auth";
 import { Image } from "expo-image";
 import { View } from "react-native";
 import { Button, Text } from "react-native-paper";

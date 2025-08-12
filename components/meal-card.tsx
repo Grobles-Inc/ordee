@@ -1,4 +1,4 @@
-import { useMealContext } from "@/context";
+import { useMealStore } from "@/context/meals";
 import { IMeal } from "@/interfaces";
 import { getPublicIdFromUrl } from "@/utils/cloudinary";
 import { router } from "expo-router";
@@ -7,7 +7,7 @@ import { Alert, Platform, View } from "react-native";
 import { Card, IconButton, Text } from "react-native-paper";
 
 export function MealCard({ meal }: { meal: IMeal }) {
-  const { deleteMeal } = useMealContext();
+  const { deleteMeal } = useMealStore();
   const url = getPublicIdFromUrl(meal.image_url);
 
   const onDelete = (id: string) => {

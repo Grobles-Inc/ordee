@@ -1,4 +1,4 @@
-import { useAuth } from "@/context";
+import { useAuth } from "@/context/auth";
 import { supabaseAdmin, supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -17,6 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { getPlanLimits, isUserLimitReached } from "@/utils/limiter";
 import { Platform } from "react-native";
+import { useAccountsStore } from "@/context/accounts";
 
 interface IUser {
   name: string;
@@ -35,6 +36,7 @@ export default function AddUserScreen() {
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = React.useState(false);
   const { profile } = useAuth();
+  const { addAccount } = useAccountsStore();
 
   const {
     control,
@@ -94,17 +96,17 @@ export default function AddUserScreen() {
       if (await isUserLimitReached(profile.id_tenant as string)) {
         Platform.OS === "web"
           ? toast.error(
-              `
+            `
               Límite de Plan Excedido`,
-              {
-                description:
-                  "El plan actual permite un máximo de ${limits.categories} usuarios. Por favor, actualice su plan para agregar más usuarios.",
-              }
-            )
+            {
+              description:
+                "El plan actual permite un máximo de ${limits.categories} usuarios. Por favor, actualice su plan para agregar más usuarios.",
+            }
+          )
           : Alert.alert(
-              "Límite de Plan Excedido",
-              `Su plan actual permite un máximo de ${limits.categories} usuarios. Por favor, actualice su plan para agregar más usuarios.`
-            );
+            "Límite de Plan Excedido",
+            `Su plan actual permite un máximo de ${limits.categories} usuarios. Por favor, actualice su plan para agregar más usuarios.`
+          );
         return;
       }
       const { data: authData, error: authError } =
@@ -116,7 +118,9 @@ export default function AddUserScreen() {
 
       if (authError) {
         if (authError.message.includes("already registered")) {
-          toast.error("Este correo electrónico ya está registrado");
+          toast.error("Este correo electrónico ya está registrado", {
+            icon: <FontAwesome name="times-circle" size={20} color="red" />,
+          });
           return;
         }
         throw authError;
@@ -131,24 +135,22 @@ export default function AddUserScreen() {
         .eq("id", "id_tenant")
         .single();
 
-      const { error: profileError } = await supabase.from("accounts").insert({
+      await addAccount({
         id: authData.user.id,
         name: data.name,
         last_name: data.last_name,
-        role: data.role,
+        role: data.role as "user" | "guest" | "admin",
         image_url: image_url as string,
-        id_tenant: profile.id_tenant,
-      });
+        disabled: false,
+      }, profile.id_tenant);
 
-      if (profileError) throw profileError;
-      toast.success("Usuario agregado exitosamente", {
-        icon: <FontAwesome name="check-circle" size={20} color="green" />,
-      });
       reset();
       router.back();
     } catch (err: any) {
       console.error("Error:", err);
-      alert(err.message || "Error al crear usuario");
+      toast.error(err.message || "Error al crear usuario", {
+        icon: <FontAwesome name="times-circle" size={20} color="red" />,
+      });
     } finally {
       setLoading(false);
     }

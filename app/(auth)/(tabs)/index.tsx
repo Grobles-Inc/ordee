@@ -1,5 +1,4 @@
 import { ITable } from "@/interfaces";
-import { supabase } from "@/utils";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetTextInput,
@@ -32,29 +31,15 @@ import {
   Text,
 } from "react-native-paper";
 
-import { useAuth, useOrderContext } from "@/context";
-import { FontAwesome } from "@expo/vector-icons";
+import { useAuth } from "@/context/auth";
+import { useTablesStore } from "@/context/tables";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
 function TableSvg({ table }: { table: ITable }) {
-  const deleteTable = async (id: string) => {
-    const { error } = await supabase
-      .from("tables")
-      .update({ disabled: true })
-      .eq("id", id);
-    if (error) {
-      console.error("Error deleting table:", error);
-      toast.error("Error al eliminar mesa!", {
-        icon: <FontAwesome name="times-circle" size={20} color="red" />,
-      });
-    } else {
-      toast.success("Mesa borrada!", {
-        icon: <FontAwesome name="check-circle" size={20} color="green" />,
-      });
-    }
-  };
+  const { deleteTable } = useTablesStore();
+
 
   function onLongPress() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -127,10 +112,8 @@ function TableSvg({ table }: { table: ITable }) {
 }
 
 export default function TablesScreen() {
-  const [tables, setTables] = useState<ITable[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { addTable } = useOrderContext();
-  const { profile } = useAuth();
+  const { addTable, tables, loading, getTables, subscribeToTables } = useTablesStore();
+  const { profile, loading: authLoading } = useAuth();
   const colorScheme = useColorScheme();
   const [refreshing, setRefreshing] = useState(false);
   const tableBottomSheetRef = useRef<BottomSheet>(null);
@@ -143,9 +126,13 @@ export default function TablesScreen() {
   }, [isMobile]);
   const isDarkMode = colorScheme === "dark";
 
+
+
   async function onRefresh() {
     setRefreshing(true);
-    await getTables();
+    if (profile?.id_tenant) {
+      await getTables(profile.id_tenant);
+    }
     setRefreshing(false);
   }
   const renderBackdrop = useCallback(
@@ -164,51 +151,31 @@ export default function TablesScreen() {
       toast.error("Número inválido. El número de mesa debe ser mayor a 0.");
       return;
     }
-    addTable({
-      number,
-      status: true,
-    });
+    if (profile?.id_tenant) {
+      addTable({
+        number,
+        status: true,
+      }, profile.id_tenant);
+    }
     tableBottomSheetRef.current?.close();
     setNumber(0);
   };
 
-  const getTables = async () => {
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("tables")
-        .select("*")
-        .eq("disabled", false)
-        .order("id", { ascending: true });
 
-      if (error) {
-        throw error;
-      }
-      setTables(data || []);
-    } catch (error) {
-      console.error("Error fetching tables:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
-    getTables();
-    const channel = supabase
-      .channel("tables-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "tables" },
-        () => getTables()
-      )
-      .subscribe();
+    if (profile?.id_tenant) {
+      getTables(profile?.id_tenant);
+    }
+  }, [profile?.id_tenant, authLoading]);
 
-    return () => {
-      channel.unsubscribe();
-    };
-  }, []);
+  useEffect(() => {
+    if (profile?.id_tenant) {
+      subscribeToTables(profile?.id_tenant);
+    }
+  }, [profile?.id_tenant]);
 
-  if (isLoading) {
+  if (loading || authLoading) {
     return (
       <SafeAreaView className="flex-1 justify-center items-center bg-white dark:bg-zinc-900">
         <ActivityIndicator size="large" />
@@ -221,7 +188,6 @@ export default function TablesScreen() {
       <View className="flex flex-row pb-4 justify-between items-center web:p-4">
         <View className="flex flex-col gap-2">
           <Text
-            onPress={() => supabase.auth.signOut()}
             className="text-4xl dark:text-white"
             style={{ fontWeight: "700" }}
           >

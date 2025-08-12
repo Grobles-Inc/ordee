@@ -1,4 +1,4 @@
-import { useAuth } from "@/context";
+import { useAuth } from "@/context/auth";
 import { AntDesign } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";

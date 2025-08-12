@@ -1,6 +1,6 @@
 import { UserSkeleton } from "@/components";
-import { useAuth } from "@/context";
-import { supabase } from "@/utils";
+import { useAccountsStore } from "@/context/accounts";
+import { useAuth } from "@/context/auth";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React, { useEffect } from "react";
@@ -9,32 +9,27 @@ import { Card, IconButton, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function UsersScreen() {
-  const { deleteUser, users, getUsers } = useAuth();
+  const { deleteAccount, accounts, getEnabledAccounts, subscribeToAccounts } = useAccountsStore();
+  const { profile } = useAuth();
   const [loading, setLoading] = React.useState(true);
   useEffect(() => {
     setLoading(true);
-    getUsers();
-    setLoading(false);
-  }, []);
+    if (profile.id_tenant) {
+      getEnabledAccounts(profile.id_tenant);
+      setLoading(false);
+    }
+  }, [profile.id_tenant]);
   useEffect(() => {
-    const channel = supabase
-      .channel("accounts-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "accounts" },
-        () => getUsers()
-      )
-      .subscribe();
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, []);
+    if (profile.id_tenant) {
+      const unsubscribe = subscribeToAccounts(profile.id_tenant);
+      return unsubscribe;
+    }
+  }, [profile.id_tenant]);
 
   const onDelete = (id: string) => {
     if (Platform.OS === "web") {
       if (confirm("¿Estás seguro de eliminar a este usuario?")) {
-        deleteUser(id);
+        deleteAccount(id);
       }
     } else {
       Alert.alert("Eliminar", "¿Estás seguro de eliminar este usuario?", [
@@ -42,7 +37,7 @@ export default function UsersScreen() {
           text: "Sí",
           style: "destructive",
           onPress: async () => {
-            deleteUser(id);
+            deleteAccount(id);
           },
         },
         {
@@ -108,7 +103,7 @@ export default function UsersScreen() {
             />
           </Card>
         )}
-        data={users}
+        data={accounts}
         estimatedItemSize={200}
         horizontal={false}
         ListEmptyComponent={

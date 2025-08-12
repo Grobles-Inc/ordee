@@ -45,13 +45,13 @@ export interface ICategory {
 
 
 export interface ICategoryContextProvider {
-  addCategory: (category: ICategory) => Promise<void>;
+  addCategory: (category: ICategory, tenantId?: string) => Promise<void>;
   getCategoryById: (id: string) => Promise<ICategory>;
-  getCategories: () => Promise<ICategory[] | any[] | undefined>;
+  getCategories: (tenantId?: string) => Promise<ICategory[] | any[] | undefined>;
   categories: ICategory[];
   category: ICategory;
   loading: boolean;
-  deleteCategory: (id: string) => Promise<void>;
+  deleteCategory: (id: string, tenantId?: string) => Promise<void>;
 }
 export interface IMeal {
   id: string;
@@ -65,15 +65,16 @@ export interface IMeal {
 }
 
 export interface IMealContextProvider {
-  addMeal: (Meal: IMeal) => Promise<void>;
+  addMeal: (Meal: IMeal, tenantId?: string) => Promise<void>;
   getMealById: (id: string) => Promise<IMeal>;
-  getMealsByCategoryId: (id: string) => Promise<IMeal[]>;
+  getMealsByCategoryId: (id: string, tenantId?: string) => Promise<IMeal[]>;
   updateMeal: (meal: IMeal) => Promise<void>;
   loading: boolean;
   changeMealAvailability: (id: string, quantity: number) => Promise<void>;
   meals: IMeal[];
   deleteMeal: (id: string, cloudinaryPublicId: string) => Promise<void>;
-  getDailyMeals: () => Promise<null | IMeal[]>;
+  getDailyMeals: (tenantId?: string) => Promise<null | IMeal[]>;
+  subscribeToMeals: (tenantId?: string) => () => void;
 }
 
 export interface ITable {
@@ -108,24 +109,56 @@ export interface IPlan {
 }
 
 export interface IOrderContextProvider {
-  addOrder: (order: IOrder) => Promise<void>;
+  addOrder: (order: IOrder, tenantId?: string) => Promise<void>;
   updateOrderServedStatus: (id: string) => Promise<void>;
   unpaidOrders: IOrder[];
-  getOrdersCountByDay: () => Promise<number | null>;
-  getUnservedOrders: () => Promise<IOrder[]>;
+  getOrdersCountByDay: (tenantId?: string) => Promise<number | null>;
+  getUnservedOrders: (tenantId?: string) => Promise<IOrder[]>;
   setUpdatingOrder: (order: IOrder | null) => void;
   updatingOrder: IOrder | null;
-  getOrdersCountByMonth: () => Promise<number | null>;
+  getOrdersCountByMonth: (tenantId?: string) => Promise<number | null>;
   updatePaidStatus: (id: string, paid: boolean) => Promise<void>;
-  getPaidOrders: () => Promise<IOrder[]>;
-  addTable: (table: ITable) => Promise<void>;
+  getPaidOrders: (tenantId?: string) => Promise<IOrder[]>;
+  addTable: (table: ITable, tenantId?: string) => Promise<void>;
   loading: boolean;
   updateOrder: (order: IOrder) => Promise<void>;
   getOrderById: (id: string) => Promise<IOrder>;
   order: IOrder;
   paidOrders: IOrder[];
   deleteOrder: (orderId: string, tableId: string, itemsToRestore: { meal_id: string; quantity: number }[]) => Promise<void>;
+  getDailyPaidOrders: (tenantId?: string) => Promise<IOrder[]>;
+  getUnpaidOrders: (tenantId?: string) => Promise<IOrder[]>;
+  subscribeToOrders: (tenantId?: string) => () => void;
+}
 
-  getDailyPaidOrders: () => Promise<IOrder[]>;
-  getUnpaidOrders: () => Promise<IOrder[]>;
+export interface ITablesContextProvider {
+  addTable: (table: ITable, tenantId?: string) => Promise<void>;
+  getTables: (tenantId?: string) => Promise<ITable[] | null>;
+  tables: ITable[];
+  loading: boolean;
+  updateTableStatus: (id: string, status: boolean) => Promise<void>;
+  deleteTable: (id: string) => Promise<void>;
+  subscribeToTables: (tenantId?: string) => () => void;
+}
+
+export interface IAccount {
+  id?: string;
+  id_tenant?: string;
+  name: string;
+  role: "user" | "guest" | "admin";
+  last_name: string;
+  image_url: string;
+  disabled: boolean;
+}
+
+export interface IAccountState {  
+  accounts: IAccount[];
+  loading: boolean;
+  setAccounts: (accounts: IAccount[]) => void;
+  setLoading: (loading: boolean) => void;
+  getEnabledAccounts: (tenantId?: string) => Promise<IAccount[] | null>;
+  addAccount: (account: IAccount, tenantId?: string) => Promise<void>;
+  updateAccount: (id: string, updates: Partial<IAccount>) => Promise<void>;
+  deleteAccount: (id: string) => Promise<void>;
+  subscribeToAccounts: (tenantId?: string) => () => void;
 }

@@ -1,12 +1,12 @@
+import BlurView from "@/components/blur-view";
 import Colors from "@/constants/Colors";
-import { useAuth } from "@/context";
+import { OrdeeTabs } from "@/constants/tabs";
+import { useAuth } from "@/context/auth";
 import { useColorScheme } from "@/utils/expo/useColorScheme";
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
 import React from "react";
-import { Platform, StatusBar, StyleSheet, Text } from "react-native";
-import { OrdeeTabs } from "@/constants/tabs";
-import BlurView from "@/components/blur-view";
+import { ActivityIndicator, Platform, StatusBar, StyleSheet, Text, View } from "react-native";
 
 
 export default function TabLayout() {
@@ -25,6 +25,13 @@ export default function TabLayout() {
     );
   };
 
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colorScheme === "dark" ? "#000000" : "#ffffff" }}>
+        <ActivityIndicator size="large" color={colorScheme === "dark" ? "#ffffff" : "#000000"} />
+      </View>
+    );
+  }
   return (
     <Tabs
       screenOptions={{
@@ -45,16 +52,16 @@ export default function TabLayout() {
         },
         tabBarHideOnKeyboard: true,
         freezeOnBlur: true,
-        // tabBarBackground: () =>
-        //   Platform.OS === "ios" ? (
-        //     <BlurView
-        //       tint={
-        //         colorScheme === "dark" ? "dark" : "systemThickMaterialLight"
-        //       }
-        //       intensity={80}
-        //       style={StyleSheet.absoluteFill}
-        //     />
-        //   ) : null,
+        tabBarBackground: () =>
+          Platform.OS === "ios" ? (
+            <BlurView
+              tint={
+                colorScheme === "dark" ? "dark" : "systemThickMaterialLight"
+              }
+              intensity={80}
+              style={StyleSheet.absoluteFill}
+            />
+          ) : null,
       }}
     >
       {OrdeeTabs.map((tab) => (
@@ -64,9 +71,9 @@ export default function TabLayout() {
           options={{
             title: tab.title,
             headerShown: tab.name === "my-profile",
-            href: !profile?.role || tab.roles.includes(profile.role)
-              ? undefined
-              : null,
+            href: (profile && profile.role && !tab.roles.includes(profile.role))
+              ? null
+              : undefined,
             tabBarIcon: tabIcon(
               `https://api.iconify.design/${tab.icon[0]}`,
               `https://api.iconify.design/${tab.icon[1]}`

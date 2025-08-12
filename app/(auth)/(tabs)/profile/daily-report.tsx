@@ -1,4 +1,5 @@
-import { useOrderContext } from "@/context";
+import { useOrderStore } from "@/context/order";
+import { useAuth } from "@/context/auth";
 import { IOrder } from "@/interfaces";
 import { supabase } from "@/utils";
 import React, { useEffect, useState } from "react";
@@ -89,7 +90,8 @@ const calculateOrderTotal = (order: IOrder): number => {
 const timeZone = "America/Lima";
 
 export default function DailyReportScreen() {
-  const { getDailyPaidOrders, getPaidOrders } = useOrderContext();
+  const { getDailyPaidOrders, getPaidOrders, subscribeToOrders } = useOrderStore();
+  const { profile } = useAuth();
   const colorScheme = useColorScheme();
   const [isDarkMode, setIsDarkMode] = useState(colorScheme === "dark");
 
@@ -125,9 +127,11 @@ export default function DailyReportScreen() {
   const [dailyTotals, setDailyTotals] = useState<{ [key: string]: number }>({});
 
   const loadDailySales = async () => {
+    if (!profile.id_tenant) return;
+
     try {
       setLoading(true);
-      const orders = await getDailyPaidOrders();
+      const orders = await getDailyPaidOrders(profile.id_tenant);
       const salesByHour: number[] = new Array(12).fill(0);
       let dailyTotal = 0;
       const newDailyTotals: { [key: string]: number } = {};
@@ -205,8 +209,10 @@ export default function DailyReportScreen() {
   };
 
   const loadPreviousOrders = async () => {
+    if (!profile.id_tenant) return;
+
     try {
-      const orders = await getPaidOrders();
+      const orders = await getPaidOrders(profile.id_tenant);
       const newDailyTotals: { [key: string]: number } = {};
 
       orders.forEach((order: IOrder) => {
@@ -229,6 +235,8 @@ export default function DailyReportScreen() {
   };
 
   useEffect(() => {
+    if (!profile.id_tenant) return;
+
     const loadData = async () => {
       await loadDailySales();
       await loadPreviousOrders();
@@ -236,21 +244,13 @@ export default function DailyReportScreen() {
 
     loadData();
 
-    const subscription = supabase
-      .channel("daily-reports")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "orders" },
-        () => {
-          loadData();
-        }
-      )
-      .subscribe();
+    // Subscribe to real-time updates using the store's subscription method
+    const unsubscribe = subscribeToOrders(profile.id_tenant);
 
     return () => {
-      subscription.unsubscribe();
+      unsubscribe();
     };
-  }, []);
+  }, [profile.id_tenant]);
 
   const SalesDetails = ({
     title,

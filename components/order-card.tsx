@@ -1,5 +1,4 @@
 import { IOrder } from "@/interfaces";
-import { useColorScheme } from "@/utils/expo/useColorScheme.web";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";

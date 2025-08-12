@@ -1,64 +1,58 @@
-import * as React from "react";
-import { createContext, useContext } from "react";
+import { IMeal, IOrder, IOrderContextProvider, ITable } from "@/interfaces";
 import { supabase } from "@/utils";
-import { IOrder, IOrderContextProvider, ITable, IMeal } from "@/interfaces";
+import { addHours, endOfToday, startOfToday } from "date-fns";
 import { router } from "expo-router";
 import { toast } from "sonner-native";
-import { startOfToday, endOfToday, addHours } from "date-fns";
-import { FontAwesome } from "@expo/vector-icons";
+import { create } from "zustand";
 import { useAuth } from "./auth";
-export const OrderContext = createContext<IOrderContextProvider>({
-  addOrder: async () => { },
-  getUnservedOrders: async () => [],
-  getOrdersCountByDay: async () => 0,
-  addTable: async () => { },
-  updatingOrder: null,
-  setUpdatingOrder: () => { },
-  getOrderById: async (id: string): Promise<IOrder> => ({} as IOrder),
-  getOrdersCountByMonth: async () => 0,
-  order: {} as IOrder,
-  loading: false,
-  getPaidOrders: async () => [],
-  updateOrder: async () => { },
-  deleteOrder: async (orderId: string, tableId: string, itemsToRestore: { meal_id: string; quantity: number }[]) => { },
-  updateOrderServedStatus: async () => { },
-  paidOrders: [],
-  updatePaidStatus: async () => { },
+
+interface OrderState extends IOrderContextProvider {
+  setUnpaidOrders: (orders: IOrder[]) => void;
+  setUpdatingOrder: (order: IOrder | null) => void;
+  setOrder: (order: IOrder) => void;
+  setPaidOrders: (orders: IOrder[]) => void;
+  setLoading: (loading: boolean) => void;
+  subscribeToOrders: () => void;
+}
+
+export const useOrderStore = create<OrderState>((set, get) => ({
   unpaidOrders: [],
-  getDailyPaidOrders: async () => [],
-  getUnpaidOrders: async () => [],
-});
+  updatingOrder: null,
+  order: {} as IOrder,
+  paidOrders: [],
+  loading: false,
+  setUnpaidOrders: (orders) => set({ unpaidOrders: orders }),
+  setUpdatingOrder: (order) => set({ updatingOrder: order }),
+  setOrder: (order) => set({ order }),
+  setPaidOrders: (orders) => set({ paidOrders: orders }),
+  setLoading: (loading) => set({ loading }),
 
-export const OrderContextProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [unpaidOrders, setUnpaidOrders] = React.useState<IOrder[]>([]);
-  const [updatingOrder, setUpdatingOrder] = React.useState<IOrder | null>(null);
-  const [order, setOrder] = React.useState<IOrder>({} as IOrder);
-  const { profile } = useAuth();
-  const [paidOrders, setPaidOrders] = React.useState<IOrder[]>([]);
-  const [loading, setLoading] = React.useState(false);
-
-  const getOrdersCountByMonth = async () => {
-    setLoading(true);
+  getOrdersCountByMonth: async (tenantId?: string) => {
+    set({ loading: true });
+    if (!tenantId) {
+      set({ loading: false });
+      return null;
+    }
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
     const { error, count } = await supabase
       .from("orders")
       .select("*", { count: "exact" })
-      .eq("id_tenant", profile.id_tenant)
+      .eq("id_tenant", tenantId)
       .gte("date", new Date(currentYear, currentMonth, 1).toISOString())
       .lt("date", new Date(currentYear, currentMonth + 1, 1).toISOString());
     if (error) throw error;
-    setLoading(false);
+    set({ loading: false });
     return count;
-  };
+  },
 
-  const getOrdersCountByDay = async () => {
-    setLoading(true);
+  getOrdersCountByDay: async (tenantId?: string) => {
+    set({ loading: true });
+    if (!tenantId) {
+      set({ loading: false });
+      return null;
+    }
     const startOfDay = startOfToday(); // Local time start of today
     const endOfDay = endOfToday(); // Local time end of today
     const utcOffset = -5; // Peru is UTC-5
@@ -67,19 +61,21 @@ export const OrderContextProvider = ({
     const { error, count } = await supabase
       .from("orders")
       .select("*", { count: "exact" })
-      .eq("id_tenant", profile.id_tenant)
+      .eq("id_tenant", tenantId)
       .gte("date", startOfDayUTC.toISOString())
       .lt("date", endOfDayUTC.toISOString());
     if (error) throw error;
-    setLoading(false);
+    set({ loading: false });
     return count;
-  };
+  },
 
-  const addOrder = async (order: IOrder) => {
-    setLoading(true);
+  addOrder: async (order: IOrder, tenantId?: string) => {
+    if (!tenantId) {
+      toast.error("Error: ID de tenant no disponible");
+      return;
+    }
 
     try {
-      // 1. Prepare order data (excluding items)
       const orderDataToInsert = {
         id_table: order.id_table,
         id_user: order.id_user,
@@ -87,15 +83,14 @@ export const OrderContextProvider = ({
         to_go: order.to_go,
         paid: order.paid,
         total: order.total,
-        id_tenant: profile.id_tenant,
+        id_tenant: tenantId,
       };
 
-      // 2. Insert the main order record and get its ID
       const { data: insertedOrderData, error: orderError } = await supabase
         .from("orders")
         .insert(orderDataToInsert)
-        .select("id") // Select the ID of the newly inserted order
-        .single(); // Expecting a single record back
+        .select("id")
+        .single();
 
       if (orderError) {
         if (orderError.code === "P0001") {
@@ -105,27 +100,25 @@ export const OrderContextProvider = ({
           console.error("Error inserting order:", orderError);
           alert("Error inserting order");
         }
-        setLoading(false);
+        set({ loading: false });
         return;
       }
 
       if (!insertedOrderData || !insertedOrderData.id) {
         console.error("Failed to retrieve inserted order ID");
         alert("Failed to retrieve inserted order ID");
-        setLoading(false);
+        set({ loading: false });
         return;
       }
 
       const newOrderId = insertedOrderData.id;
 
-      // 3. Prepare items for the order_meals table
       const orderMealsDataToInsert = order.order_meals.map((meal) => ({
         order_id: newOrderId,
         meal_id: meal.id,
-        quantity: Number(meal.quantity)
+        quantity: Number(meal.quantity),
       }));
 
-      // 4. Insert items into the order_meals table
       const { error: orderMealsError } = await supabase
         .from("order_meals")
         .insert(orderMealsDataToInsert);
@@ -133,7 +126,7 @@ export const OrderContextProvider = ({
       if (orderMealsError) {
         console.error("Error inserting order items:", orderMealsError);
         alert("Error inserting order items");
-        setLoading(false);
+        set({ loading: false });
         return;
       }
 
@@ -144,7 +137,7 @@ export const OrderContextProvider = ({
               .from("meals")
               .select("id, name, price, id_category, quantity, stock")
               .eq("id", meal.id)
-              .eq("id_tenant", profile.id_tenant)
+              .eq("id_tenant", tenantId)
               .single();
 
             if (fetchError) {
@@ -178,7 +171,7 @@ export const OrderContextProvider = ({
       if (mealsError) {
         console.error("Error updating meals:", mealsError);
         alert("Order placed, but failed to update meal stock.");
-        setLoading(false);
+        set({ loading: false });
         return;
       }
 
@@ -187,7 +180,7 @@ export const OrderContextProvider = ({
           .from("tables")
           .update({ status: false })
           .eq("id", order.id_table)
-          .eq("id_tenant", profile.id_tenant);
+          .eq("id_tenant", tenantId);
 
         if (tableError) {
           console.error("Error updating table status:", tableError);
@@ -195,102 +188,157 @@ export const OrderContextProvider = ({
         }
       }
 
-      toast.success("Pedido agregado!", {
-        icon: <FontAwesome name="check-circle" size={20} color="green" />,
-      });
+      toast.success("Pedido agregado!");
       router.back();
     } catch (error) {
       console.error("Unexpected error:", error);
-      toast.success("Error al procesar pedido", {
-        icon: <FontAwesome name="times-circle" size={20} color="red" />,
-      });
+      toast.success("Error al procesar pedido");
     } finally {
-      setLoading(false);
+      set({ loading: false });
     }
-  };
+  },
 
-  async function addTable(table: ITable) {
-    setLoading(true);
+  addTable: async (table: ITable, tenantId?: string) => {
+    set({ loading: true });
+    if (!tenantId) {
+      toast.error("Error: ID de tenant no disponible");
+      set({ loading: false });
+      return;
+    }
     const { error } = await supabase
       .from("tables")
       .insert({
         ...table,
-        id_tenant: profile.id_tenant,
+        id_tenant: tenantId,
       });
     if (error) {
       console.error("Error adding table:", error);
-      toast.error("Error al agregar mesa!", {
-        icon: <FontAwesome name="times-circle" size={20} color="red" />,
-      });
+      toast.error("Error al agregar mesa!");
       return;
     }
-    toast.success("Mesa agregada!", {
-      icon: <FontAwesome name="check-circle" size={20} color="green" />,
-    });
-    setLoading(false);
-  }
+    toast.success("Mesa agregada!");
+    set({ loading: false });
+  },
 
-  const updatePaidStatus = async (id: string, paid: boolean) => {
-    await supabase.from("orders").update({ paid }).eq("id", id).select();
-    const { error } = await supabase
-      .from("tables")
-      .update({ status: true })
-      .eq("id", order.id_table)
-      .select();
-    if (error) {
-      toast.error("Error al actualizar estado de la mesa!", {
-        icon: <FontAwesome name="times-circle" size={20} color="red" />,
-      });
-      return;
+  updatePaidStatus: async (id: string, paid: boolean) => {
+    // Optimistic update - update paid status immediately
+    const currentUnpaidOrders = get().unpaidOrders;
+    const currentPaidOrders = get().paidOrders;
+    
+    if (paid) {
+      // Move from unpaid to paid
+      const orderToMove = currentUnpaidOrders.find(order => order.id === id);
+      if (orderToMove) {
+        const updatedUnpaidOrders = currentUnpaidOrders.filter(order => order.id !== id);
+        const updatedPaidOrders = [{ ...orderToMove, paid: true }, ...currentPaidOrders];
+        set({ 
+          unpaidOrders: updatedUnpaidOrders, 
+          paidOrders: updatedPaidOrders 
+        });
+      }
     }
-  };
 
-  async function getUnservedOrders() {
-    setLoading(true);
+    try {
+      const { order } = get();
+      await supabase.from("orders").update({ paid }).eq("id", id).select();
+      const { error } = await supabase
+        .from("tables")
+        .update({ status: true })
+        .eq("id", order.id_table)
+        .select();
+      
+      if (error) {
+        // Revert optimistic update on error
+        set({ 
+          unpaidOrders: currentUnpaidOrders, 
+          paidOrders: currentPaidOrders 
+        });
+        toast.error("Error al actualizar estado de la mesa!");
+        return;
+      }
+
+      toast.success("Estado de pago actualizado!");
+    } catch (catchError) {
+      // Revert optimistic update on error
+      set({ 
+        unpaidOrders: currentUnpaidOrders, 
+        paidOrders: currentPaidOrders 
+      });
+      toast.error("Error al actualizar estado de pago!");
+    }
+  },
+
+  getUnservedOrders: async (tenantId?: string) => {
+    set({ loading: true });
+    if (!tenantId) {
+      set({ loading: false });
+      return [];
+    }
     const { data, error } = await supabase
       .from("orders")
       .select("*, tables(id, number)")
-      .eq("id_tenant", profile?.id_tenant)
+      .eq("id_tenant", tenantId)
       .eq("served", false);
     if (error) throw error;
-    setLoading(false);
+    set({ loading: false });
     return data;
-  }
+  },
 
-  async function getPaidOrders() {
-    setLoading(true);
+  getPaidOrders: async (tenantId?: string) => {
+    set({ loading: true });
+    if (!tenantId) {
+      set({ loading: false });
+      return [];
+    }
     const { data, error } = await supabase
       .from("orders")
       .select("*, tables(id, number), order_meals(quantity, meals(name))")
       .eq("paid", true)
-      .eq("id_tenant", profile?.id_tenant)
+      .eq("id_tenant", tenantId)
       .order("date", { ascending: false });
     if (error) throw error;
-    setPaidOrders(data);
-    setLoading(false);
+    set({ paidOrders: data });
+    set({ loading: false });
     return data;
-  }
-  const updateOrderServedStatus = async (id: string) => {
-    setLoading(true);
-    const { error } = await supabase
-      .from("orders")
-      .update({ served: true })
-      .eq("id", id);
-    if (error) throw error;
-    toast.success("Pedido servido!", {
-      icon: <FontAwesome name="check-circle" size={20} color="green" />,
-    });
-    setLoading(false);
-  };
+  },
+  updateOrderServedStatus: async (id: string) => {
+    // Optimistic update - mark as served immediately
+    const currentUnpaidOrders = get().unpaidOrders;
+    const updatedOrders = currentUnpaidOrders.map(order =>
+      order.id === id ? { ...order, served: true } : order
+    );
+    set({ unpaidOrders: updatedOrders });
 
-  const deleteOrder = async (orderId: string, tableId: string, itemsToRestore: { meal_id: string; quantity: number }[]) => {
-    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from("orders")
+        .update({ served: true })
+        .eq("id", id);
+      
+      if (error) {
+        // Revert optimistic update on error
+        set({ unpaidOrders: currentUnpaidOrders });
+        toast.error("Error al marcar como servido!");
+        return;
+      }
 
-    // 1. Restore meal quantities before deleting the order
-    // (Doing this first avoids issues if order deletion fails after stock is adjusted)
+      toast.success("Pedido servido!");
+    } catch (catchError) {
+      // Revert optimistic update on error
+      set({ unpaidOrders: currentUnpaidOrders });
+      toast.error("Error al marcar como servido!");
+    }
+  },
+
+  deleteOrder: async (
+    orderId: string,
+    tableId: string,
+    itemsToRestore: { meal_id: string; quantity: number }[]
+  ) => {
+    set({ loading: true });
+
     const mealStockUpdates = await Promise.all(
       itemsToRestore.map(async (item) => {
-        // Fetch current quantity
         const { data: currentMeal, error: fetchError } = await supabase
           .from("meals")
           .select("quantity")
@@ -302,16 +350,14 @@ export const OrderContextProvider = ({
             `Error fetching quantity for meal ${item.meal_id} during delete:`,
             fetchError
           );
-          return null; // Skip update if fetch fails
+          return null;
         }
 
-        // Calculate new quantity
         const newQuantity = currentMeal.quantity + item.quantity;
         return { id: item.meal_id, quantity: newQuantity };
       })
     );
 
-    // Filter out any null results from failed fetches
     const validUpdates = mealStockUpdates.filter(
       (update) => update !== null
     ) as { id: string; quantity: number }[];
@@ -322,16 +368,10 @@ export const OrderContextProvider = ({
         .upsert(validUpdates);
       if (mealError) {
         console.error("Error restoring meal quantities:", mealError);
-        toast.error("Error al restaurar stock de platillos.", {
-          icon: <FontAwesome name="times-circle" size={20} color="red" />,
-        });
-        // Decide if you should proceed with order deletion or stop
-        // setLoading(false); // Maybe stop here
-        // return;
+        toast.error("Error al restaurar stock de platillos.");
       }
     }
 
-    // 2. Delete the order (ON DELETE CASCADE handles order_meals)
     const { error: deleteError } = await supabase
       .from("orders")
       .delete()
@@ -339,42 +379,30 @@ export const OrderContextProvider = ({
 
     if (deleteError) {
       console.error("Error deleting order:", deleteError);
-      toast.error("Error al eliminar el pedido.", {
-        icon: <FontAwesome name="times-circle" size={20} color="red" />,
-      });
-      // Note: Meal stock might already be restored. Consider implications.
-      setLoading(false);
+      toast.error("Error al eliminar el pedido.");
+      set({ loading: false });
       return;
     }
 
-    // 3. Update the table status to "available" (status = true)
-    // Actualizar el estado de la mesa a "libre" (status = true)
     const { error: tableError } = await supabase
       .from("tables")
-      .update({ status: true }) // Assuming true means available
+      .update({ status: true })
       .eq("id", tableId);
 
     if (tableError) {
       console.error("Error updating table status:", tableError);
-      toast.error("Pedido eliminado, pero error al actualizar mesa.", {
-        icon: <FontAwesome name="exclamation-circle" size={20} color="orange" />,
-      });
-      // Don't return, order is already deleted.
-      // setLoading(false);
-      // return;
+      toast.error("Pedido eliminado, pero error al actualizar mesa.");
     }
 
-    setLoading(false);
-    toast.success("Pedido eliminado!", {
-      icon: <FontAwesome name="check-circle" size={20} color="green" />,
-    });
-    setUpdatingOrder(null);
-  };
+    set({ loading: false });
+    toast.success("Pedido eliminado!");
+    set({ updatingOrder: null });
+  },
 
-  async function getOrderById(id: string) {
-    setLoading(true);
+  getOrderById: async (id: string) => {
+    set({ loading: true });
     const { data, error } = await supabase
-      .from("orders") // Start from orders table
+      .from("orders")
       .select(
         `
         *,
@@ -386,13 +414,12 @@ export const OrderContextProvider = ({
           meals!inner ( * )
         )
       `
-      ) // Join order_meals and then meals
-      .eq("id", id) // Filter by order ID
-      .single(); // Expect a single order
+      )
+      .eq("id", id)
+      .single();
 
     if (error) throw error;
 
-    // Patch: flatten order_meals into items
     if (data && data.order_meals) {
       data.items = data.order_meals.map((om: any) => ({
         ...om.meals,
@@ -400,34 +427,29 @@ export const OrderContextProvider = ({
       }));
     }
 
-    setLoading(false);
-    setOrder(data);
+    set({ loading: false });
+    set({ order: data });
     return data;
-  }
+  },
 
-  async function updateOrder(order: IOrder) {
-    setLoading(true);
+  updateOrder: async (order: IOrder) => {
+    set({ loading: true });
 
-    // 1. Fetch current order items to calculate stock differences
-    const { data: currentOrderMeals, error: fetchCurrentError } =
-      await supabase
-        .from("order_meals")
-        .select("meal_id, quantity")
-        .eq("order_id", order.id);
+    const { data: currentOrderMeals, error: fetchCurrentError } = await supabase
+      .from("order_meals")
+      .select("meal_id, quantity")
+      .eq("order_id", order.id);
 
     if (fetchCurrentError) {
       console.error(
         "Error fetching current order items for update:",
         fetchCurrentError
       );
-      toast.error("Error al obtener items actuales para actualizar.", {
-        icon: <FontAwesome name="times-circle" size={20} color="red" />,
-      });
-      setLoading(false);
+      toast.error("Error al obtener items actuales para actualizar.");
+      set({ loading: false });
       return;
     }
 
-    // 2. Create maps for easier lookup
     const currentMealsMap = new Map(
       currentOrderMeals.map((item) => [item.meal_id, item.quantity])
     );
@@ -437,7 +459,6 @@ export const OrderContextProvider = ({
 
     const stockAdjustments: { id: string; quantity: number }[] = [];
 
-    // 3. Fetch all relevant meal data in one go
     const allMealIds = [
       ...new Set([...currentMealsMap.keys(), ...newMealsMap.keys()]),
     ];
@@ -448,10 +469,8 @@ export const OrderContextProvider = ({
 
     if (fetchMealsError) {
       console.error("Error fetching meal data:", fetchMealsError);
-      toast.error("Error al obtener datos de los platillos.", {
-        icon: <FontAwesome name="times-circle" size={20} color="red" />,
-      });
-      setLoading(false);
+        toast.error("Error al obtener datos de los platillos.");
+      set({ loading: false });
       return;
     }
 
@@ -459,7 +478,6 @@ export const OrderContextProvider = ({
       allMealsData.map((meal) => [meal.id, meal.quantity])
     );
 
-    // 4. Calculate stock changes
     for (const [mealId, currentQuantity] of allMealsMap.entries()) {
       const oldQuantity = currentMealsMap.get(mealId) || 0;
       const newQuantity = newMealsMap.get(mealId) || 0;
@@ -473,27 +491,22 @@ export const OrderContextProvider = ({
       }
     }
 
-    // 5. Update meal stocks
     if (stockAdjustments.length > 0) {
-
-      for (const adjustment of stockAdjustments){
+      for (const adjustment of stockAdjustments) {
         const { error: mealError } = await supabase
           .from("meals")
           .update({ quantity: adjustment.quantity })
           .eq("id", adjustment.id);
 
-          if (mealError) {
-            console.error("Error updating meal quantities:", mealError);
-            toast.error("Error al actualizar el stock de los platillos.", {
-              icon: <FontAwesome name="times-circle" size={20} color="red" />,
-            });
-            setLoading(false);
-            return;
-          }
+        if (mealError) {
+          console.error("Error updating meal quantities:", mealError);
+          toast.error("Error al actualizar el stock de los platillos.");
+          set({ loading: false });
+          return;
+        }
       }
     }
 
-    // 6. Delete old order_meals entries
     const { error: deleteError } = await supabase
       .from("order_meals")
       .delete()
@@ -501,14 +514,11 @@ export const OrderContextProvider = ({
 
     if (deleteError) {
       console.error("Error deleting old order items:", deleteError);
-      toast.error("Error al eliminar items antiguos del pedido.", {
-        icon: <FontAwesome name="times-circle" size={20} color="red" />,
-      });
-      setLoading(false);
+      toast.error("Error al eliminar items antiguos del pedido.");
+      set({ loading: false });
       return;
     }
 
-    // 7. Insert new order_meals entries
     const newOrderMealsData = order.order_meals.map((item) => ({
       order_id: order.id,
       meal_id: item.id,
@@ -521,15 +531,12 @@ export const OrderContextProvider = ({
         .insert(newOrderMealsData);
       if (insertError) {
         console.error("Error inserting new order items:", insertError);
-        toast.error("Error al insertar nuevos items del pedido.", {
-          icon: <FontAwesome name="times-circle" size={20} color="red" />,
-        });
-        setLoading(false);
+        toast.error("Error al insertar nuevos items del pedido.");
+        set({ loading: false });
         return;
       }
     }
 
-    // 8. Update the main order details
     const { order_meals, items, ...orderUpdateData } = order;
     const { error: updateOrderError } = await supabase
       .from("orders")
@@ -538,81 +545,105 @@ export const OrderContextProvider = ({
 
     if (updateOrderError) {
       console.error("Update Order Error", updateOrderError);
-      toast.error("Error al actualizar el pedido.", {
-        icon: <FontAwesome name="times-circle" size={20} color="red" />,
-      });
+      toast.error("Error al actualizar el pedido.");
     } else {
-      toast.success("Pedido actualizado!", {
-        icon: <FontAwesome name="check-circle" size={20} color="green" />,
-      });
+      toast.success("Pedido actualizado!");
       router.back();
     }
-    setLoading(false);
-    setUpdatingOrder(null);
-  }
+    set({ loading: false });
+    set({ updatingOrder: null });
+  },
 
-  async function getDailyPaidOrders() {
+  getDailyPaidOrders: async (tenantId?: string) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    setLoading(true);
+    set({ loading: true });
+    if (!tenantId) {
+      set({ loading: false });
+      return [];
+    }
 
     const { data, error } = await supabase
       .from("orders")
       .select("*")
       .eq("paid", true)
-      .eq("id_tenant", profile?.id_tenant)
+      .eq("id_tenant", tenantId)
       .gte("date", today.toISOString())
       .order("date");
     if (error) throw error;
-    setLoading(false);
+    set({ loading: false });
     return data;
-  }
+  },
 
-  async function getUnpaidOrders() {
+  getUnpaidOrders: async (tenantId?: string) => {
+    if (!tenantId) {
+      set({ unpaidOrders: [] });
+      return [];
+    }
     const { data, error } = await supabase
       .from("orders")
       .select("*, tables(id, number), order_meals(quantity, meals(name))")
       .eq("paid", false)
-      .eq("id_tenant", profile?.id_tenant)
+      .eq("id_tenant", tenantId)
       .order("date", { ascending: false });
     if (error) throw error;
-    setUnpaidOrders(data);
+    set({ unpaidOrders: data });
     return data;
-  }
+  },
+  subscribeToOrders: (tenantId?: string) => {
+    if (!tenantId) return () => {};
 
-  return (
-    <OrderContext.Provider
-      value={{
-        unpaidOrders,
-        deleteOrder,
-        loading,
-        getOrderById,
-        paidOrders,
-        getPaidOrders,
-        getUnservedOrders,
-        updatingOrder,
-        updateOrder,
-        addOrder,
-        setUpdatingOrder,
-        addTable,
-        updateOrderServedStatus,
-        order,
-        getOrdersCountByDay,
-        getDailyPaidOrders,
-        getOrdersCountByMonth,
-        updatePaidStatus,
-        getUnpaidOrders,
-      }}
-    >
-      {children}
-    </OrderContext.Provider>
-  );
-};
+    // Initial fetch of all orders
+    Promise.all([
+      get().getUnservedOrders(tenantId),
+      get().getPaidOrders(tenantId),
+      get().getUnpaidOrders(tenantId),
+    ])
 
-export const useOrderContext = () => {
-  const context = useContext(OrderContext);
-  if (!context) {
-    throw new Error("useOrderContext must be used within a OrderProvider");
+    // Subscribe to changes
+    const channel = supabase
+      .channel('orders-changes')
+      .on(
+        'postgres_changes',
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'orders' 
+        },
+        (payload) => {
+          // Handle different types of changes
+          switch (payload.eventType) {
+            case 'INSERT':
+              // New order created - fetch pending orders
+              get().getUnservedOrders(tenantId)
+              get().getUnpaidOrders(tenantId)
+              break
+            case 'UPDATE':
+              // Order updated - fetch all lists to ensure correct state
+              Promise.all([
+                get().getUnservedOrders(tenantId),
+                get().getPaidOrders(tenantId),
+                get().getUnpaidOrders(tenantId),
+              ])
+              break
+            case 'DELETE':
+              // Order deleted - fetch all lists to ensure correct state
+              Promise.all([
+                get().getUnservedOrders(tenantId),
+                get().getPaidOrders(tenantId),
+                get().getUnpaidOrders(tenantId),
+              ])
+              break
+          }
+        }
+      )
+      .subscribe()
+
+    // Return cleanup function
+    return () => {
+      channel.unsubscribe()
+    }
   }
-  return context;
-};
+}));
+
+

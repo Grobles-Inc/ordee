@@ -1,8 +1,8 @@
-import { useOrderContext } from "@/context";
+import { useOrderStore } from "@/context/order";
 import { router, Stack } from "expo-router";
 import React from "react";
 export default function PaymentsLayout() {
-  const { order } = useOrderContext();
+  const { order } = useOrderStore();
   return (
     <Stack>
       <Stack.Screen

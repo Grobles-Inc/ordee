@@ -1,4 +1,5 @@
-import { useCategoryContext, useMealContext } from "@/context";
+import { useCategoryStore } from "@/context/category";
+import { useMealStore } from "@/context/meals";
 import { IMeal } from "@/interfaces";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
@@ -10,12 +11,12 @@ import { ActivityIndicator, Button, List, TextInput } from "react-native-paper";
 import { toast } from "sonner-native";
 
 export default function AddMealScreen() {
-  const { addMeal, loading, getMealById, updateMeal } = useMealContext();
+  const { addMeal, loading, getMealById, updateMeal } = useMealStore();
   const [meal, setMeal] = React.useState<IMeal>({} as IMeal);
   const { id } = useLocalSearchParams();
   const [image_url, setImage_url] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState(false);
-  const { categories, getCategories } = useCategoryContext();
+  const { categories, getCategories } = useCategoryStore();
   const [expanded, setExpanded] = React.useState(false);
   const {
     control,

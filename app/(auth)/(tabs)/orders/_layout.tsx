@@ -1,4 +1,4 @@
-import { useOrderContext } from "@/context";
+import { useOrderStore } from "@/context/order";
 import { router, Stack } from "expo-router";
 import React from "react";
 import { Button as NativeButton } from "react-native";
@@ -6,7 +6,7 @@ import { Platform } from "react-native";
 import { Button } from "react-native-paper";
 
 export default function UserLayout() {
-  const { order, setUpdatingOrder } = useOrderContext();
+  const { order, setUpdatingOrder } = useOrderStore();
   return (
     <Stack>
       <Stack.Screen

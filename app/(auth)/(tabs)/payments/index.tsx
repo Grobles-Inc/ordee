@@ -1,5 +1,6 @@
 import { OrderCardSkeleton, PaymentCard } from "@/components";
-import { useOrderContext } from "@/context";
+import { useOrderStore } from "@/context/order";
+import { useAuth } from "@/context/auth";
 import { supabase } from "@/utils";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
@@ -17,28 +18,29 @@ interface GroupedOrder {
 }
 
 export default function PaidOrdersScreen() {
-  const { paidOrders, getPaidOrders, loading } = useOrderContext();
+  const { paidOrders, getPaidOrders, loading, subscribeToOrders } = useOrderStore();
+  const { profile } = useAuth();
   const [search, setSearch] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
 
   async function onRefresh() {
-    await getPaidOrders();
+    if (!profile.id_tenant) return;
+    await getPaidOrders(profile.id_tenant);
   }
 
   React.useEffect(() => {
-    getPaidOrders();
-    supabase.channel("db-changes").on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table: "orders",
-      },
-      (payload) => {
-        getPaidOrders();
-      }
-    );
-  }, []);
+    if (!profile.id_tenant) return;
+
+    // Load paid orders initially
+    getPaidOrders(profile.id_tenant);
+
+    // Subscribe to real-time updates using the store's subscription method
+    const unsubscribe = subscribeToOrders(profile.id_tenant);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [profile.id_tenant]);
 
   const groupedOrders = React.useMemo(() => {
     const filtered = paidOrders.filter((order) => {

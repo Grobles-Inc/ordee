@@ -1,4 +1,4 @@
-import { useCategoryContext } from "@/context";
+import { useCategoryStore } from "@/context/category";
 import { ICategory } from "@/interfaces";
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -30,7 +30,7 @@ export default function ProfileLayout() {
   const isDarkMode = colorScheme === "dark";
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const { addCategory } = useCategoryContext();
+  const { addCategory } = useCategoryStore();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
   const snapPoints = useMemo(() => {

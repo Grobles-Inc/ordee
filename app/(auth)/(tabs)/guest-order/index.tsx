@@ -1,5 +1,5 @@
 import { GuestOrderCard } from "@/components";
-import { useOrderContext } from "@/context";
+import { useOrderStore } from "@/context/order";
 import { IOrder } from "@/interfaces";
 import { supabase } from "@/utils";
 import { FlashList } from "@shopify/flash-list";
@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const [orders, setOrders] = React.useState<IOrder[]>();
-  const { getUnservedOrders, loading } = useOrderContext();
+  const { getUnservedOrders, loading } = useOrderStore();
   React.useEffect(() => {
     getUnservedOrders().then((orders) => setOrders(orders));
   }, []);
