@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/auth";
 import { useCategoryStore } from "@/context/category";
 import { useMealStore } from "@/context/meals";
 import { IMeal } from "@/interfaces";
@@ -17,6 +18,7 @@ export default function AddMealScreen() {
   const [image_url, setImage_url] = React.useState<string>();
   const [isLoading, setIsLoading] = React.useState(false);
   const { categories, getCategories } = useCategoryStore();
+  const { profile } = useAuth();
   const [expanded, setExpanded] = React.useState(false);
   const {
     control,
@@ -27,7 +29,7 @@ export default function AddMealScreen() {
   } = useForm<IMeal>({
     defaultValues: {
       name: "",
-      price: Number(""),
+      price: 0,
       id_category: "Seleccionar Categoría",
       quantity: "",
       image_url: "",
@@ -48,8 +50,10 @@ export default function AddMealScreen() {
   }
 
   useEffect(() => {
-    getCategories();
-  }, []);
+    if (profile?.id_tenant) {
+      getCategories(profile.id_tenant);
+    }
+  }, [profile?.id_tenant]);
 
   useEffect(() => {
     handleGetMeal();
@@ -89,35 +93,6 @@ export default function AddMealScreen() {
     }
   };
 
-  const onUpdate = async (data: IMeal) => {
-    const { id_category } = data;
-    const category = categories.find(
-      (category) => category.name === id_category
-    );
-    if (Number(data.quantity) < 0 || Number(data.quantity) === 0) {
-      toast.error("Cantidad no válida");
-      return;
-    }
-
-    if (Number(data.price) < 0 || Number(data.price) === 0) {
-      toast.error("Precio no válido");
-      return;
-    }
-    if (!category?.id && !meal.id_category) {
-      toast.error("Selecciona una categoría para el item");
-      return;
-    }
-    updateMeal({
-      ...data,
-      id: meal.id,
-      id_category: category?.id || meal.id_category,
-      image_url: image_url as string,
-    });
-    reset();
-
-    router.back();
-  };
-
   const onSubmit = async (data: IMeal) => {
     const { id_category } = data;
     const category = categories.find(
@@ -136,16 +111,58 @@ export default function AddMealScreen() {
       toast.error("Selecciona una categoría para el item");
       return;
     }
+    if (!profile?.id_tenant) {
+      toast.error("Error: ID de tenant no disponible");
+      return;
+    }
     if (category) {
       addMeal({
         ...data,
         id_category: category.id,
+        price: Number(data.price),
+        quantity: Number(data.quantity),
         image_url: image_url as string,
-      });
+      }, profile.id_tenant);
       reset();
     }
     router.back();
   };
+
+  const onUpdate = async (data: IMeal) => {
+    const { id_category } = data;
+    const category = categories.find(
+      (category) => category.name === id_category
+    );
+    if (Number(data.quantity) < 0 || Number(data.quantity) === 0) {
+      toast.error("Cantidad no válida");
+      return;
+    }
+
+    if (Number(data.price) < 0 || Number(data.price) === 0) {
+      toast.error("Precio no válido");
+      return;
+    }
+    if (!category?.id && !meal.id_category) {
+      toast.error("Selecciona una categoría para el item");
+      return;
+    }
+    if (!profile?.id_tenant) {
+      toast.error("Error: ID de tenant no disponible");
+      return;
+    }
+    updateMeal({
+      ...data,
+      id: meal.id,
+      id_category: category?.id || meal.id_category,
+      price: Number(data.price),
+      quantity: Number(data.quantity),
+      image_url: image_url as string,
+    });
+    reset();
+
+    router.back();  
+  };
+
   return (
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       {loading ? (
@@ -242,7 +259,7 @@ export default function AddMealScreen() {
                     label="Precio Unitario"
                     placeholder="0.00"
                     value={value === 0 ? "" : value.toString()}
-                    onChangeText={onChange}
+                    onChangeText={(text) => onChange(text === "" ? 0 : Number(text))} // Manejar conversión correctamente
                     mode="outlined"
                     keyboardType="numeric"
                     error={!!errors.price}

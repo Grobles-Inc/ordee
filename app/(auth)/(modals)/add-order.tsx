@@ -191,7 +191,7 @@ export default function AddOrderScreen() {
           0
         ),
       };
-      addOrder(orderData);
+      addOrder(orderData, profile.id_tenant);
 
       reset();
       setItemsSelected([]);
