@@ -1,6 +1,5 @@
 import { useAuth } from "@/context/auth";
 import { IUser } from "@/interfaces";
-import { useHeaderHeight } from "@react-navigation/elements";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import React from "react";

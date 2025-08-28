@@ -1,7 +1,6 @@
 import { useAuth } from "@/context/auth";
 import { useOrderStore } from "@/context/order";
-import { supabase } from "@/utils";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useFocusEffect } from "@react-navigation/native";
 import { Image } from "expo-image";
@@ -9,19 +8,18 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
+  Platform,
   RefreshControl,
   ScrollView,
   TouchableOpacity,
   useColorScheme,
   View,
-  Platform,
 } from "react-native";
-import { Badge, Button, Divider, ProgressBar, Text } from "react-native-paper";
+import { Button, ProgressBar, Text } from "react-native-paper";
 export default function ProfileScreen() {
   const { profile, session, signOut } = useAuth();
   const [count, setCount] = React.useState(0);
   const [refreshing, setRefreshing] = React.useState(false);
-  const [expoPushToken, setExpoPushToken] = React.useState("");
   const { getOrdersCountByDay, subscribeToOrders } = useOrderStore();
   const router = useRouter();
   const headerHeight = useHeaderHeight();
@@ -163,51 +161,77 @@ export default function ProfileScreen() {
           </>
         )}
         <View className="my-4" />
-        <Text style={{ color: "gray" }} className="px-6 py-2 uppercase">
-          MENÚ DE NAVEGACIÓN
-        </Text>
-        <View className="flex flex-col gap-2 w-full items-start bg-red-100 dark:bg-zinc-800 rounded-xl p-4">
-          <Button
-            icon="account-group-outline"
+        <View className="flex flex-col gap-6 w-full items-start  dark:bg-zinc-800 rounded-xl p-4 bg-zinc-100">
+          <TouchableOpacity
+            className="flex-row justify-between items-center gap-3 py-2 px-3 rounded-lg w-full"
             onPress={() => router.push("/(auth)/(tabs)/profile/users")}
-            mode="text"
+            activeOpacity={0.7}
           >
-            Usuarios
-          </Button>
-          <Button
-            icon="badge-account-outline"
+            <View className="flex flex-row items-center gap-3">
+              <MaterialCommunityIcons name="account-group-outline" size={22} color="#FF6347" />
+              <Text className="text-lg font-medium text-zinc-900 dark:text-white">Usuarios</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={22} color="#FF6347" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="flex-row justify-between items-center gap-3 py-2 px-3 rounded-lg w-full"
             onPress={() => router.push("/(auth)/(tabs)/profile/membership")}
-            mode="text"
+            activeOpacity={0.7}
           >
-            Membresía
-          </Button>
-          <Button
-            icon="book-open-page-variant-outline"
+            <View className="flex flex-row items-center gap-3">
+              <MaterialCommunityIcons name="badge-account-outline" size={22} color="#FF6347" />
+              <Text className="text-lg font-medium text-zinc-900 dark:text-white">Membresía</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={22} color="#FF6347" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="flex-row justify-between items-center gap-3 py-2 px-3 rounded-lg w-full"
             onPress={() => router.push("/(auth)/(tabs)/profile/categories")}
-            mode="text"
+            activeOpacity={0.7}
           >
-            Categorías
-          </Button>
-          <Button
+            <View className="flex flex-row items-center gap-3">
+              <MaterialCommunityIcons name="book-open-page-variant-outline" size={22} color="#FF6347" />
+              <Text className="text-lg font-medium text-zinc-900 dark:text-white">Categorías</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={22} color="#FF6347" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="flex-row justify-between items-center gap-3 py-2 px-3 rounded-lg w-full"
             onPress={() => router.push("/(auth)/(tabs)/profile/daily-report")}
-            mode="text"
-            icon="chart-line"
+            activeOpacity={0.7}
           >
-            Reporte Diario
-          </Button>
+            <View className="flex flex-row items-center gap-3">
+              <MaterialCommunityIcons name="chart-line" size={22} color="#FF6347" />
+              <Text className="text-lg font-medium text-zinc-900 dark:text-white">Reporte Diario</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={22} color="#FF6347" />
+          </TouchableOpacity>
           {Platform.OS === "web" && (
-            <Button icon="logout" onPress={signOut}>
-              Cerrar Sesión
-            </Button>
+            <TouchableOpacity
+              className="flex-row justify-between items-center gap-3 py-2 px-3 rounded-lg w-full"
+              onPress={signOut}
+              activeOpacity={0.7}
+            >
+              <View className="flex flex-row items-center gap-3">
+                <MaterialCommunityIcons name="logout" size={22} color="#FF6347" />
+                <Text className="text-lg font-medium text-zinc-900 dark:text-white">Cerrar Sesión</Text>
+              </View>
+              <MaterialCommunityIcons name="chevron-right" size={22} color="#FF6347" />
+            </TouchableOpacity>
           )}
           {Platform.OS !== "web" && (
-            <Button
+            <TouchableOpacity
+              className="flex-row justify-between items-center gap-3 py-2 px-3 rounded-lg w-full"
               onPress={() => router.push("/(auth)/(tabs)/profile/settings")}
-              mode="text"
-              icon="nut"
+              activeOpacity={0.7}
             >
-              Configuración
-            </Button>
+              <View className="flex flex-row items-center gap-3">
+                <MaterialCommunityIcons name="nut" size={22} color="#FF6347" />
+                <Text className="text-lg font-medium text-zinc-900 dark:text-white">Configuración</Text>
+              </View>
+              <MaterialCommunityIcons name="chevron-right" size={22} color="#FF6347" />
+            </TouchableOpacity>
           )}
         </View>
       </View>
@@ -219,11 +243,6 @@ export default function ProfileScreen() {
         Versión 1.0.3
       </Text>
 
-      <View className="absolute bottom-[150px] right-[-150px] w-[200px] h-[300px] rounded-xl rotate-[-45deg] bg-orange-300 shadow-lg" />
-
-      <View className="absolute bottom-[75px] right-[-150px] w-[200px] h-[300px] rounded-xl rotate-[-50deg] bg-orange-400 shadow-lg" />
-
-      <View className="absolute bottom-[0px] right-[-150px] w-[200px] h-[300px] rounded-xl rotate-[-60deg] bg-orange-500 shadow-lg" />
     </ScrollView>
   );
 }
