@@ -77,32 +77,6 @@ export default function AddOrderScreen() {
     );
   }
 
-  function onReset() {
-    Alert.alert(
-      "Resetear order",
-      "Esta acción limpiara todos los datos de la orden, ¿estás seguro?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Aceptar",
-          onPress: async () => {
-            try {
-              reset();
-              setItemsSelected([]);
-              router.back();
-            } catch (err) {
-              console.error("An error occurred:", err);
-              alert("Algo sucedió mal, vuelve a intentarlo.");
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
-  }
   const { control, handleSubmit, reset, setValue } = useForm<IOrder>({
     defaultValues: {
       id_table: "",
@@ -230,7 +204,7 @@ export default function AddOrderScreen() {
       <View className=" dark:bg-zinc-900 flex-1">
         <ScrollView contentInsetAdjustmentBehavior="automatic">
           <View className="flex flex-col w-full items-center">
-            <View className="w-full  overflow-hidden flex flex-col bg-white">
+            <View className="w-full  overflow-hidden flex flex-col">
               <Controller
                 control={control}
                 name="to_go"

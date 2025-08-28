@@ -34,13 +34,13 @@ export const OrdeeTabs = [
   },
   {
     name: "my-profile",
-    title: "Mi Perfil",
+    title: "Perfil",
     icon: ["mingcute:user-3-fill.svg", "mingcute:user-3-line.svg"],
     roles: ["guest", "user"],
   },
   {
     name: "profile",
-    title: "Mi Perfil",
+    title: "Perfil",
     icon: ["mingcute:user-3-fill.svg", "mingcute:user-3-line.svg"],
     roles: ["admin"],
   },

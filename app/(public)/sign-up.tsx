@@ -1,8 +1,7 @@
 import { supabase } from "@/utils";
-import { FontAwesome } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
@@ -77,7 +76,7 @@ export default function SignUpScreen() {
       // ¡Éxito! El usuario está en auth.users, y el trigger *debería* haber creado
       // el tenant en ordee.tenants y el account en ordee.accounts.
       console.log("Sign up successful, trigger executed:", authData.user);
-      
+
       // Asignar rol "admin" por defecto al usuario recién registrado
       const { error: roleUpdateError } = await supabase
         .from("accounts")
@@ -114,10 +113,10 @@ export default function SignUpScreen() {
             />
             <View className="flex flex-col gap-1 items-center">
               <Text className="text-4xl font-bold dark:text-white">
-                Crea una cuenta
+                Crear cuenta
               </Text>
               <Text className="text-center  dark:text-white">
-                Ingresa tus datos para crear una cuenta
+                Ingresa los datos de tu empresa.
               </Text>
             </View>
           </View>
@@ -128,7 +127,7 @@ export default function SignUpScreen() {
               render={({ field: { onChange, value } }) => (
                 <View className="flex flex-col gap-2">
                   <TextInput
-                    label="Nombre del Negocio"
+                    label="Nombre de la empresa"
                     mode="outlined"
                     error={errors.company ? true : false}
                     onChangeText={onChange}
@@ -146,7 +145,7 @@ export default function SignUpScreen() {
               rules={{
                 required: {
                   value: true,
-                  message: "Ingrese el nombre del negocio",
+                  message: "Requerido",
                 },
               }}
             />
@@ -172,7 +171,7 @@ export default function SignUpScreen() {
                 </View>
               )}
               rules={{
-                required: { value: true, message: "Ingrese tus nombres" },
+                required: { value: true, message: "Requerido" },
               }}
             />
             <Controller
@@ -197,7 +196,7 @@ export default function SignUpScreen() {
                 </View>
               )}
               rules={{
-                required: { value: true, message: "Ingrese tus apellidos" },
+                required: { value: true, message: "Requerido" },
               }}
             />
 
@@ -207,7 +206,7 @@ export default function SignUpScreen() {
               render={({ field: { onChange, value } }) => (
                 <View className="flex flex-col gap-2">
                   <TextInput
-                    label="Email"
+                    label="Correo Electrónico"
                     mode="outlined"
                     error={errors.email ? true : false}
                     onChangeText={onChange}
@@ -223,7 +222,7 @@ export default function SignUpScreen() {
                 </View>
               )}
               rules={{
-                required: { value: true, message: "Ingrese el email" },
+                required: { value: true, message: "Requerido" },
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                   message: "Ingrese un email válido",
@@ -259,7 +258,7 @@ export default function SignUpScreen() {
                 </View>
               )}
               rules={{
-                required: { value: true, message: "Ingrese la contraseña" },
+                required: { value: true, message: "Requerido" },
               }}
             />
           </View>

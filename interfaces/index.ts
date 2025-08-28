@@ -118,6 +118,7 @@ export interface IOrderContextProvider {
   updatingOrder: IOrder | null;
   getOrdersCountByMonth: (tenantId?: string) => Promise<number | null>;
   updatePaidStatus: (id: string, paid: boolean) => Promise<void>;
+  getLatestOrderByTableId: (tableId: string) => Promise<IOrder | null>;
   getPaidOrders: (tenantId?: string) => Promise<IOrder[]>;
   addTable: (table: ITable, tenantId?: string) => Promise<void>;
   loading: boolean;

@@ -290,11 +290,13 @@ export default function OrderDetailsScreen() {
       await updatePaidStatus(order.id, true);
     }
     setModalVisible(false);
-    await printOrder();
-    if (Platform.OS !== "web") {
-      router.reload();
-    }
+    printOrder();
     router.push("/(auth)/(tabs)/orders");
+    if (Platform.OS === "web") {
+      setTimeout(() => {
+        router.reload();
+      }, 500);
+    }
   };
 
   async function onRefresh() {
@@ -328,9 +330,6 @@ export default function OrderDetailsScreen() {
                 <Chip icon={order.to_go ? "shopping" : "table-furniture"}>
                   {order.to_go ? "Para llevar" : "Para mesa"}
                 </Chip>
-                <Chip icon={order.served ? "check-circle" : "clock"}>
-                  {order.served ? "Servido" : "En espera"}
-                </Chip>
                 {order.paid && (
                   <View className="bg-green-100 dark:bg-green-300 flex flex-row items-center justify-between  p-1.5 rounded-lg">
                     <FontAwesome6
@@ -346,31 +345,23 @@ export default function OrderDetailsScreen() {
 
             <View className="flex flex-col gap-4">
               <View className="flex flex-col gap-4">
-                <View className="flex flex-row justify-between px-4">
-                  <Text variant="titleSmall" className="w-60">
-                    {""}
-                  </Text>
-                  <Text variant="titleSmall">Precio/u</Text>
-                  <Text variant="titleSmall">Und.</Text>
-                </View>
                 <Divider />
                 {order?.items?.map((item, index) => (
                   <View
                     key={index}
-                    className="flex flex-row justify-between px-4"
+                    className="flex flex-row justify-between px-4 items-center"
                   >
-                    <View className="flex flex-row items-center gap-2">
-                      <AntDesign
-                        name="checkcircleo"
-                        size={20}
-                        color="#10B981"
-                      />
-                      <Text className="w-44 text-lg">
-                        {item?.name.toLocaleLowerCase()}
-                      </Text>
-                    </View>
-                    <Text>S/.{item.price.toFixed(2)}</Text>
-                    <Text>{item.quantity}</Text>
+
+                    <Text variant="titleMedium" >
+                      {item.name.slice(0, 25)}{item.name.length > 25 ? '...' : ''}
+                    </Text>
+                    <Text>
+                      x {item.quantity}
+                    </Text>
+
+                    <Text>
+                      S/. {item.price.toFixed(2)}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -379,9 +370,9 @@ export default function OrderDetailsScreen() {
           <View className="flex flex-col gap-4">
             <Divider />
             <View className="flex flex-row justify-between px-4">
-              <Text variant="titleMedium">Importe Total</Text>
+              <Text variant="titleLarge">Total</Text>
               <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-                S/.{order?.total?.toFixed(2)}
+                S/. {order?.total?.toFixed(2)}
               </Text>
             </View>
           </View>
@@ -408,32 +399,31 @@ export default function OrderDetailsScreen() {
                 elevation: 5,
               }}
             >
-              <View>
-                <View className="flex flex-row items-center gap-4">
-                  <Image
-                    style={{
-                      width: 30,
-                      height: 30,
-                    }}
-                    source={{
-                      uri: "https://img.icons8.com/?size=200&id=31337&format=png&color=ff6247",
-                    }}
-                  />
-                  <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-                    Imprimir Comprobante
-                  </Text>
-                </View>
-                <View className="flex flex-col mt-3 ml-12">
-                  <Text>
-                    La orden ahora se registrará como pagada y se procedera con
-                    la impresión del comprobante.
-                  </Text>
-                </View>
+              <View className="flex flex-col items-center gap-4">
+
+                <Image
+                  style={{
+                    width: 60,
+                    height: 60,
+                  }}
+                  source={{
+                    uri: "https://img.icons8.com/?size=400&id=31337&format=png&color=ff6247",
+                  }}
+                />
+                <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
+                  Pagar Orden
+                </Text>
               </View>
+
+              <Text variant="bodyMedium" style={{ textAlign: "center" }}>
+                La orden se marcará como pagada y podrás imprimir el comprobante.
+              </Text>
+
+
 
               <View className="flex flex-col justify-between gap-4 mt-7">
                 <Button mode="contained" onPress={confirmUpdate}>
-                  Imprimir
+                  Aceptar
                 </Button>
                 <Button mode="text" onPress={() => setModalVisible(false)}>
                   Cancelar
@@ -445,12 +435,11 @@ export default function OrderDetailsScreen() {
         <Button
           mode="contained"
           style={{ marginTop: 64, margin: 16 }}
-          icon="printer-outline"
           onPress={() => {
             setModalVisible(true);
           }}
         >
-          Imprimir Comprobante
+          Pagar Orden
         </Button>
       </ScrollView>
     </View>

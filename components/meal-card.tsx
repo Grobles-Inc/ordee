@@ -47,26 +47,38 @@ export function MealCard({ meal }: { meal: IMeal }) {
     });
   };
 
+  React.useEffect(() => {
+    if (meal.quantity === 0 && meal.stock) {
+      // Only update if stock is not already false
+      useMealStore.getState().updateMeal({
+        ...meal,
+        stock: false,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <Card style={{ marginVertical: 16 }}>
-      <Card.Cover source={{ uri: meal.image_url }} />
+    <Card style={{ flex: 1, margin: 8 }}>
+      <Card.Cover source={{ uri: meal.image_url }} style={{ height: 120 }} />
       <Card.Title
         title={meal.name}
-        subtitle={`${meal.quantity} porciones - ${meal.stock ? "En Stock" : "Sin Stock"}`}
+        titleStyle={{ textDecorationLine: meal.stock ? "none" : "line-through" }}
+        subtitle={`${meal.quantity} porciones`}
         subtitleStyle={{ color: meal.stock ? "#10B981" : "#c26775", fontWeight: "bold" }}
       />
-      <Card.Content className="flex flex-row justify-between items-center">
-        <Text variant="titleLarge">S/. {meal.price.toFixed(2)}</Text>
-        <View className="flex flex-row">
-          <IconButton icon="pencil-outline" size={20} onPress={handlePress} />
-          <IconButton
-            icon="delete-outline"
-            size={20}
-            onPress={() => {
-              onDelete(meal.id);
-            }}
-          />
-        </View>
+      <Card.Content className="flex flex-row justify-end items-center">
+
+        <IconButton icon="pencil-outline" size={20} onPress={handlePress} />
+        <IconButton
+          icon="delete-outline"
+          mode="contained"
+          size={20}
+          onPress={() => {
+            onDelete(meal.id);
+          }}
+        />
+
       </Card.Content>
     </Card>
   );

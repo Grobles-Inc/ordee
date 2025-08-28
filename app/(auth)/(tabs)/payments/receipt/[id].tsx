@@ -225,32 +225,12 @@ export default function ReceiptDetailsScreen() {
             </View>
           </View>
           <Text className="text-zinc-400">
-            {dateStr} • S/.{order.total?.toFixed(2)}
+            {dateStr}
           </Text>
         </View>
 
-        <Text className="text-xs px-6 py-2 text-zinc-400">
-          RESUMEN DEL PEDIDO
-        </Text>
-
         <View className="bg-white p-6 dark:bg-zinc-900">
-          <View className="flex-row items-center mb-4">
-            <Image
-              source={{
-                uri: "https://img.icons8.com/?size=200&id=CIZkVfGggoVX&format=png&color=000000",
-              }}
-              className="w-14 h-14 p-2 mr-4 bg-zinc-100 rounded-lg"
-            />
-            <View>
-              <Text className="text-lg font-bold dark:text-white">
-                Orden de Alimentos
-              </Text>
-              <Text className="text-zinc-400 uppercase">
-                {order.to_go ? "Para llevar" : "Para mesa"}
-              </Text>
-            </View>
-          </View>
-          <Divider className="mb-4" />
+
           <View className="flex flex-col gap-2">
             <View className="flex-row justify-between mb-2">
               <Text className="text-zinc-400 text-lg">Subtotal</Text>
@@ -284,35 +264,29 @@ export default function ReceiptDetailsScreen() {
                 {order.users?.name} {order.users?.last_name}
               </Text>
               <Text className="text-zinc-400">
-                UUID: {order.users?.id.slice(0, 25)}...
+                {order.users?.email}
               </Text>
             </View>
           </View>
         </View>
 
-        <Text className="text-xs px-6 py-2 text-zinc-400">ITEMS</Text>
+        <Text className="text-xs px-6 py-2 text-zinc-400">PEDIDO</Text>
         <View className="bg-white p-6 dark:bg-zinc-900">
           {order.items?.map((item, index) => (
             <View
               className="flex-row items-start mb-2 justify-between"
               key={index}
             >
-              <View className="flex-row items-start mb-4 ">
-                <Icon
-                  name="check-circle"
-                  size={20}
-                  color="#10B981"
-                  className="mr-4 mt-2"
-                />
-                <View className="flex flex-col ">
-                  <Text className="font-semibold text-lg dark:text-white">
-                    {item.name}
-                  </Text>
-                  <Text className="text-sm text-zinc-400">
-                    Cantidad: {item.quantity} porciones
-                  </Text>
-                </View>
-              </View>
+
+
+              <Text className="font-semibold  dark:text-white">
+                {item.name.slice(0, 25)}{item.name.length > 25 ? '...' : ''}
+              </Text>
+              <Text className="text-sm text-zinc-400">
+                {item.quantity} {item.quantity === 1 ? 'porción' : 'porciones'}
+              </Text>
+
+
               <Text className="text-gray-500 ">
                 S/. {item.price.toFixed(2)}
               </Text>

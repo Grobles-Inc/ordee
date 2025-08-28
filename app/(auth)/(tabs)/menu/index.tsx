@@ -174,10 +174,11 @@ export default function MenuScreen() {
           refreshing={refreshing}
           onRefresh={onRefresh}
           data={filteredMeals}
+          numColumns={2}
           renderItem={({ item: meal }) => <MealCard meal={meal} />}
           estimatedItemSize={200}
           horizontal={false}
-          contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 100 }}
           ListEmptyComponent={
             <SafeAreaView className="flex flex-col items-center justify-center mt-20">
               <Image

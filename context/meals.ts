@@ -80,8 +80,6 @@ export const useMealStore = create<MealState>((set, get) => ({
         toast.error("Error al actualizar item!");
         return;
       }
-
-      toast.success("Item actualizado!");
     } catch (catchError) {
       // Revert optimistic update on error
       set({ meals: currentMeals });
@@ -184,7 +182,6 @@ export const useMealStore = create<MealState>((set, get) => ({
         body: formData,
       });
 
-      toast.success("Item eliminado!");
     } catch (catchError) {
       // Revert optimistic update on error
       set({ meals: currentMeals });

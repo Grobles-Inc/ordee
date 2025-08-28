@@ -92,29 +92,13 @@ export default function WebLayout() {
 
   const filteredTabs = OrdeeTabs.filter((tab) => {
     // If profile or role is not available, show all tabs as fallback
-    if (!profile || !profile.role || profile.role === "") {
-      console.log("No profile role found, showing all tabs");
+    if (!profile || !profile.role) {
       return true;
     }
-    const hasAccess = tab.roles.includes(profile.role);
-    console.log(`Tab ${tab.name} access for role ${profile.role}:`, hasAccess);
-    return hasAccess;
+    return tab.roles.includes(profile.role);
   });
 
-  console.log("Profile:", profile);
-  console.log("Filtered tabs:", filteredTabs.map(t => t.name));
 
-  const tabIcon = (focusedIcon: string, unfocusedIcon: string) => {
-    return (
-      <Image
-        style={{ width: 28, height: 28 }}
-        source={{
-          uri: focusedIcon,
-        }}
-        alt="icon"
-      />
-    );
-  };
 
   return (
     <>
@@ -198,19 +182,20 @@ export default function WebLayout() {
                 }}
                 className="flex-1 items-center justify-center gap-1"
               >
-                {tabIcon(
-                  `https://api.iconify.design/${tab.icon[0]}`,
-                  `https://api.iconify.design/${tab.icon[1]}`
-                )}
-                <Text
-                  className="text-xs font-medium"
-                  style={{
-                    color: segments.includes(tab.name as never)
-                      ? "#FA2E47"
-                      : colorScheme === "dark"
-                        ? "#999"
-                        : "#666",
+                <Image
+                  style={{ width: 28, height: 28 }}
+                  source={{
+                    uri: segments.includes(tab.name as never)
+                      ? `https://api.iconify.design/${tab.icon[0]}`
+                      : `https://api.iconify.design/${tab.icon[1]}`,
                   }}
+                  alt="icon"
+                />
+                <Text
+                  className={`text-xs font-medium ${segments.includes(tab.name as never)
+                    ? "text-[#FF6247]"
+                    : "text-zinc-500 dark:text-zinc-400"
+                    }`}
                 >
                   {tab.title}
                 </Text>

@@ -12,7 +12,7 @@ interface OrderState extends IOrderContextProvider {
   setOrder: (order: IOrder) => void;
   setPaidOrders: (orders: IOrder[]) => void;
   setLoading: (loading: boolean) => void;
-  subscribeToOrders: () => void;
+  subscribeToOrders: (tenantId?: string) => () => void;
 }
 
 export const useOrderStore = create<OrderState>((set, get) => ({
@@ -45,6 +45,18 @@ export const useOrderStore = create<OrderState>((set, get) => ({
     if (error) throw error;
     set({ loading: false });
     return count;
+  },
+
+
+  getLatestOrderByTableId: async (tableId: string) => {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("id_table", tableId)
+      .order("date", { ascending: false })
+      .limit(1);
+    if (error) throw error;
+    return data[0];
   },
 
   getOrdersCountByDay: async (tenantId?: string) => {
@@ -337,66 +349,93 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   ) => {
     set({ loading: true });
 
-    const mealStockUpdates = await Promise.all(
-      itemsToRestore.map(async (item) => {
-        const { data: currentMeal, error: fetchError } = await supabase
+    try {
+      // First, get the current meal quantities before restoration
+      const mealStockUpdates = await Promise.all(
+        itemsToRestore.map(async (item) => {
+          console.log(`Restoring stock for meal ID: ${item.meal_id}, quantity: ${item.quantity}`);
+          
+          const { data: currentMeal, error: fetchError } = await supabase
+            .from("meals")
+            .select("id, quantity")
+            .eq("id", item.meal_id)
+            .single();
+
+          if (fetchError) {
+            console.error(
+              `Error fetching meal ${item.meal_id} during delete:`,
+              fetchError
+            );
+            return null;
+          }
+
+          if (!currentMeal) {
+            console.error(`Meal with ID ${item.meal_id} not found during delete`);
+            return null;
+          }
+
+          const newQuantity = currentMeal.quantity + item.quantity;
+          console.log(`Meal ${item.meal_id}: current quantity ${currentMeal.quantity} + ${item.quantity} = ${newQuantity}`);
+          
+          return { id: item.meal_id, quantity: newQuantity };
+        })
+      );
+
+      const validUpdates = mealStockUpdates.filter(
+        (update) => update !== null
+      ) as { id: string; quantity: number }[];
+
+      // Restore meal stock if there are valid updates
+      if (validUpdates.length > 0) {
+        console.log("Updating meal stock:", validUpdates);
+        
+        const { error: mealError } = await supabase
           .from("meals")
-          .select("quantity")
-          .eq("id", item.meal_id)
-          .single();
-
-        if (fetchError || !currentMeal) {
-          console.error(
-            `Error fetching quantity for meal ${item.meal_id} during delete:`,
-            fetchError
-          );
-          return null;
+          .upsert(validUpdates, { onConflict: 'id' });
+          
+        if (mealError) {
+          console.error("Error restoring meal quantities:", mealError);
+          toast.error("Error al restaurar stock de platillos.");
+          set({ loading: false });
+          return;
         }
-
-        const newQuantity = currentMeal.quantity + item.quantity;
-        return { id: item.meal_id, quantity: newQuantity };
-      })
-    );
-
-    const validUpdates = mealStockUpdates.filter(
-      (update) => update !== null
-    ) as { id: string; quantity: number }[];
-
-    if (validUpdates.length > 0) {
-      const { error: mealError } = await supabase
-        .from("meals")
-        .upsert(validUpdates);
-      if (mealError) {
-        console.error("Error restoring meal quantities:", mealError);
-        toast.error("Error al restaurar stock de platillos.");
       }
-    }
 
-    const { error: deleteError } = await supabase
-      .from("orders")
-      .delete()
-      .eq("id", orderId);
+      // Delete the order
+      const { error: deleteError } = await supabase
+        .from("orders")
+        .delete()
+        .eq("id", orderId);
 
-    if (deleteError) {
-      console.error("Error deleting order:", deleteError);
-      toast.error("Error al eliminar el pedido.");
+      if (deleteError) {
+        console.error("Error deleting order:", deleteError);
+        toast.error("Error al eliminar el pedido.");
+        set({ loading: false });
+        return;
+      }
+
+      // Update table status to available
+      const { error: tableError } = await supabase
+        .from("tables")
+        .update({ status: true })
+        .eq("id", tableId);
+
+      if (tableError) {
+        console.error("Error updating table status:", tableError);
+        toast.error("Pedido eliminado, pero error al actualizar mesa.");
+      } else {
+        console.log(`Table ${tableId} status updated to available`);
+      }
+
       set({ loading: false });
-      return;
+      toast.success("Pedido eliminado!");
+      set({ updatingOrder: null });
+      
+    } catch (error) {
+      console.error("Unexpected error in deleteOrder:", error);
+      toast.error("Error inesperado al eliminar el pedido.");
+      set({ loading: false });
     }
-
-    const { error: tableError } = await supabase
-      .from("tables")
-      .update({ status: true })
-      .eq("id", tableId);
-
-    if (tableError) {
-      console.error("Error updating table status:", tableError);
-      toast.error("Pedido eliminado, pero error al actualizar mesa.");
-    }
-
-    set({ loading: false });
-    toast.success("Pedido eliminado!");
-    set({ updatingOrder: null });
   },
 
   getOrderById: async (id: string) => {

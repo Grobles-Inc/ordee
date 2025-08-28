@@ -1,4 +1,3 @@
-import BlurView from "@/components/blur-view";
 import Colors from "@/constants/Colors";
 import { OrdeeTabs } from "@/constants/tabs";
 import { useAuth } from "@/context/auth";
@@ -52,16 +51,7 @@ export default function TabLayout() {
         },
         tabBarHideOnKeyboard: true,
         freezeOnBlur: true,
-        tabBarBackground: () =>
-          Platform.OS === "ios" ? (
-            <BlurView
-              tint={
-                colorScheme === "dark" ? "dark" : "systemThickMaterialLight"
-              }
-              intensity={80}
-              style={StyleSheet.absoluteFill}
-            />
-          ) : null,
+
       }}
     >
       {OrdeeTabs.map((tab) => (

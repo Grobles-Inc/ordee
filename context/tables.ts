@@ -50,7 +50,6 @@ export const useTablesStore = create<TablesState>((set, get) => ({
         t.id === tempId ? data : t
       );
       set({ tables: updatedTables });
-      toast.success("Mesa agregada!");
 
     } catch (catchError) {
       // Revert optimistic update on error
@@ -71,6 +70,7 @@ export const useTablesStore = create<TablesState>((set, get) => ({
       const { data, error } = await supabase
         .from("tables")
         .select("*")
+        .order("number", { ascending: true })
         .eq("id_tenant", tenantId)
         .neq("disabled", true);
       
@@ -138,9 +138,6 @@ export const useTablesStore = create<TablesState>((set, get) => ({
         toast.error("Error al eliminar mesa!");
         return;
       }
-
-      toast.success("Mesa eliminada!");
-
     } catch (catchError) {
       // Revert optimistic update on error
       set({ tables: currentTables });

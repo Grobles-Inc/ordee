@@ -31,7 +31,7 @@ export default function AddMealScreen() {
       name: "",
       price: 0,
       id_category: "Seleccionar Categoría",
-      quantity: "",
+      quantity: 0,
       image_url: "",
     },
   });
@@ -99,7 +99,7 @@ export default function AddMealScreen() {
       (category) => category.name === id_category
     );
 
-    if (Number(data.quantity) <= 0) {
+    if (Number(data.quantity) < 0) {
       toast.error("Cantidad no válida");
       return;
     }
@@ -133,7 +133,7 @@ export default function AddMealScreen() {
     const category = categories.find(
       (category) => category.name === id_category
     );
-    if (Number(data.quantity) < 0 || Number(data.quantity) === 0) {
+    if (Number(data.quantity) < 0) {
       toast.error("Cantidad no válida");
       return;
     }
@@ -160,7 +160,7 @@ export default function AddMealScreen() {
     });
     reset();
 
-    router.back();  
+    router.back();
   };
 
   return (
@@ -283,7 +283,7 @@ export default function AddMealScreen() {
                   <TextInput
                     label="Cantidad"
                     placeholder="0"
-                    value={value === 0 ? "" : value.toString()}
+                    value={value.toString()}
                     onChangeText={onChange}
                     mode="outlined"
                     keyboardType="numeric"

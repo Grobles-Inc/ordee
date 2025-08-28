@@ -68,11 +68,10 @@ export default function SignInScreen() {
               />
               <View className="flex flex-col gap-1 items-center">
                 <Text className="text-4xl font-bold dark:text-white">
-                  {" "}
                   Inicia Sesión
                 </Text>
                 <Text className="text-center dark:text-white">
-                  Eres nuevo en Ordee?
+                  Eres nuevo en la app?
                   <Text
                     className=" text-orange-500"
                     onPress={() => router.push("/(public)/sign-up")}
@@ -90,7 +89,7 @@ export default function SignInScreen() {
                 render={({ field: { onChange, value } }) => (
                   <View className="flex flex-col gap-2">
                     <TextInput
-                      label="Email"
+                      label="Correo Electrónico"
                       mode="outlined"
                       error={errors.email ? true : false}
                       onChangeText={onChange}
@@ -106,10 +105,10 @@ export default function SignInScreen() {
                   </View>
                 )}
                 rules={{
-                  required: { value: true, message: "Ingrese el email" },
+                  required: { value: true, message: "Requerido" },
                   pattern: {
                     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                    message: "Ingrese un email válido",
+                    message: "Ingrese un correo electrónico válido",
                   },
                 }}
               />
@@ -157,7 +156,7 @@ export default function SignInScreen() {
                 mode="contained-tonal"
                 onPress={() => onSubmitWithoutEmail()}
               >
-                Continuar sin cuenta
+                Continuar como invitado
               </Button>
             </View>
             <View className=" flex flex-col gap-2">

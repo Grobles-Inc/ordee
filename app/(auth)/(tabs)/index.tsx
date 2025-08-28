@@ -33,13 +33,14 @@ import {
 
 import { useAuth } from "@/context/auth";
 import { useTablesStore } from "@/context/tables";
+import { useOrderStore } from "@/context/order";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
 function TableSvg({ table }: { table: ITable }) {
   const { deleteTable } = useTablesStore();
-
+  const { getLatestOrderByTableId } = useOrderStore();
 
   function onLongPress() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -49,7 +50,7 @@ function TableSvg({ table }: { table: ITable }) {
         style: "cancel",
       },
       {
-        text: "Aceptar",
+        text: "Borrar",
         style: "destructive",
         onPress: async () => {
           try {
@@ -62,7 +63,7 @@ function TableSvg({ table }: { table: ITable }) {
     ]);
   }
 
-  function onPress() {
+  async function onPress() {
     if (table.status) {
       router.push({
         pathname: "/add-order",
@@ -71,13 +72,27 @@ function TableSvg({ table }: { table: ITable }) {
     } else {
       Alert.alert(
         "Mesa Ocupada",
-        "No se pueden agregar pedidos a esta mesa",
+        "¿Desea ver los pedidos de esta mesa?",
         [
           {
-            text: "Aceptar",
-            onPress: () => { },
-            style: "cancel",
-          },
+            text: "Ver Orden",
+            onPress: async () => {
+              try {
+                const latestOrder = await getLatestOrderByTableId(table.id as string);
+                if (latestOrder?.id) {
+                  router.push({
+                    pathname: "/(auth)/(tabs)/orders/details/[id]",
+                    params: { id: latestOrder.id },
+                  });
+                } else {
+                  toast.error("No se encontró orden activa para esta mesa");
+                }
+              } catch (error) {
+                toast.error("Error al obtener la orden");
+                console.error("Error getting latest order:", error);
+              }
+            },
+          }
         ],
         { cancelable: false }
       );

@@ -22,11 +22,11 @@ export function OrderCard({ order }: { order: IOrder }) {
           params: { id: order.id as string },
         });
       }}
-      title={"Mesa " + order.tables?.number}
-      description={order.served ? null : "En espera"}
+      title={order.to_go ? "Para llevar" : "Mesa " + order.tables?.number}
+      titleStyle={{ fontSize: 18 }}
       left={(props) => (
-        <View className="bg-orange-100 rounded-full p-2 ml-4 flex justify-center items-center ">
-          <List.Icon icon="food" color="#FF6247" />
+        <View className="bg-orange-100 rounded-full p-2 ml-4  flex justify-center items-center ">
+          <List.Icon icon={order.to_go ? "food" : "table-furniture"} color="#FF6247" />
         </View>
       )}
       right={(props) => (
