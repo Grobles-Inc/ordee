@@ -5,7 +5,7 @@ import { router } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { KeyboardAvoidingView, ScrollView, Text, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, Text, View, Platform } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -16,8 +16,8 @@ type TLogin = {
 
 export default function SignInScreen() {
   const [loading, setLoading] = React.useState(false);
-
   const [secureEntry, setSecureEntry] = React.useState(false);
+
   const {
     control,
     handleSubmit,
@@ -66,7 +66,7 @@ export default function SignInScreen() {
                 }}
                 source={require("../../assets/images/logo.png")}
               />
-              <View className="flex flex-col gap-1 items-center">
+              <View className="flex flex-col mt-2 gap-1 items-center">
                 <Text className="text-4xl font-bold dark:text-white">
                   Inicia Sesión
                 </Text>
@@ -161,11 +161,11 @@ export default function SignInScreen() {
             </View>
             <View className=" flex flex-col gap-2">
               <Text className="text-muted-foreground text-zinc-400   mx-auto text-center px-4">
-                Para sacar el máximo provecho y saber como usar la app visita la
+                Aprende como usar la app en nuestra
                 <Text
                   className=" text-orange-500"
                   onPress={() =>
-                    openBrowserAsync("https://ordee.framer.website")
+                    Platform.OS === "web" ? window.open("https://ordee.framer.website", "_blank") : openBrowserAsync("https://ordee.framer.website")
                   }
                 >
                   {" "}
@@ -179,7 +179,7 @@ export default function SignInScreen() {
                 <Text
                   className=" text-orange-500"
                   onPress={() =>
-                    openBrowserAsync("https://grobles.framer.website")
+                    Platform.OS === "web" ? window.open("https://grobles.netlify.app", "_blank") : openBrowserAsync("https://grobles.netlify.app")
                   }
                 >
                   {" "}
@@ -187,7 +187,7 @@ export default function SignInScreen() {
                 </Text>
               </Text>
               <Text className="text-muted-foreground text-zinc-400   mx-auto text-sm">
-                Versión 1.0.3
+                Versión 1.5.2
               </Text>
             </View>
           </View>
