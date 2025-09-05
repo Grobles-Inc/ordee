@@ -113,7 +113,6 @@ export const useMealStore = create<MealState>((set, get) => ({
       .select("*")
       .eq("id_tenant", tenantId)
       .order("created_at", { ascending: false });
-
     if (error) {
       console.error("Error fetching daily meals:", error);
       set({ meals: [], loading: false });
@@ -149,7 +148,6 @@ export const useMealStore = create<MealState>((set, get) => ({
     } catch (catchError) {
       // Revert optimistic update on error
       set({ meals: currentMeals });
-      toast.error("Error al actualizar item!");
     }
   },
   deleteMeal: async (id: string, cloudinaryPublicId: string) => {

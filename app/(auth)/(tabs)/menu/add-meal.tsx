@@ -156,6 +156,7 @@ export default function AddMealScreen() {
       id_category: category?.id || meal.id_category,
       price: Number(data.price),
       quantity: Number(data.quantity),
+      stock: Number(data.quantity) > 0 ? true : meal.stock,
       image_url: image_url as string,
     });
     reset();
@@ -299,7 +300,7 @@ export default function AddMealScreen() {
             />
 
             <View className="flex flex-col gap-4 items-center">
-              {image_url && !isLoading && (
+              {image_url && !isLoading ? (
                 <Image
                   source={{
                     uri: image_url,
@@ -310,13 +311,18 @@ export default function AddMealScreen() {
                     borderRadius: 8,
                   }}
                 />
+              ) : (
+                <View className="flex flex-col  items-center p-2 h-40 w-40 bg-gray-100/50 rounded-lg  border border-gray-300 border-dashed justify-center">
+                  <Text className="text-gray-500 text-sm">PNG, JPG, JPEG</Text>
+                  <Text className="text-gray-500 text-xs">Max: 2MB</Text>
+                </View>
               )}
               {isLoading && <ActivityIndicator />}
 
               <Button
                 onPress={pickImage}
-                mode="contained-tonal"
-                icon="upload"
+                mode="outlined"
+                icon="camera"
                 disabled={isLoading}
               >
                 <Text>{id ? "Cambiar imagen" : "Subir imagen"}</Text>
@@ -330,6 +336,9 @@ export default function AddMealScreen() {
                 disabled={loading}
               >
                 {id ? "Actualizar" : "Registrar"} Item
+              </Button>
+              <Button mode="text" onPress={() => router.back()}>
+                Cancelar
               </Button>
             </View>
           </View>

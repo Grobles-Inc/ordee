@@ -135,13 +135,12 @@ export default function ProfileScreen() {
               style={{ marginTop: 10, borderRadius: 10, width: "100%" }}
             >
               <TouchableOpacity
-                className="flex-row flex items-center justify-between  p-4"
+                className="flex-row flex items-center justify-between   p-4"
                 onPress={() =>
-                  // Linking.openURL("https://cal.com/miguel-requena/meeting-ordee")
                   router.push("/(auth)/(tabs)/profile/membership/paywall")
                 }
               >
-                <View className=" flex flex-col gap-4 w-4/5">
+                <View className=" flex flex-col gap-4 w-4/5 animate-pulse">
                   <Text
                     variant="titleLarge"
                     style={{ fontWeight: "bold", color: "white" }}
@@ -153,7 +152,7 @@ export default function ProfileScreen() {
                     funcionalidades premium.
                   </Text>
                 </View>
-                <View className="bg-white/20 rounded-full p-2 ">
+                <View className="bg-white/20 rounded-full p-2 animate-pulse">
                   <FontAwesome5 name="check-circle" size={32} color="white" />
                 </View>
               </TouchableOpacity>

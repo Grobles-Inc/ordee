@@ -22,13 +22,13 @@ export const OrdeeTabs = [
   },
   {
     name: "guest-order",
-    title: "Ordenes",
+    title: "Pedidos",
     icon: ["mingcute:clipboard-fill.svg", "mingcute:clipboard-line.svg"],
     roles: ["guest"],
   },
   {
     name: "orders",
-    title: "Ordenes",
+    title: "Pedidos",
     icon: ["mingcute:clipboard-fill.svg", "mingcute:clipboard-line.svg"],
     roles: ["user", "admin"],
   },

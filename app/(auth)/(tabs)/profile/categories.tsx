@@ -100,7 +100,7 @@ export default function CategoriesScreen() {
               right={(props) => (
                 <IconButton
                   {...props}
-                  icon="delete-outline"
+                  icon="delete"
                   onPress={() => onDelete(category.id || "")}
                 />
               )}

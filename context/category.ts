@@ -63,7 +63,6 @@ export const useCategoryStore = create<CategoryState>((set, get) => ({
         c.id === tempId ? data : c
       );
       set({ categories: updatedCategories });
-      toast.success("Categoría agregada al menú!");
 
     } catch (catchError) {
       // Revert optimistic update on error

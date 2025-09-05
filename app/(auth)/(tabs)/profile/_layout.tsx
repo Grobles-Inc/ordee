@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/auth";
 import { useCategoryStore } from "@/context/category";
 import { ICategory } from "@/interfaces";
 import BottomSheet, {
@@ -13,7 +14,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Controller, useForm } from "react-hook-form";
 import {
   Button as NativeButton,
   Platform,
@@ -31,6 +31,7 @@ export default function ProfileLayout() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const { addCategory } = useCategoryStore();
+  const { profile } = useAuth();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
   const snapPoints = useMemo(() => {
@@ -60,7 +61,7 @@ export default function ProfileLayout() {
       name,
       description,
     };
-    addCategory(data);
+    addCategory(data, profile?.id_tenant);
     categoryBottomSheetRef.current?.close();
     setName("");
     setDescription("");

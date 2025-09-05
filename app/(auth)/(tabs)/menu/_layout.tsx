@@ -16,39 +16,15 @@ export default function MenuLayout() {
         options={{
           title: "Menú del Día",
           headerShown: false,
-          // headerSearchBarOptions: {
-          //   placeholder: "Buscar ...",
-          //   hideWhenScrolling: true,
-          //   cancelButtonText: "Cancelar",
-          //   onChangeText: (event) => {
-          //     const search = event.nativeEvent.text;
-          //     router.setParams({
-          //       search: search,
-          //     });
-          //   },
-          //   onCancelButtonPress: () => {
-          //     router.setParams({
-          //       search: undefined,
-          //     });
-          //   },
-          // },
           headerLargeTitleShadowVisible: false,
         }}
       />
       <Stack.Screen
         name="add-meal"
         options={{
-          title: "Formulario de Item",
-          presentation: "modal",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <FontAwesome6
-                name="xmark"
-                size={20}
-                color={isDarkMode ? "white" : "black"}
-              />
-            </TouchableOpacity>
-          ),
+          title: "Item",
+          presentation: "card",
+          headerBackTitle: "Menú",
         }}
       />
     </Stack>

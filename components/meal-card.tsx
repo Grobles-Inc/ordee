@@ -67,19 +67,15 @@ export function MealCard({ meal }: { meal: IMeal }) {
         subtitle={`${meal.quantity} porciones`}
         subtitleStyle={{ color: meal.stock ? "#10B981" : "#c26775", fontWeight: "bold" }}
       />
-      <Card.Content className="flex flex-row justify-end items-center">
-
-        <IconButton icon="pencil-outline" size={20} onPress={handlePress} />
+      <Card.Actions >
+        <IconButton icon="pencil" onPress={handlePress} />
         <IconButton
-          icon="delete-outline"
-          mode="contained"
-          size={20}
+          icon="delete"
           onPress={() => {
             onDelete(meal.id);
           }}
         />
-
-      </Card.Content>
+      </Card.Actions>
     </Card>
   );
 }

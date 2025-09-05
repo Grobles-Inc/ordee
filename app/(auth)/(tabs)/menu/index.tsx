@@ -82,8 +82,8 @@ export default function MenuScreen() {
               router.push("/menu/add-meal");
               setVisible(false);
             }}
-            leadingIcon="note-plus-outline"
-            title="Agregar nuevo item"
+            leadingIcon="plus-circle-outline"
+            title="Agregar Item"
           />
           <Menu.Item
             trailingIcon={categoryId === undefined ? "check" : undefined}
@@ -91,7 +91,7 @@ export default function MenuScreen() {
               setCategoryId(undefined);
               setVisible(false);
             }}
-            leadingIcon="book-alphabet"
+            leadingIcon={categoryId === undefined ? "book" : "book-outline"}
             title="Ver Todos"
           />
           <Divider />
@@ -102,7 +102,7 @@ export default function MenuScreen() {
           {categories.map((category) => (
             <Menu.Item
               key={category.id}
-              leadingIcon="book-outline"
+              leadingIcon={category.id === categoryId ? "book" : "book-outline"}
               trailingIcon={category.id === categoryId ? "check" : undefined}
               onPress={() => {
                 setCategoryId(category.id);
@@ -115,46 +115,28 @@ export default function MenuScreen() {
           <Text variant="labelSmall" style={{ color: "gray" }} className="ml-4">
             Stock
           </Text>
-          <View style={{ paddingHorizontal: 16 }}>
-            {["all", "inStock", "outOfStock"].map((option) => (
-              <TouchableOpacity
+          <Divider />
+          <View>
+            {["all", "inStock", "outOfStock"].map(option => (
+              <Menu.Item
                 key={option}
                 onPress={() => {
                   setFilter(option);
                   setVisible(false);
                 }}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  paddingVertical: 10,
-                }}
-              >
-                <Ionicons
-                  name={
-                    option === "all"
-                      ? filter === "all"
-                        ? "checkmark-circle"
-                        : "list"
-                      : option === "inStock"
-                        ? filter === "inStock"
-                          ? "checkmark-circle"
-                          : "cube"
-                        : filter === "outOfStock"
-                          ? "checkmark-circle"
-                          : "close-circle"
-                  }
-                  size={20}
-                  color={filter === option ? "#FF6247" : "gray"}
-                />
-                <Text style={{ marginLeft: 10 }}>
-                  {option === "all"
+                leadingIcon={filter === option ? "bookmark" : "bookmark-outline"}
+                trailingIcon={filter === option ? "check" : undefined}
+                title={
+                  option === "all"
                     ? "Todos"
                     : option === "inStock"
-                      ? "En stock"
-                      : "Sin stock"}
-                </Text>
-              </TouchableOpacity>
+                      ? "Stock"
+                      : "Sin stock"
+                }
+
+              />
             ))}
+
           </View>
         </Menu>
       </Appbar.Header>

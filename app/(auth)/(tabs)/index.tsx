@@ -24,16 +24,16 @@ import {
 } from "react-native";
 import {
   ActivityIndicator,
+  Appbar,
   Button,
   Chip,
   Divider,
-  IconButton,
-  Text,
+  Text
 } from "react-native-paper";
 
 import { useAuth } from "@/context/auth";
-import { useTablesStore } from "@/context/tables";
 import { useOrderStore } from "@/context/order";
+import { useTablesStore } from "@/context/tables";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -75,6 +75,10 @@ function TableSvg({ table }: { table: ITable }) {
         "¿Desea ver los pedidos de esta mesa?",
         [
           {
+            text: "Cancelar",
+            style: "destructive",
+          },
+          {
             text: "Ver Orden",
             onPress: async () => {
               try {
@@ -92,9 +96,10 @@ function TableSvg({ table }: { table: ITable }) {
                 console.error("Error getting latest order:", error);
               }
             },
-          }
+          },
+
+
         ],
-        { cancelable: false }
       );
     }
   }
@@ -199,27 +204,21 @@ export default function TablesScreen() {
   }
 
   return (
-    <SafeAreaView className="p-4 bg-white dark:bg-zinc-900 h-screen">
-      <View className="flex flex-row pb-4 justify-between items-center web:p-4">
-        <View className="flex flex-col gap-2">
-          <Text
-            className="text-4xl dark:text-white"
-            style={{ fontWeight: "700" }}
-          >
-            Mesas
-          </Text>
-          <Text className="opacity-50 dark:text-white">
-            Listado de mesas del local
-          </Text>
-        </View>
+    <View className="flex-1 bg-white dark:bg-zinc-900">
+      <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
+        <Appbar.Content
+          titleStyle={{ fontWeight: "bold" }}
+          title="Mesas"
+
+        />
         {profile.role === "admin" && (
-          <IconButton
-            mode="contained"
-            icon="plus"
+          <Appbar.Action
+            icon="plus-circle-outline"
+            size={32}
             onPress={() => tableBottomSheetRef.current?.expand()}
           />
         )}
-      </View>
+      </Appbar.Header>
       <Divider />
 
       <ScrollView
@@ -288,6 +287,6 @@ export default function TablesScreen() {
           </Button>
         </BottomSheetView>
       </BottomSheet>
-    </SafeAreaView>
+    </View>
   );
 }

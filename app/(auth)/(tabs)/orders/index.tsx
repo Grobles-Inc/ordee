@@ -5,7 +5,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React from "react";
 import { View } from "react-native";
-import { Appbar, Divider, Searchbar, Text } from "react-native-paper";
+import { ActivityIndicator, Appbar, Divider, Searchbar, Text } from "react-native-paper";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -52,7 +52,7 @@ export default function OrdersScreen() {
           titleStyle={{
             fontWeight: "bold",
           }}
-          title="Pedidos Recientes"
+          title="Pedidos"
         />
         <Appbar.Action
           icon="magnify"
@@ -72,11 +72,7 @@ export default function OrdersScreen() {
       )}
       <View className="flex-1">
         {loading && (
-          <View className="flex flex-col gap-2 p-4">
-            <OrderCardSkeleton />
-            <OrderCardSkeleton />
-            <OrderCardSkeleton />
-          </View>
+          <ActivityIndicator size="large" />
         )}
         <FlashList
           contentContainerStyle={{
