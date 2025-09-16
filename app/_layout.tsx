@@ -1,10 +1,12 @@
+import OnboardingScreen from "@/components/onboarding";
 import { ORDEE_THEME } from "@/constants/ordee";
 import { AuthContextProvider } from "@/context/auth";
 import { DARK_NAV_THEME, NAV_THEME } from "@/utils";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { router, Slot } from "expo-router";
+import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
@@ -18,8 +20,6 @@ import {
 import "react-native-reanimated";
 import { Toaster } from "sonner-native";
 import "../styles/global.css";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import OnboardingScreen from "@/components/onboarding";
 
 export { ErrorBoundary } from "expo-router";
 
