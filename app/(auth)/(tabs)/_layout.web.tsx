@@ -130,7 +130,7 @@ export default function WebLayout() {
                   className="w-12 h-12"
                   source={require("../../../assets/images/logo.png")}
                 />
-                <Text className="text-2xl web:md:hidden text-[#FF6247] font-bold">
+                <Text className="text-2xl text-[#FF6247] font-bold">
                   Ordee
                 </Text>
               </View>
