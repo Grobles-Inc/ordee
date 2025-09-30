@@ -304,11 +304,11 @@ export default function DailyReportScreen() {
                 noOfSections={5}
               />
               <View className="flex flex-row gap-2 items-center web:md:hidden">
-                <AntDesign name="swapleft" size={20} color="#FF6247" />
+                <AntDesign name="swap-left" size={20} color="#FF6247" />
                 <Text variant="labelSmall" style={{ color: "gray" }}>
                   Desliza a la izquierda
                 </Text>
-                <AntDesign name="swapright" size={20} color="#FF6247" />
+                <AntDesign name="swap-right" size={20} color="#FF6247" />
               </View>
             </View>
             <View className="p-4 bg-white dark:bg-zinc-900 rounded-lg">

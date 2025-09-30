@@ -1,11 +1,11 @@
-import { IAccount, IAuthContextProvider, IUser } from "@/interfaces";
+import { IAuthContextProvider, IUser } from "@/interfaces";
 import { supabase } from "@/utils";
 import { FontAwesome } from "@expo/vector-icons";
 import { Session } from "@supabase/supabase-js";
-import { useRouter, useSegments } from "expo-router";
-import { create } from "zustand";
-import { toast } from "sonner-native";
+import { router, useSegments } from "expo-router";
 import { useEffect } from "react";
+import { toast } from "sonner-native";
+import { create } from "zustand";
 
 interface AuthState extends IAuthContextProvider {
   setLoading: (loading: boolean) => void;
@@ -91,7 +91,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       console.error("Profile fetch error:", error);
       toast.error("Error al obtener el perfil!");
       set({ profile: {} as IUser });
-      useRouter().replace("/(public)/sign-in");
+      router.replace("/(public)/sign-in");
     } finally {
       set({ loading: false });
     }
@@ -139,7 +139,6 @@ export function AuthContextProvider({
 }) {
   const { session, setSession, getProfile, setProfile, setUsers } = useAuthStore();
   const segments = useSegments();
-  const router = useRouter();
 
   useEffect(() => {
     async function initializeAuth() {

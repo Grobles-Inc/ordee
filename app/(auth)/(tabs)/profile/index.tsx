@@ -140,7 +140,7 @@ export default function ProfileScreen() {
                   router.push("/(auth)/(tabs)/profile/membership/paywall")
                 }
               >
-                <View className=" flex flex-col gap-4 w-4/5 animate-pulse">
+                <View className=" flex flex-col gap-4 w-4/5">
                   <Text
                     variant="titleLarge"
                     style={{ fontWeight: "bold", color: "white" }}
@@ -152,7 +152,7 @@ export default function ProfileScreen() {
                     funcionalidades premium.
                   </Text>
                 </View>
-                <View className="bg-white/20 rounded-full p-2 animate-pulse">
+                <View className="bg-white/20 rounded-full p-2">
                   <FontAwesome5 name="check-circle" size={32} color="white" />
                 </View>
               </TouchableOpacity>

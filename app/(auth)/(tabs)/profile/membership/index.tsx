@@ -60,7 +60,7 @@ export default function Membership() {
         </View>
         <View className="flex flex-col gap-4 rounded-xl p-4  dark:bg-zinc-800 bg-zinc-100">
           <View className="flex flex-row gap-4 items-center">
-            <AntDesign name="infocirlce" size={24} color="#0ea5e9" />
+            <AntDesign name="info-circle" size={24} color="#0ea5e9" />
             <Text className="text-xl">Información del Plan</Text>
           </View>
           <View className="flex flex-col gap-4">

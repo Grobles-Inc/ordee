@@ -104,7 +104,6 @@ export default function UsersScreen() {
           </Card>
         )}
         data={accounts}
-        estimatedItemSize={200}
         horizontal={false}
         ListEmptyComponent={
           <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">

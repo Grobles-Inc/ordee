@@ -34,53 +34,38 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        animation: "shift",
         headerShown: false,
-        lazy: true,
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
-        tabBarStyle: {
-          position: "absolute",
-          backgroundColor: colorScheme === "dark" ? "#000000" : "#ffffff",
-          borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: "rgba(0,0,0,0.2)",
-          elevation: 0,
-        },
-        headerStyle: {
-          height: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-        },
-        tabBarHideOnKeyboard: true,
-        freezeOnBlur: true,
-
+        tabBarActiveTintColor: "#FF6247",
+        tabBarInactiveTintColor: "#9ca3af",
       }}
     >
-      {OrdeeTabs.map((tab) => (
-        <Tabs.Screen
-          key={tab.name}
-          name={tab.name}
-          options={{
-            title: tab.title,
-            headerShown: tab.name === "my-profile",
-            href: (profile && profile.role && !tab.roles.includes(profile.role))
-              ? null
-              : undefined,
-            tabBarIcon: tabIcon(
-              `https://api.iconify.design/${tab.icon[0]}`,
-              `https://api.iconify.design/${tab.icon[1]}`
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text
-                className={` text-xs   ${focused
-                  ? "text-[#FF6247]"
-                  : "text-zinc-500 dark:text-zinc-400"
-                  }`}
-              >
-                {tab.title}
-              </Text>
-            ),
-          }}
-        />
-      ))}
+      {OrdeeTabs.map((tab) => {
+        const hasAccess = (profile && profile.role && !tab.roles.includes(profile.role));
+
+        return (
+          <Tabs.Screen
+            key={tab.name}
+            name={tab.name}
+            options={{
+              title: tab.title,
+              href: hasAccess
+                ? null
+                : undefined,
+              tabBarIcon: ({ focused, color }) => (
+                <Image
+                  source={{ uri: focused ? `https://api.iconify.design/${tab.icon[0]}` : `https://api.iconify.design/${tab.icon[1]}` }}
+                  style={{ width: 24, height: 24, tintColor: color }}
+                />
+              ),
+              tabBarLabel: ({ focused, color }) => (
+                <Text style={{ fontSize: 12, color }}>
+                  {tab.title}
+                </Text>
+              ),
+            }}
+          />
+        );
+      })}
     </Tabs>
   );
 }

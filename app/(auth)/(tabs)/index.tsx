@@ -1,17 +1,9 @@
 import { ITable } from "@/interfaces";
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetTextInput,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, {
-  useCallback,
   useEffect,
-  useMemo,
-  useRef,
-  useState,
+  useState
 } from "react";
 import {
   Alert,
@@ -27,8 +19,11 @@ import {
   Appbar,
   Button,
   Chip,
+  Dialog,
   Divider,
-  Text
+  Portal,
+  Text,
+  TextInput,
 } from "react-native-paper";
 
 import { useAuth } from "@/context/auth";
@@ -136,15 +131,9 @@ export default function TablesScreen() {
   const { profile, loading: authLoading } = useAuth();
   const colorScheme = useColorScheme();
   const [refreshing, setRefreshing] = useState(false);
-  const tableBottomSheetRef = useRef<BottomSheet>(null);
+  const [dialogVisible, setDialogVisible] = useState(false);
   const [number, setNumber] = useState<number>(0);
   const { width } = useWindowDimensions();
-  const isMobile = width < 768;
-  const snapPoints = useMemo(() => {
-    if (isMobile) return ["50%"];
-    return ["40%", "50%"];
-  }, [isMobile]);
-  const isDarkMode = colorScheme === "dark";
 
 
 
@@ -155,16 +144,6 @@ export default function TablesScreen() {
     }
     setRefreshing(false);
   }
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        appearsOnIndex={0}
-        disappearsOnIndex={-1}
-        {...props}
-      />
-    ),
-    []
-  );
 
   const onSubmitTable = async (e: any) => {
     if (number <= 0) {
@@ -177,7 +156,7 @@ export default function TablesScreen() {
         status: true,
       }, profile.id_tenant);
     }
-    tableBottomSheetRef.current?.close();
+    setDialogVisible(false);
     setNumber(0);
   };
 
@@ -215,7 +194,7 @@ export default function TablesScreen() {
           <Appbar.Action
             icon="plus-circle-outline"
             size={32}
-            onPress={() => tableBottomSheetRef.current?.expand()}
+            onPress={() => setDialogVisible(true)}
           />
         )}
       </Appbar.Header>
@@ -244,24 +223,13 @@ export default function TablesScreen() {
           )}
         </View>
       </ScrollView>
-      <BottomSheet
-        ref={tableBottomSheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        enablePanDownToClose={true}
-        handleIndicatorStyle={{ backgroundColor: "gray" }}
-        backgroundStyle={{
-          backgroundColor: isDarkMode ? "#262626" : "white",
-        }}
-        backdropComponent={renderBackdrop}
-      >
-        <BottomSheetView className="p-4 flex flex-col gap-4">
-          <View className="flex flex-col gap-2">
-            <Text variant="titleMedium">Registrar Mesa</Text>
-            <BottomSheetTextInput
-              className="border rounded-lg border-gray-200 p-4 w-full dark:border-zinc-700 text-black dark:text-white"
+      <Portal>
+        <Dialog visible={dialogVisible} onDismiss={() => setDialogVisible(false)}>
+          <Dialog.Title>Registrar Mesa</Dialog.Title>
+          <Dialog.Content>
+            <TextInput
+              mode="outlined"
               keyboardType="numeric"
-              placeholderTextColor={"gray"}
               placeholder="Número de mesa"
               value={number === 0 ? "" : number.toString()}
               onChangeText={(text) => {
@@ -273,20 +241,13 @@ export default function TablesScreen() {
                 }
               }}
             />
-          </View>
-
-          <Button mode="contained" onPress={onSubmitTable}>
-            Registrar
-          </Button>
-
-          <Button
-            onPress={() => tableBottomSheetRef.current?.close()}
-            mode="text"
-          >
-            Cancelar
-          </Button>
-        </BottomSheetView>
-      </BottomSheet>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setDialogVisible(false)}>Cancelar</Button>
+            <Button onPress={onSubmitTable}>Registrar</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 }

@@ -113,7 +113,6 @@ export default function CategoriesScreen() {
           </Card>
         )}
         data={categories}
-        estimatedItemSize={200}
         ListEmptyComponent={
           <SafeAreaView className="flex flex-col gap-4 items-center justify-center mt-20">
             <Image
