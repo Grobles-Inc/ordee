@@ -136,17 +136,32 @@ export default function WebLayout() {
               </View>
 
               <View className="flex flex-col gap-4">
-                {filteredTabs.map((tab) => (
-                  <SidebarItem
-                    key={tab.name}
-                    icon={`https://api.iconify.design/${tab.icon[0]}`}
-                    unfocusedIcon={`https://api.iconify.design/${tab.icon[1]}`}
-                    title={tab.title}
-                    href={tab.name}
-                    compact={isCompact}
-                    isActive={segments.includes(tab.name as never)}
-                  />
-                ))}
+                {filteredTabs.map((tab) => {
+                  const isActive =
+                    tab.name === "index"
+                      ? !segments.some((seg) =>
+                        [
+                          "menu",
+                          "payments",
+                          "guest-order",
+                          "orders",
+                          "my-profile",
+                          "profile",
+                        ].includes(seg as string)
+                      )
+                      : segments.includes(tab.name as never);
+                  return (
+                    <SidebarItem
+                      key={tab.name}
+                      icon={`https://api.iconify.design/${tab.icon[0]}`}
+                      unfocusedIcon={`https://api.iconify.design/${tab.icon[1]}`}
+                      title={tab.title}
+                      href={tab.name === "index" ? "/" : tab.name}
+                      compact={isCompact}
+                      isActive={isActive}
+                    />
+                  );
+                })}
               </View>
             </View>
           </View>
@@ -174,33 +189,40 @@ export default function WebLayout() {
               borderTopColor: borderColor,
             }}
           >
-            {filteredTabs.map((tab) => (
-              <Pressable
-                key={tab.name}
-                onPress={() => {
-                  router.push(`/(auth)/(tabs)/${tab.name}` as never);
-                }}
-                className="flex-1 items-center justify-center gap-1"
-              >
-                <Image
-                  style={{ width: 28, height: 28 }}
-                  source={{
-                    uri: segments.includes(tab.name as never)
-                      ? `https://api.iconify.design/${tab.icon[0]}`
-                      : `https://api.iconify.design/${tab.icon[1]}`,
+            {filteredTabs.map((tab) => {
+              const isActive = tab.name === 'index'
+                ? !segments.some(seg => ['menu', 'payments', 'guest-order', 'orders', 'my-profile', 'profile'].includes(seg as string))
+                : segments.includes(tab.name as never);
+
+              return (
+
+                <Pressable
+                  key={tab.name}
+                  onPress={() => {
+                    router.push(tab.name === "index" ? "/" : tab.name as never);
                   }}
-                  alt="icon"
-                />
-                <Text
-                  className={`text-xs font-medium ${segments.includes(tab.name as never)
-                    ? "text-[#FF6247]"
-                    : "text-zinc-500 dark:text-zinc-400"
-                    }`}
+                  className="flex-1 items-center justify-center gap-1"
                 >
-                  {tab.title}
-                </Text>
-              </Pressable>
-            ))}
+                  <Image
+                    style={{ width: 28, height: 28 }}
+                    source={{
+                      uri: isActive
+                        ? `https://api.iconify.design/${tab.icon[0]}`
+                        : `https://api.iconify.design/${tab.icon[1]}`,
+                    }}
+                    alt="icon"
+                  />
+                  <Text
+                    className={`text-xs font-medium ${isActive
+                      ? "text-[#FF6247]"
+                      : "text-zinc-500 dark:text-zinc-400"
+                      }`}
+                  >
+                    {tab.title}
+                  </Text>
+                </Pressable>
+              )
+            })}
           </View>
         )}
       </View>

@@ -17,7 +17,6 @@ export default function UserLayout() {
         options={() => {
           return {
             title: "Agregar Usuario",
-            presentation: "modal",
             headerShown: false,
           };
         }}
