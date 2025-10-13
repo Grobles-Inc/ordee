@@ -9,6 +9,7 @@ import { Slot } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   ActivityIndicator,
   MD3DarkTheme,
@@ -69,23 +70,25 @@ function RootLayoutNav() {
   const paperTheme = isDarkMode ? customDarkTheme : customLightTheme;
 
   return (
-    <AuthContextProvider>
-      <ThemeProvider
-        value={{
-          ...DefaultTheme,
-          colors: {
-            ...DefaultTheme.colors,
-            ...NAV_THEME,
-            ...(isDarkMode ? DARK_NAV_THEME : {}),
-          },
-          dark: isDarkMode,
-        }}
-      >
-        <PaperProvider theme={paperTheme}>
-          <Slot />
-        </PaperProvider>
-        <Toaster className="web:md:w-1/3 web:md:left-1/3" />
-      </ThemeProvider>
-    </AuthContextProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthContextProvider>
+        <ThemeProvider
+          value={{
+            ...DefaultTheme,
+            colors: {
+              ...DefaultTheme.colors,
+              ...NAV_THEME,
+              ...(isDarkMode ? DARK_NAV_THEME : {}),
+            },
+            dark: isDarkMode,
+          }}
+        >
+          <PaperProvider theme={paperTheme}>
+            <Slot />
+          </PaperProvider>
+          <Toaster className="web:md:w-1/3 web:md:left-1/3" />
+        </ThemeProvider>
+      </AuthContextProvider>
+    </GestureHandlerRootView>
   );
 }

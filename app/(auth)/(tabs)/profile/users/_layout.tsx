@@ -18,6 +18,7 @@ export default function UserLayout() {
           return {
             title: "Agregar Usuario",
             headerShown: false,
+            presentation: "modal",
           };
         }}
       />

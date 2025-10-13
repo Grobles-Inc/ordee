@@ -7,9 +7,12 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Image,
+  KeyboardAvoidingView,
+  Modal,
   Platform,
   RefreshControl,
   ScrollView,
+  TouchableWithoutFeedback,
   useColorScheme,
   useWindowDimensions,
   View,
@@ -19,10 +22,9 @@ import {
   Button,
   Chip,
   Divider,
-  Modal,
-  Portal,
   Text,
 } from "react-native-paper";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 
 export default function OrderDetailsScreen() {
   const params = useLocalSearchParams<{ id: string }>();
@@ -32,6 +34,9 @@ export default function OrderDetailsScreen() {
   const [refreshing, setRefreshing] = React.useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const { getOrderById, loading, updatePaidStatus } = useOrderStore();
+
+  const showModal = useCallback(() => setModalVisible(true), []);
+  const hideModal = useCallback(() => setModalVisible(false), []);
 
   React.useEffect(() => {
     getOrderById(params.id).then((order) => {
@@ -188,36 +193,36 @@ export default function OrderDetailsScreen() {
                       <th align="right">Total</th>
                   </tr>
                   ${order?.items
-        .map(
-          (item) => `
+                    .map(
+                      (item) => `
                       <tr>
                           <td class="item-name">${item.name}</td>
                           <td class="quantity-col">${item.quantity}</td>
                           <td class="price-col">${(typeof item.price ===
-              "number"
-              ? item.price
-              : parseFloat(item.price)
-            ).toFixed(2)}</td>
+                          "number"
+                            ? item.price
+                            : parseFloat(item.price)
+                          ).toFixed(2)}</td>
                           <td class="price-col">${(
-              (typeof item.price === "number"
-                ? item.price
-                : parseFloat(item.price)) *
-              (typeof item.quantity === "number"
-                ? item.quantity
-                : parseInt(item.quantity))
-            ).toFixed(2)}</td>
+                            (typeof item.price === "number"
+                              ? item.price
+                              : parseFloat(item.price)) *
+                            (typeof item.quantity === "number"
+                              ? item.quantity
+                              : parseInt(item.quantity))
+                          ).toFixed(2)}</td>
                       </tr>
                   `
-        )
-        .join("")}
+                    )
+                    .join("")}
               </table>
               <div class="total-section">
                   <table width="100%">
                       <tr>
                           <td><strong>Total:</strong></td>
                           <td align="right"><strong>S/. ${order.total.toFixed(
-          2
-        )}</strong></td>
+                            2
+                          )}</strong></td>
                       </tr>
                   </table>
               </div>
@@ -289,7 +294,7 @@ export default function OrderDetailsScreen() {
     if (order?.id) {
       await updatePaidStatus(order.id, true);
     }
-    setModalVisible(false);
+    hideModal();
     printOrder();
     router.push("/(auth)/(tabs)/orders");
     if (Platform.OS === "web") {
@@ -351,17 +356,13 @@ export default function OrderDetailsScreen() {
                     key={index}
                     className="flex flex-row justify-between px-4 items-center"
                   >
+                    <Text variant="titleMedium">
+                      {item.name.slice(0, 25)}
+                      {item.name.length > 25 ? "..." : ""}
+                    </Text>
+                    <Text>x {item.quantity}</Text>
 
-                    <Text variant="titleMedium" >
-                      {item.name.slice(0, 25)}{item.name.length > 25 ? '...' : ''}
-                    </Text>
-                    <Text>
-                      x {item.quantity}
-                    </Text>
-
-                    <Text>
-                      S/. {item.price.toFixed(2)}
-                    </Text>
+                    <Text>S/. {item.price.toFixed(2)}</Text>
                   </View>
                 ))}
               </View>
@@ -377,67 +378,70 @@ export default function OrderDetailsScreen() {
             </View>
           </View>
 
-          <Portal>
-            <Modal
-              visible={modalVisible}
-              onDismiss={() => setModalVisible(false)}
-              contentContainerStyle={{
-                borderRadius: 12,
-                padding: 24,
-                width: isMobile ? "100%" : 500,
-                marginHorizontal: "auto",
-                display: "flex",
-                gap: 10,
-                backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-                elevation: 5,
-              }}
-            >
-              <View className="flex flex-col items-center gap-4">
+          <Modal
+            visible={modalVisible}
+            transparent
+            animationType="none"
+            onRequestClose={hideModal}
+          >
+            <TouchableWithoutFeedback onPress={hideModal}>
+              <View className="flex-1 bg-black/70 justify-center items-center p-4">
+                <TouchableWithoutFeedback>
+                  <Animated.View
+                    entering={SlideInDown.duration(300)}
+                    exiting={SlideOutDown.duration(200)}
+                    className="bg-white dark:bg-zinc-800 rounded-xl w-full max-w-sm"
+                  >
+                    <KeyboardAvoidingView
+                      behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    >
+                      <View className="p-6">
+                        <View className="flex flex-col items-center gap-4 mb-6">
+                          <Image
+                            style={{
+                              width: 60,
+                              height: 60,
+                            }}
+                            source={{
+                              uri: "https://img.icons8.com/?size=400&id=31337&format=png&color=ff6247",
+                            }}
+                          />
+                          <Text
+                            variant="titleLarge"
+                            style={{ fontWeight: "bold" }}
+                          >
+                            Pagar Orden
+                          </Text>
+                        </View>
 
-                <Image
-                  style={{
-                    width: 60,
-                    height: 60,
-                  }}
-                  source={{
-                    uri: "https://img.icons8.com/?size=400&id=31337&format=png&color=ff6247",
-                  }}
-                />
-                <Text variant="titleLarge" style={{ fontWeight: "bold" }}>
-                  Pagar Orden
-                </Text>
+                        <Text
+                          variant="bodyMedium"
+                          style={{ textAlign: "center", marginBottom: 24 }}
+                        >
+                          La orden se marcará como pagada y podrás imprimir el
+                          comprobante.
+                        </Text>
+
+                        <View className="flex-row justify-end gap-3">
+                          <Button mode="text" onPress={hideModal}>
+                            Cancelar
+                          </Button>
+                          <Button mode="contained" onPress={confirmUpdate}>
+                            Aceptar
+                          </Button>
+                        </View>
+                      </View>
+                    </KeyboardAvoidingView>
+                  </Animated.View>
+                </TouchableWithoutFeedback>
               </View>
-
-              <Text variant="bodyMedium" style={{ textAlign: "center" }}>
-                La orden se marcará como pagada y podrás imprimir el comprobante.
-              </Text>
-
-
-
-              <View className="flex flex-col justify-between gap-4 mt-7">
-                <Button mode="contained" onPress={confirmUpdate}>
-                  Aceptar
-                </Button>
-                <Button mode="text" onPress={() => setModalVisible(false)}>
-                  Cancelar
-                </Button>
-              </View>
-            </Modal>
-          </Portal>
+            </TouchableWithoutFeedback>
+          </Modal>
         </View>
         <Button
           mode="contained"
           style={{ marginTop: 64, margin: 16 }}
-          onPress={() => {
-            setModalVisible(true);
-          }}
+          onPress={showModal}
         >
           Pagar Orden
         </Button>

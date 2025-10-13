@@ -2,17 +2,18 @@ import { useAuth } from "@/context/auth";
 import { useCategoryStore } from "@/context/category";
 import { ICategory } from "@/interfaces";
 import { router, Stack } from "expo-router";
-import React, {
-  useEffect,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Button as NativeButton,
+  KeyboardAvoidingView,
+  Modal,
   Platform,
+  TouchableWithoutFeedback,
   useColorScheme,
-  View
+  View,
 } from "react-native";
-import { Button, Dialog, Portal, TextInput } from "react-native-paper";
+import { Button, Text, TextInput } from "react-native-paper";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 import { toast } from "sonner-native";
 
 export default function ProfileLayout() {
@@ -24,7 +25,8 @@ export default function ProfileLayout() {
   const { addCategory } = useCategoryStore();
   const { profile } = useAuth();
 
-
+  const showDialog = useCallback(() => setDialogVisible(true), []);
+  const hideDialog = useCallback(() => setDialogVisible(false), []);
 
   const onSubmitCategory = async (e: any) => {
     if (name === "") {
@@ -37,7 +39,7 @@ export default function ProfileLayout() {
       description,
     };
     addCategory(data, profile?.id_tenant);
-    setDialogVisible(false);
+    hideDialog();
     setName("");
     setDescription("");
   };
@@ -127,13 +129,10 @@ export default function ProfileLayout() {
                 <NativeButton
                   title="Agregar"
                   color="#FF6247"
-                  onPress={() => setDialogVisible(true)}
+                  onPress={showDialog}
                 />
               ) : (
-                <Button
-                  mode="text"
-                  onPress={() => setDialogVisible(true)}
-                >
+                <Button mode="text" onPress={showDialog}>
                   Agregar
                 </Button>
               );
@@ -162,30 +161,54 @@ export default function ProfileLayout() {
           }}
         />
       </Stack>
-      <Portal>
-        <Dialog visible={dialogVisible} onDismiss={() => setDialogVisible(false)}>
-          <Dialog.Title>Registrar Categoría</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              mode="outlined"
-              label="Nombre"
-              value={name}
-              onChangeText={(text) => setName(text)}
-            />
-            <TextInput
-              mode="outlined"
-              label="Descripción"
-              value={description}
-              onChangeText={(text) => setDescription(text)}
-              style={{ marginTop: 16 }}
-            />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setDialogVisible(false)}>Cancelar</Button>
-            <Button onPress={onSubmitCategory}>Registrar Categoría</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      <Modal
+        visible={dialogVisible}
+        transparent
+        animationType="none"
+        onRequestClose={hideDialog}
+      >
+        <TouchableWithoutFeedback onPress={hideDialog}>
+          <View className="flex-1 bg-black/70 justify-center items-center p-4">
+            <TouchableWithoutFeedback>
+              <Animated.View
+                entering={SlideInDown.duration(300)}
+                exiting={SlideOutDown.duration(200)}
+                className="bg-white dark:bg-zinc-800 rounded-xl w-full max-w-sm"
+              >
+                <KeyboardAvoidingView
+                  behavior={Platform.OS === "ios" ? "padding" : "height"}
+                >
+                  <View className="p-6 flex flex-col gap-4">
+                    <Text variant="titleLarge">Agregar Categoría</Text>
+
+                    <TextInput
+                      mode="outlined"
+                      label="Nombre"
+                      value={name}
+                      onChangeText={(text) => setName(text)}
+                    />
+                    <TextInput
+                      mode="outlined"
+                      label="Descripción"
+                      value={description}
+                      onChangeText={(text) => setDescription(text)}
+                    />
+
+                    <View className="flex-row justify-end gap-3 mt-6">
+                      <Button mode="text" onPress={hideDialog}>
+                        Cancelar
+                      </Button>
+                      <Button mode="contained" onPress={onSubmitCategory}>
+                        Agregar
+                      </Button>
+                    </View>
+                  </View>
+                </KeyboardAvoidingView>
+              </Animated.View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 }

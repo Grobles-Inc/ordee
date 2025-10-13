@@ -1,17 +1,16 @@
 import { ITable } from "@/interfaces";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import React, {
-  useEffect,
-  useState
-} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
   RefreshControl,
   ScrollView,
   TouchableOpacity,
-  useColorScheme,
-  useWindowDimensions,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import {
@@ -19,12 +18,11 @@ import {
   Appbar,
   Button,
   Chip,
-  Dialog,
   Divider,
-  Portal,
   Text,
   TextInput,
 } from "react-native-paper";
+import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
 
 import { useAuth } from "@/context/auth";
 import { useOrderStore } from "@/context/order";
@@ -65,37 +63,33 @@ function TableSvg({ table }: { table: ITable }) {
         params: { number: table.number, id_table: table.id },
       });
     } else {
-      Alert.alert(
-        "Mesa Ocupada",
-        "¿Desea ver los pedidos de esta mesa?",
-        [
-          {
-            text: "Cancelar",
-            style: "destructive",
-          },
-          {
-            text: "Ver Orden",
-            onPress: async () => {
-              try {
-                const latestOrder = await getLatestOrderByTableId(table.id as string);
-                if (latestOrder?.id) {
-                  router.push({
-                    pathname: "/(auth)/(tabs)/orders/details/[id]",
-                    params: { id: latestOrder.id },
-                  });
-                } else {
-                  toast.error("No se encontró orden activa para esta mesa");
-                }
-              } catch (error) {
-                toast.error("Error al obtener la orden");
-                console.error("Error getting latest order:", error);
+      Alert.alert("Mesa Ocupada", "¿Desea ver los pedidos de esta mesa?", [
+        {
+          text: "Cancelar",
+          style: "destructive",
+        },
+        {
+          text: "Ver Orden",
+          onPress: async () => {
+            try {
+              const latestOrder = await getLatestOrderByTableId(
+                table.id as string
+              );
+              if (latestOrder?.id) {
+                router.push({
+                  pathname: "/(auth)/(tabs)/orders/details/[id]",
+                  params: { id: latestOrder.id },
+                });
+              } else {
+                toast.error("No se encontró orden activa para esta mesa");
               }
-            },
+            } catch (error) {
+              toast.error("Error al obtener la orden");
+              console.error("Error getting latest order:", error);
+            }
           },
-
-
-        ],
-      );
+        },
+      ]);
     }
   }
 
@@ -127,15 +121,15 @@ function TableSvg({ table }: { table: ITable }) {
 }
 
 export default function TablesScreen() {
-  const { addTable, tables, loading, getTables, subscribeToTables } = useTablesStore();
+  const { addTable, tables, loading, getTables, subscribeToTables } =
+    useTablesStore();
   const { profile, loading: authLoading } = useAuth();
-  const colorScheme = useColorScheme();
   const [refreshing, setRefreshing] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [number, setNumber] = useState<number>(0);
-  const { width } = useWindowDimensions();
 
-
+  const showDialog = useCallback(() => setDialogVisible(true), []);
+  const hideDialog = useCallback(() => setDialogVisible(false), []);
 
   async function onRefresh() {
     setRefreshing(true);
@@ -151,16 +145,17 @@ export default function TablesScreen() {
       return;
     }
     if (profile?.id_tenant) {
-      addTable({
-        number,
-        status: true,
-      }, profile.id_tenant);
+      addTable(
+        {
+          number,
+          status: true,
+        },
+        profile.id_tenant
+      );
     }
-    setDialogVisible(false);
+    hideDialog();
     setNumber(0);
   };
-
-
 
   useEffect(() => {
     if (profile?.id_tenant) {
@@ -185,16 +180,12 @@ export default function TablesScreen() {
   return (
     <View className="flex-1 bg-white dark:bg-zinc-900">
       <Appbar.Header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-800">
-        <Appbar.Content
-          titleStyle={{ fontWeight: "bold" }}
-          title="Mesas"
-
-        />
+        <Appbar.Content titleStyle={{ fontWeight: "bold" }} title="Mesas" />
         {profile.role === "admin" && (
           <Appbar.Action
             icon="plus-circle-outline"
             size={32}
-            onPress={() => setDialogVisible(true)}
+            onPress={showDialog}
           />
         )}
       </Appbar.Header>
@@ -223,31 +214,58 @@ export default function TablesScreen() {
           )}
         </View>
       </ScrollView>
-      <Portal>
-        <Dialog visible={dialogVisible} onDismiss={() => setDialogVisible(false)}>
-          <Dialog.Title>Registrar Mesa</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              mode="outlined"
-              keyboardType="numeric"
-              placeholder="Número de mesa"
-              value={number === 0 ? "" : number.toString()}
-              onChangeText={(text) => {
-                const parsedNumber = Number(text);
-                if (!isNaN(parsedNumber) && parsedNumber >= 0) {
-                  setNumber(parsedNumber);
-                } else {
-                  toast.error("Número no válido.");
-                }
-              }}
-            />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setDialogVisible(false)}>Cancelar</Button>
-            <Button onPress={onSubmitTable}>Registrar</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+
+      <Modal
+        visible={dialogVisible}
+        transparent
+        animationType="none"
+        onRequestClose={hideDialog}
+      >
+        <TouchableWithoutFeedback onPress={hideDialog}>
+          <View className="flex-1 bg-black/70 justify-center items-center p-4">
+            <TouchableWithoutFeedback>
+              <Animated.View
+                entering={SlideInDown.duration(300)}
+                exiting={SlideOutDown.duration(200)}
+                className="bg-white dark:bg-zinc-800 rounded-xl w-full max-w-sm"
+              >
+                <KeyboardAvoidingView
+                  behavior={Platform.OS === "ios" ? "padding" : "height"}
+                >
+                  <View className="p-6">
+                    <Text variant="titleLarge" className="mb-4">
+                      Nueva Mesa
+                    </Text>
+
+                    <TextInput
+                      mode="outlined"
+                      keyboardType="numeric"
+                      placeholder="Número de mesa"
+                      value={number === 0 ? "" : number.toString()}
+                      onChangeText={(text) => {
+                        const parsedNumber = Number(text);
+                        if (!isNaN(parsedNumber) && parsedNumber >= 0) {
+                          setNumber(parsedNumber);
+                        } else {
+                          toast.error("Número no válido.");
+                        }
+                      }}
+                    />
+                    <View className="flex-row justify-end gap-3 mt-4 w-full">
+                      <Button mode="text" onPress={hideDialog}>
+                        <Text>Cancelar</Text>
+                      </Button>
+                      <Button mode="contained" onPress={onSubmitTable}>
+                        <Text>Registrar</Text>
+                      </Button>
+                    </View>
+                  </View>
+                </KeyboardAvoidingView>
+              </Animated.View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 }
