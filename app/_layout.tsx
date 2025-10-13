@@ -1,4 +1,3 @@
-import OnboardingScreen from "@/components/onboarding";
 import { ORDEE_THEME } from "@/constants/ordee";
 import { AuthContextProvider } from "@/context/auth";
 import { DARK_NAV_THEME, NAV_THEME } from "@/utils";
@@ -15,7 +14,6 @@ import {
   MD3DarkTheme,
   MD3LightTheme,
   PaperProvider,
-  Portal,
 } from "react-native-paper";
 import "react-native-reanimated";
 import { Toaster } from "sonner-native";
@@ -29,7 +27,6 @@ const customDarkTheme = { ...MD3DarkTheme, colors: ORDEE_THEME.dark };
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [isOnboardingCompleted, setIsOnboardingCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -41,7 +38,6 @@ export default function RootLayout() {
       const onboardingCompleted = await AsyncStorage.getItem(
         "onboardingCompleted"
       );
-      setIsOnboardingCompleted(onboardingCompleted === "true");
       setIsLoading(false);
     };
 
@@ -62,11 +58,6 @@ export default function RootLayout() {
   }
   if (isLoading) {
     return <ActivityIndicator />;
-  }
-  if (!isOnboardingCompleted) {
-    return (
-      <OnboardingScreen onComplete={() => setIsOnboardingCompleted(true)} />
-    );
   }
 
   return <RootLayoutNav />;
