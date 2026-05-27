@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { NeonAuthUIProvider } from "@neondatabase/auth-ui";
 import { authClient } from "~/auth";
-import "~/app/app.css";
+import appCss from '../../styles/app.css?url'
 
 const queryClient = new QueryClient({
   defaultOptions: {
