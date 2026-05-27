@@ -1,0 +1,32 @@
+import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "sonner";
+import { NeonAuthUIProvider } from "@neondatabase/auth-ui";
+import { authClient } from "~/auth";
+import "~/app.css";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      retry: 1,
+    },
+  },
+});
+
+export const Route = createRootRoute({
+  component: RootComponent,
+});
+
+function RootComponent() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <NeonAuthUIProvider authClient={authClient}>
+        <Outlet />
+        <Toaster position="top-right" richColors />
+        <TanStackRouterDevtools />
+      </NeonAuthUIProvider>
+    </QueryClientProvider>
+  );
+}
