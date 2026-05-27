@@ -12,13 +12,13 @@ export default defineConfig({
     tailwindcss(),
   ],
   resolve: {
-    alias: {
-      "~": path.resolve(__dirname, "./app"),
-      "~/features": path.resolve(__dirname, "./features"),
-      "~/components": path.resolve(__dirname, "./components"),
-      "~/server": path.resolve(__dirname, "./server"),
-      "~/lib": path.resolve(__dirname, "./lib"),
-      "~/hooks": path.resolve(__dirname, "./hooks"),
-    },
+    alias: [
+      { find: "~/features", replacement: path.resolve(__dirname, "./features") },
+      { find: "~/components", replacement: path.resolve(__dirname, "./components") },
+      { find: "~/server", replacement: path.resolve(__dirname, "./server") },
+      { find: "~/lib", replacement: path.resolve(__dirname, "./lib") },
+      { find: "~/hooks", replacement: path.resolve(__dirname, "./hooks") },
+      { find: "~", replacement: path.resolve(__dirname, "./app") },
+    ],
   },
 });
