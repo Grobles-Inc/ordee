@@ -1,17 +1,112 @@
-# [Ordee](https://ordee-app.vercel.app)
+# Ordee
 
-A mobile app for restaurants, covering processes for orders, menu, meals, receipts and much more. 
-| ![Img 1](https://i.postimg.cc/xjsxw2t3/phone1.png) | ![Img 2](https://i.postimg.cc/jjmqg9Bx/telefono2.png) | ![Img 3](https://i.postimg.cc/htCtxhr7/telefono3.png) |
-|:---:|:---:|:---:|
-| ![Img 4](https://i.postimg.cc/DyPZvx46/telefono4.png) | ![Img 5](https://i.postimg.cc/Jz7hGjbL/telefono5.png) | ![Img 6](https://i.postimg.cc/02sj1Tjr/telefono6.png) |
+Restaurant management application for tracking orders, menu items, tables, and payments.
 
-## Stack
+## Tech Stack
 
-- [Expo](https://expo.dev/): Set of tools, libraries and services which allow you to develop native iOS and Android apps written in JavaScript.
-- [react-native](https://reactnative.dev/): Used to develop applications for Android, Android TV, iOS, macOS, tvOS, Web, Windows and UWP by allowing developers to use React with the native features of these platforms.
-- [postgresql](https://supabase.com/docs/guides/database/overview) : Provided by *Supabase*
-- [typescript](https://www.typescriptlang.org/): It is a superset of JavaScript, essentially adding static types and class-based objects.
-- [react-native-paper](https://reactnativepaper.com): High-quality, standard-compliant Material Design library that has you covered in all major use-cases.
-- [nativewind](https://www.nativewind.dev/): A utility-first CSS framework for rapidly building custom user interfaces.
+- **Frontend:** React 19, Vite, TanStack Start, TanStack Router
+- **UI:** Shadcn UI, Tailwind CSS v4, Lucide Icons
+- **Backend:** Neon (PostgreSQL), Drizzle ORM
+- **Auth:** Neon Auth (Better Auth)
+- **State:** Zustand, TanStack Query
+- **Hosting:** Netlify
 
+## Getting Started
 
+### Prerequisites
+
+- Bun v1.3+
+- Node.js 20+
+- Neon database
+
+### Installation
+
+```bash
+bun install
+```
+
+### Environment Variables
+
+Create a `.env` file:
+
+```env
+DATABASE_URL=postgresql://...
+VITE_NEON_AUTH_URL=https://...
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+```
+
+### Database
+
+Push schema to database:
+
+```bash
+bun run db:push
+```
+
+Generate migrations:
+
+```bash
+bun run db:generate
+bun run db:migrate
+```
+
+### Development
+
+```bash
+bun run dev
+```
+
+### Build
+
+```bash
+bun run build
+```
+
+## Project Structure
+
+```
+app/
+  routes/           # TanStack Router routes
+  auth.ts           # Auth client
+features/
+  accounts/         # User management
+  categories/       # Menu categories
+  meals/            # Menu items
+  tables/           # Table management
+  orders/           # Order management
+  payments/         # Payment history
+  daily-report/     # Daily statistics
+  membership/       # Plan management
+  guest-orders/     # Guest ordering
+components/
+  ui/               # Shadcn UI components
+server/
+  db/               # Drizzle schema & connection
+  functions/        # Server functions
+hooks/
+  use-auth.ts       # Auth hook
+```
+
+## Features
+
+- **Orders** — Create, update, track orders with cart system
+- **Menu** — Manage meals with images, categories, stock tracking
+- **Tables** — Table management with status tracking
+- **Payments** — View paid orders and receipts
+- **Daily Reports** — Revenue and order statistics
+- **Membership** — Plan management with usage tracking
+- **Guest Orders** — Self-service ordering for guests
+- **User Management** — Admin, user, and guest roles
+
+## Deployment
+
+Deploy to Netlify:
+
+1. Connect repository
+2. Set environment variables
+3. Deploy
+
+Build command: `bun run build`
+Publish directory: `.output/public`
