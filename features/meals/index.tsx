@@ -84,9 +84,7 @@ export function MealsFeature() {
         reader.readAsDataURL(imageFile);
       });
 
-      const { url } = await uploadMealImage({
-        data: { file: base64, fileName: imageFile.name },
-      });
+      const { url } = await uploadMealImage(base64, imageFile.name);
 
       createMeal.mutate(
         {
@@ -115,7 +113,7 @@ export function MealsFeature() {
     if (imageFile) {
       try {
         if (mealToEdit?.imageUrl) {
-          await deleteMealImage({ data: { imageUrl: mealToEdit.imageUrl } });
+          await deleteMealImage(mealToEdit.imageUrl);
         }
 
         const reader = new FileReader();
@@ -128,9 +126,7 @@ export function MealsFeature() {
           reader.readAsDataURL(imageFile);
         });
 
-        const { url } = await uploadMealImage({
-          data: { file: base64, fileName: imageFile.name },
-        });
+        const { url } = await uploadMealImage(base64, imageFile.name);
         imageUrl = url;
       } catch (error) {
         console.error("Failed to upload image:", error);
@@ -177,7 +173,7 @@ export function MealsFeature() {
     const meal = meals.find((m) => m.id === mealToDelete);
     if (meal?.imageUrl) {
       try {
-        await deleteMealImage({ data: { imageUrl: meal.imageUrl } });
+        await deleteMealImage(meal.imageUrl);
       } catch (error) {
         console.error("Failed to delete image:", error);
       }
