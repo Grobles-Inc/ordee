@@ -2,7 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import appCss from '../styles/app.css?url'
+import appCssHref from '../styles/app.css?url'
+
+// Inject CSS
+const link = document.createElement('link')
+link.rel = 'stylesheet'
+link.href = appCssHref
+document.head.appendChild(link)
 
 const router = createRouter({ routeTree });
 
