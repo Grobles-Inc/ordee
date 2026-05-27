@@ -13,7 +13,12 @@
     "noEmit": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "~/features/*": ["./features/*"],
+      "~/components/*": ["./components/*"],
+      "~/server/*": ["./server/*"],
+      "~/lib/*": ["./lib/*"],
+      "~/hooks/*": ["./hooks/*"]
     },
     "baseUrl": "."
   },
