@@ -1,5 +1,4 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { createRootRoute, Outlet, redirect } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { NeonAuthUIProvider } from "@neondatabase/auth-ui";
@@ -25,7 +24,6 @@ function RootComponent() {
       <NeonAuthUIProvider authClient={authClient}>
         <Outlet />
         <Toaster position="top-right" richColors />
-        <TanStackRouterDevtools />
       </NeonAuthUIProvider>
     </QueryClientProvider>
   );
